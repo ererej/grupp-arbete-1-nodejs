@@ -1,0 +1,13 @@
+.hej:active{
+    background-color: black;
+}
+.hej{
+    list-style: none;
+    top: 0;
+    width: 100px;
+    height: 100px;
+    
+}
+div{
+    background-color: aqua;
+}
