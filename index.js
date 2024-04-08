@@ -1,37 +1,17 @@
 class Card {
-    constructor(value) {
-        this.value = value;
-        this.selected = false;
-    }
-
-    select() {
-        if (this.selected === true) {
-            this.selected = false;
-        } else {
-            this.selected = true;
-        }
+    constructor(type, value) {
+        this.type = type //hearts, spades, diamond, clubs
+        this.value = value
     }
 }
-const numberOfPairs = 8
-let gameBoard = []
 
-cardValues = []
-for (let i=0; i < numberOfCards; i++) {
-    cardValues.push(i).push(i)
+let cardPile = []
+const types =["hearts", "spades", "diamond", "clubs"]
+for(i=0; i<types.length; i++){
+    for(j=1; j<=13;j++){
+        const card = new Card(types[i], j);
+        cardPile.push(card)
+
+    }
 }
-
-for (let i=0; i< numberOfCards*2; i++) {
-    gameBoard.push()
-}
-
-
-
-let selectedCard1 = gameBoard[parseInt(process.argv[2])]
-let selectedCard2 = gameBoard[parseInt(process.argv[3])]
-
-console.log(gameBoard[0].value)
-if (selectedCard1.value === selectedCard2.value) {
-    console.log("UNO!!!!")
-} else {
-    console.log("finns i sjön!!!")
-}
+console.log(cardPile)
