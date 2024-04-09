@@ -1,8 +1,25 @@
 class Card {
-    constructor(type, index) {
+    constructor(type, cardType) {
         this.type = type //hearts, spades, diamond, clubs
-        this.index = index //1-13
-        this.value = this.index > 10 ? 10 : this.index //jack, queen, king = 10
+        
+        switch (cardType) {
+            case 1:
+                this.name = "ace"
+                break;
+            case 11:
+                this.name = "jack"
+                break;
+            case 12:
+                this.name = "queen"
+                break;
+            case 13:
+                this.name = "king"
+                break;
+            default:
+                this.name = cardType
+                break;
+            }
+        this.value = this.cardType > 10 ? 10 : this.cardType //jack, queen, king = 10
     }
 }
 
@@ -33,6 +50,7 @@ const shuffelCards = () => {
 }
 
 spriteIndex = 0;
+spriteScale = 10;
 function drawCard() {
     ctx.drawImage(
         spriteSheet,
@@ -42,8 +60,8 @@ function drawCard() {
         32,
         0, // Ritar på x-koordinat 0 på canvas
         0, // Ritar på y-koordinat 0 på canvas
-        32 * 1,
-        32 * 1
+        32 * spriteScale,
+        32 * spriteScale
     )
     spriteIndex++
     if (spriteIndex > 5) {
