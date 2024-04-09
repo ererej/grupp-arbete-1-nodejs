@@ -1,21 +1,38 @@
 class Card {
-    constructor(type, index) {
+    constructor(type, cardType) {
         this.type = type //hearts, spades, diamond, clubs
-        this.index = index //1-13
-        this.value = this.index > 10 ? 10 : this.index //jack, queen, king = 10
+        
+        switch (cardType) {
+            case 1:
+                this.name = "ace"
+                break;
+            case 11:
+                this.name = "jack"
+                break;
+            case 12:
+                this.name = "queen"
+                break;
+            case 13:
+                this.name = "king"
+                break;
+            default:
+                this.name = cardType
+                break;
+            }
+        this.value = this.cardType > 10 ? 10 : this.cardType //jack, queen, king = 10
     }
 }
 
 let cardPile = []
 let houseCards = []
 let playerCards = []
-const types =["hearts", "spades", "diamond", "clubs"]
+const types =["hearts", "spades", "diamonds", "clubs"]
 
 let canvas = document.getElementById("myCanvas")
 let ctx = canvas.getContext("2d")
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
-const spriteSheet = document.getElementById("spriteSheet")
+const background = document.getElementById("background")
 
 function drawbuttons(){
     ctx.fillStyle = "#99B080"
@@ -48,7 +65,9 @@ const shuffelCards = () => {
 }
 
 spriteIndex = 0;
-function drawCard() {
+spriteScale = 10;
+function draw() {
+    ctx.drawImage(background, 0, 0, canvas.width, canvas.height, 0, 0, canvas.width, canvas.height)
     ctx.drawImage(
         spriteSheet,
         spriteIndex * 32, 	// Beräknar framens x-koordinat
@@ -57,13 +76,13 @@ function drawCard() {
         32,
         0, // Ritar på x-koordinat 0 på canvas
         0, // Ritar på y-koordinat 0 på canvas
-        32 * 1,
-        32 * 1
+        32 * spriteScale,
+        32 * spriteScale
     )
     spriteIndex++
     if (spriteIndex > 5) {
         spriteIndex = 0
     }
-    requestAnimationFrame(drawCard)
+    requestAnimationFrame(draw)
 }
-requestAnimationFrame(drawCard)
+requestAnimationFrame(draw)
