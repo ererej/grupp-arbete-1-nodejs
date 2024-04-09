@@ -1,17 +1,54 @@
 class Card {
-    constructor(type, value) {
+    constructor(type, index) {
         this.type = type //hearts, spades, diamond, clubs
-        this.value = value
+        this.index = index //1-13
+        this.value = this.index > 10 ? 10 : this.index //jack, queen, king = 10
     }
 }
 
 let cardPile = []
+let houseCards = []
+let playerCards = []
 const types =["hearts", "spades", "diamond", "clubs"]
-for(i=0; i<types.length; i++){
-    for(j=1; j<=13;j++){
-        const card = new Card(types[i], j);
-        cardPile.push(card)
 
+let canvas = document.getElementById("myCanvas")
+let ctx = canvas.getContext("2d")
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+const spriteSheet = document.getElementById("spriteSheet")
+
+ctx.fillStyle = "darkGreen"
+ctx.fillRect(0, 0, canvas.width, canvas.height)
+
+
+
+const shuffelCards = () => {
+    cardPile = []
+    for(i=0; i<types.length; i++){
+        for(j=1; j<=13;j++){
+            const card = new Card(types[i], j);
+            cardPile.push(card)
+        }
     }
 }
-console.log(cardPile)
+
+spriteIndex = 0;
+function drawCard() {
+    ctx.drawImage(
+        spriteSheet,
+        spriteIndex * 32, 	// Beräknar framens x-koordinat
+        0,						// Framens y-koordinat är alltid 0
+        32,
+        32,
+        0, // Ritar på x-koordinat 0 på canvas
+        0, // Ritar på y-koordinat 0 på canvas
+        32 * 1,
+        32 * 1
+    )
+    spriteIndex++
+    if (spriteIndex > 5) {
+        spriteIndex = 0
+    }
+    requestAnimationFrame(drawCard)
+}
+requestAnimationFrame(drawCard)

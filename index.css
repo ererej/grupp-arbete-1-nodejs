@@ -1,20 +1,9 @@
-.game_board {
-    margin: 300px;
-    display: flex;
+html, body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
 }
 
-@keyframes flip {
-    30% {transform: translateY(-10%) scale(1.05);}
-    80% {transform: rotateY(180deg);}
-    100% {transform: rotateY(180deg) translateY(0%) ;}
-}
-
-.card {
-    background-color: red;
-    height: 300px;
-    width: 150px;
-}
-
-.card:hover {
-    animation: flip 4s linear;
+img {
+    display: none;
 }
