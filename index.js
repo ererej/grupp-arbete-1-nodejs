@@ -48,7 +48,7 @@ function drawbuttons(){
     
 
 }
-drawbuttons()
+
 
 
 
@@ -64,25 +64,10 @@ const shuffelCards = () => {
     }
 }
 
-spriteIndex = 0;
-spriteScale = 10;
+
 function draw() {
     ctx.drawImage(background, 0, 0, canvas.width, canvas.height, 0, 0, canvas.width, canvas.height)
-    ctx.drawImage(
-        spriteSheet,
-        spriteIndex * 32, 	// Beräknar framens x-koordinat
-        0,						// Framens y-koordinat är alltid 0
-        32,
-        32,
-        0, // Ritar på x-koordinat 0 på canvas
-        0, // Ritar på y-koordinat 0 på canvas
-        32 * spriteScale,
-        32 * spriteScale
-    )
-    spriteIndex++
-    if (spriteIndex > 5) {
-        spriteIndex = 0
-    }
+    drawbuttons()
     requestAnimationFrame(draw)
 }
 requestAnimationFrame(draw)
