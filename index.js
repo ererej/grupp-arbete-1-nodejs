@@ -20,6 +20,8 @@ class Card {
                 break;
             }
         this.value = this.cardType > 10 ? 10 : this.cardType //jack, queen, king = 10
+        this.image = new Image()
+        this.image.src = ".cards/" + this.name + "_of_" + this.type + ".png"
     }
 }
 
