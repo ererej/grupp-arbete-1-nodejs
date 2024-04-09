@@ -17,8 +17,23 @@ canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 const spriteSheet = document.getElementById("spriteSheet")
 
-ctx.fillStyle = "darkGreen"
-ctx.fillRect(0, 0, canvas.width, canvas.height)
+function drawbuttons(){
+    ctx.fillStyle = "#99B080"
+    ctx.fillRect(1100,300,140,100)
+    ctx.fillRect(200,300,140,100)  
+
+
+    ctx.fillStyle = "#FAF8ED"
+    ctx.font = "48px serif"
+    ctx.fillText("HIT", 230,366,100)
+    ctx.fillText("STAND", 1120,366,100)
+
+    
+
+}
+drawbuttons()
+
+
 
 
 
