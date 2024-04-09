@@ -26,13 +26,13 @@ class Card {
 let cardPile = []
 let houseCards = []
 let playerCards = []
-const types =["hearts", "spades", "diamond", "clubs"]
+const types =["hearts", "spades", "diamonds", "clubs"]
 
 let canvas = document.getElementById("myCanvas")
 let ctx = canvas.getContext("2d")
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
-const spriteSheet = document.getElementById("spriteSheet")
+const background = document.getElementById("background")
 
 ctx.fillStyle = "darkGreen"
 ctx.fillRect(0, 0, canvas.width, canvas.height)
@@ -51,7 +51,8 @@ const shuffelCards = () => {
 
 spriteIndex = 0;
 spriteScale = 10;
-function drawCard() {
+function draw() {
+    ctx.drawImage(background, 0, 0, canvas.width, canvas.height, 0, 0, canvas.width, canvas.height)
     ctx.drawImage(
         spriteSheet,
         spriteIndex * 32, 	// Beräknar framens x-koordinat
@@ -67,6 +68,6 @@ function drawCard() {
     if (spriteIndex > 5) {
         spriteIndex = 0
     }
-    requestAnimationFrame(drawCard)
+    requestAnimationFrame(draw)
 }
-requestAnimationFrame(drawCard)
+requestAnimationFrame(draw)
