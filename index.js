@@ -40,7 +40,7 @@ const background = document.getElementById("background")
 
 
 
-const shuffelCards = () => {
+const restockCards = () => {
     cardPile = []
     for(i=0; i<types.length; i++){
         for(j=1; j<=13;j++){
@@ -50,7 +50,9 @@ const shuffelCards = () => {
     }
 }
 
-
+const randomCard = () => {
+    return cardPile => cardPile.splice((Math.random() * cardPile.length) | 0,1);
+}
 
 class Button {
     constructor(name, x, y, width, height) {
@@ -82,6 +84,18 @@ const drawbuttons = () => {
     })
 }
 
+
+const drawCard = (card, x, y) => {
+    ctx.drawImage(card.image, x, y, card.image.width, card.image.height)
+
+}
+
+const drawPlayerCards = () => {
+    playerCards.forEach(card => {
+        drawCard(card, (1000/playerCards.length)*playerCards.indexOf(card), 600)
+    });
+}
+
 const mousePos = (canvas, event) => {
     var boundingBox = canvas.getBoundingClientRect();
     return {
@@ -106,11 +120,14 @@ canvas.addEventListener('click', function(event) {
     }
 }, false)
 
+restockCards()
+playerCards.push(randomCard())
+playerCards.push(randomCard())
 
 function draw() {
     ctx.drawImage(background, 0, 0, canvas.width, canvas.height, 0, 0, canvas.width, canvas.height);
     drawbuttons()
-
+    drawPlayerCards()
     requestAnimationFrame(draw);
 };
 requestAnimationFrame(draw);
