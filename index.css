@@ -2,8 +2,18 @@ html, body {
     margin: 0;
     padding: 0;
     overflow: hidden;
+    background-color: yellow;
 }
 
 img {
     display: none;
+}
+
+p {
+    font-size: 40px;
+    font-weight: bold;
+    color: red;
+    position: absolute;
+    top: 40%;
+    left: 85%;
 }
