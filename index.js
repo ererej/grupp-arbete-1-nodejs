@@ -60,21 +60,27 @@ const pickUpCard = (cards, cPile) => {
 }
 
 class Button {
-    constructor(name, x, y, width, height) {
+    constructor(name, x, y, width, height, enabled) {
         this.name = name,
         this.id = name,
         this.x = x,
         this.y = y,
         this.width = width,
         this.height = height
+        this.enabled = enabled
     }
 }
 let buttons = []
 buttons.push(new Button("hit", 200, 300, 140, 100))
 buttons.push(new Button("stand", 900, 300, 140, 100))
+buttons.push(new Button("bet 50", 30, 300, 140, 100, true))
+buttons.push(new Button("bet 250", 30, 400, 140, 100, true))
+buttons.push(new Button("bet 500", 30, 500, 140, 100, true))
+buttons.push(new Button("bet all in", 30, 600, 180, 100, true))
 
 const drawbuttons = () => {
     buttons.forEach(button => {
+        if (!button.enabled) return
         ctx.beginPath()
         ctx.rect(button.x, button.y, button.width, button.height)
         ctx.fillStyle = 'rgba(225,225,225,0.5)'
@@ -97,17 +103,23 @@ const drawCard = (card, x, y, scaleDownFactor) => {
 const drawPlayerCards = () => {
     const scaleDownFactor = 3
     playerCards.forEach(card => {
-        drawCard(card, (700/playerCards.length+1)*(playerCards.indexOf(card) + 1) - card.image.naturalWidth/scaleDownFactor + 100, 450, scaleDownFactor)
+        drawCard(card, (700/playerCards.length+1)*(playerCards.indexOf(card) + 1) - 700/(playerCards.length+1) + 150, 450, scaleDownFactor)
     });
 }
 
 const drawHouseCards = () => {
     const scaleDownFactor = 3
     houseCards.forEach(card => {
-        drawCard(card, (700/houseCards.length+1)*(houseCards.indexOf(card) + 1) - card.image.naturalWidth/scaleDownFactor + 100, 10, 3)
+        drawCard(card, (700/houseCards.length+1)*(houseCards.indexOf(card) + 1) - 700/(houseCards.length+1) + 150, 10, 3)
     });
 }
 
+
+const drawtext = (text, posX, posY, color, size) => {
+    ctx.font = `${size}px serif`
+    ctx.fillStyle = color
+    ctx.fillText(text, posX, posY)
+}
 
 const mousePos = (canvas, event) => {
     var boundingBox = canvas.getBoundingClientRect();
@@ -127,16 +139,34 @@ canvas.addEventListener('click', function(event) {
     while (i < buttons.length) {
         const button = buttons[i];
         if (tuching(mousePosition, button)) {
-            if(button.name === "hit"){
-                pickUpCard(playerCards, cardPile)
+            switch (button.name.split(" ")[0]) {
+                case "hit":
+                    if (bet > 0) {
+                        pickUpCard(playerCards, cardPile)
+                        break;
+                    }
+                    break
+                case "stand":
+                    break;
+                case "bet":
+                    if (button.name.split(" ")[1] == "all") {
+                        bet = cash
+                    } else {
+                        if (cash >= parseInt(button.name.split(" ")[1]) + bet) {
+                            bet += parseInt(button.name.split(" ")[1])
+                        }
+                    }
+                    break;
             }
         }
         i++;
     }
 }, false)
 
+let cash = 1000
+let bet = 0
+
 restockCards()
-pickUpCard(playerCards, cardPile)
 pickUpCard(playerCards, cardPile)
 pickUpCard(houseCards, cardPile)
 pickUpCard(houseCards, cardPile)
@@ -148,6 +178,8 @@ function draw() {
     drawCard(playerCards[0], 0, 0)
     drawPlayerCards()
     drawHouseCards()
+    drawtext(`cash: ${cash}`, 10, 50, "lightgreen", 30)
+    drawtext(`bet: ${bet}`, 10, 100, "lightgreen", 30)
     requestAnimationFrame(draw);
 };
 requestAnimationFrame(draw);
