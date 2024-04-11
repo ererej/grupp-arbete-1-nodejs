@@ -203,7 +203,7 @@ function draw() {
     drawtext(`cash: ${cash}`, 10, 50, "lightgreen", 30)
     drawtext(`bet: ${bet}`, 10, 100, "lightgreen", 30)
     drawtext(`CardSum: ${cardSum(playerCards)}`, 900, 600, "lightgreen", 30 )
-    drawtext(`CardSum: ${cardsum(dealerSum)}`, 900, 150, "lightgreen", 30 )
+    drawtext(`CardSum: ${cardSum(houseCards)}`, 900, 150, "lightgreen", 30 )
     requestAnimationFrame(draw);
 };
 requestAnimationFrame(draw);
