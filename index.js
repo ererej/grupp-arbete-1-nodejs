@@ -78,6 +78,7 @@ buttons.push(new Button("bet 250", 30, 400, 140, 100, true))
 buttons.push(new Button("bet 500", 30, 500, 140, 100, true))
 buttons.push(new Button("bet all in", 30, 600, 180, 100, true))
 
+
 const drawbuttons = () => {
     buttons.forEach(button => {
         if (!button.enabled) return
@@ -119,6 +120,14 @@ const drawtext = (text, posX, posY, color, size) => {
     ctx.font = `${size}px serif`
     ctx.fillStyle = color
     ctx.fillText(text, posX, posY)
+}
+
+const cardSum = (hand) => {
+    let sum = 0
+    hand.forEach(card => {
+        sum =+ card.value 
+    });
+    return sum 
 }
 
 const mousePos = (canvas, event) => {
@@ -178,8 +187,11 @@ function draw() {
     drawCard(playerCards[0], 0, 0)
     drawPlayerCards()
     drawHouseCards()
+    cardSum(playerCards)
     drawtext(`cash: ${cash}`, 10, 50, "lightgreen", 30)
     drawtext(`bet: ${bet}`, 10, 100, "lightgreen", 30)
+    drawtext(`CardSum: ${cardSum(playerCards)}`, 900, 600, "lightgreen", 30 )
+    drawtext(`CardSum: ${cardsum(dealerSum)}`, 900, 150, "lightgreen", 30 )
     requestAnimationFrame(draw);
 };
 requestAnimationFrame(draw);
