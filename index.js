@@ -5,23 +5,28 @@ class Card {
         switch (cardType) {
             case 1:
                 this.name = "ace"
+                this.value = 11
                 break;
             case 11:
                 this.name = "jack"
+                this.value = 10
                 break;
             case 12:
                 this.name = "queen"
+                this.value = 10
                 break;
             case 13:
                 this.name = "king"
+                this.value = 10
                 break;
             default:
                 this.name = cardType
+                this.value = cardType
                 break;
-            }
-        this.value = this.cardType > 10 ? 10 : this.cardType //jack, queen, king = 10
+            }//jack, queen, king = 10
         this.image = new Image()
-        this.image.src = ".cards/" + this.name + "_of_" + this.type + ".png"
+        this.image.src = "./cards/" + this.name + "_of_" + this.type + ".png"
+        document.body.appendChild(this.image)
     }
 }
 
@@ -50,8 +55,8 @@ const restockCards = () => {
     }
 }
 
-const randomCard = () => {
-    return cardPile => cardPile.splice((Math.random() * cardPile.length) | 0,1);
+const pickUpCard = (cards, cPile) => {
+    cards.push(cPile.splice((Math.floor(Math.random() * cPile.length)), 1)[0]);
 }
 
 class Button {
@@ -85,16 +90,24 @@ const drawbuttons = () => {
 }
 
 
-const drawCard = (card, x, y) => {
-    ctx.drawImage(card.image, x, y, card.image.width, card.image.height)
-
+const drawCard = (card, x, y, scaleDownFactor) => {
+    ctx.drawImage(card.image, x, y, card.image.naturalWidth/scaleDownFactor, card.image.naturalHeight/scaleDownFactor)
 }
 
 const drawPlayerCards = () => {
+    const scaleDownFactor = 3
     playerCards.forEach(card => {
-        drawCard(card, (1000/playerCards.length)*playerCards.indexOf(card), 600)
+        drawCard(card, (700/playerCards.length+1)*(playerCards.indexOf(card) + 1) - card.image.naturalWidth/scaleDownFactor + 100, 450, scaleDownFactor)
     });
 }
+
+const drawHouseCards = () => {
+    const scaleDownFactor = 3
+    houseCards.forEach(card => {
+        drawCard(card, (700/houseCards.length+1)*(houseCards.indexOf(card) + 1) - card.image.naturalWidth/scaleDownFactor + 100, 10, 3)
+    });
+}
+
 
 const mousePos = (canvas, event) => {
     var boundingBox = canvas.getBoundingClientRect();
@@ -114,20 +127,27 @@ canvas.addEventListener('click', function(event) {
     while (i < buttons.length) {
         const button = buttons[i];
         if (tuching(mousePosition, button)) {
-            alert(`clicked ${button.name}`);
+            if(button.name === "hit"){
+                pickUpCard(playerCards, cardPile)
+            }
         }
         i++;
     }
 }, false)
 
 restockCards()
-playerCards.push(randomCard())
-playerCards.push(randomCard())
+pickUpCard(playerCards, cardPile)
+pickUpCard(playerCards, cardPile)
+pickUpCard(houseCards, cardPile)
+pickUpCard(houseCards, cardPile)
+console.log(playerCards)
 
 function draw() {
     ctx.drawImage(background, 0, 0, canvas.width, canvas.height, 0, 0, canvas.width, canvas.height);
     drawbuttons()
+    drawCard(playerCards[0], 0, 0)
     drawPlayerCards()
+    drawHouseCards()
     requestAnimationFrame(draw);
 };
 requestAnimationFrame(draw);
