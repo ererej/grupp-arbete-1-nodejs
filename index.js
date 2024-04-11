@@ -73,6 +73,7 @@ class Button {
 let buttons = []
 buttons.push(new Button("hit", 200, 300, 140, 100))
 buttons.push(new Button("stand", 900, 300, 140, 100))
+buttons.push(new Button("start", canvas.width/2 - 50, canvas.height/2 - 70, 140, 100, false))
 buttons.push(new Button("bet 50", 30, 300, 140, 100, true))
 buttons.push(new Button("bet 250", 30, 400, 140, 100, true))
 buttons.push(new Button("bet 500", 30, 500, 140, 100, true))
@@ -104,14 +105,14 @@ const drawCard = (card, x, y, scaleDownFactor) => {
 const drawPlayerCards = () => {
     const scaleDownFactor = 3
     playerCards.forEach(card => {
-        drawCard(card, (700/playerCards.length+1)*(playerCards.indexOf(card) + 1) - 700/(playerCards.length+1) + 150, 450, scaleDownFactor)
+        drawCard(card, (canvas.width*0.6/playerCards.length+1)*(playerCards.indexOf(card) + 1) - canvas.width*0.6/(playerCards.length+1) + canvas.width*0.15, 450, scaleDownFactor)
     });
 }
 
 const drawHouseCards = () => {
     const scaleDownFactor = 3
     houseCards.forEach(card => {
-        drawCard(card, (700/houseCards.length+1)*(houseCards.indexOf(card) + 1) - 700/(houseCards.length+1) + 150, 10, 3)
+        drawCard(card, (canvas.width*0.6/houseCards.length+1)*(houseCards.indexOf(card) + 1) - canvas.width*0.6/(houseCards.length+1) + canvas.width*0.15, 10, scaleDownFactor)
     });
 }
 
@@ -148,7 +149,7 @@ canvas.addEventListener('click', function(event) {
     while (i < buttons.length) {
         const button = buttons[i];
         if (tuching(mousePosition, button)) {
-            switch (button.name.split(" ")[0]) {
+            switch (button.name.split(" ")[0].toLowerCase()) {
                 case "hit":
                     if (bet > 0) {
                         pickUpCard(playerCards, cardPile)
@@ -157,12 +158,23 @@ canvas.addEventListener('click', function(event) {
                     break
                 case "stand":
                     break;
+                case "start":
+                    for (let i =0; i < buttons.length; i++) {
+                        if (buttons[i].name.split(" ")[0] == "bet") {
+                            buttons[i].enabled = false
+                        }
+                    }
+                    buttons[buttons.indexOf(buttons.find(button => button.name == "stand"))].enabled = true
+                    buttons[buttons.indexOf(buttons.find(button => button.name == "hit"))].enabled = true
+                    button.enabled = false
                 case "bet":
                     if (button.name.split(" ")[1] == "all") {
                         bet = cash
+                        buttons[buttons.indexOf(buttons.find(button => button.name == "start"))].enabled = true
                     } else {
                         if (cash >= parseInt(button.name.split(" ")[1]) + bet) {
                             bet += parseInt(button.name.split(" ")[1])
+                            buttons[buttons.indexOf(buttons.find(button => button.name == "start"))].enabled = true
                         }
                     }
                     break;
@@ -182,12 +194,12 @@ pickUpCard(houseCards, cardPile)
 console.log(playerCards)
 
 function draw() {
-    ctx.drawImage(background, 0, 0, canvas.width, canvas.height, 0, 0, canvas.width, canvas.height);
-    drawbuttons()
+    ctx.drawImage(background, 0, 0, background.width, background.height, 0, 0, canvas.width, canvas.height);
     drawCard(playerCards[0], 0, 0)
     drawPlayerCards()
     drawHouseCards()
     cardSum(playerCards)
+    drawbuttons()
     drawtext(`cash: ${cash}`, 10, 50, "lightgreen", 30)
     drawtext(`bet: ${bet}`, 10, 100, "lightgreen", 30)
     drawtext(`CardSum: ${cardSum(playerCards)}`, 900, 600, "lightgreen", 30 )
