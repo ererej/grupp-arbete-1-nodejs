@@ -125,7 +125,7 @@ const drawtext = (text, posX, posY, color, size) => {
     ctx.fillText(text, posX, posY)
 }
 
-//broken :P
+//counts the sum of the cards in the inputed hand
 const cardSum = (hand) => {
     let sum = 0;
     hand.forEach(card => {
