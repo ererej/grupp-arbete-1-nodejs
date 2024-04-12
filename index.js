@@ -71,7 +71,7 @@ class Button {
     }
 }
 let buttons = []
-buttons.push(new Button("hit", 200, 300, 140, 100))
+buttons.push(new Button("hit", canvas.width*0.3, 300, 140, 100))
 buttons.push(new Button("stand", 900, 300, 140, 100))
 buttons.push(new Button("start", canvas.width/2 - 50, canvas.height/2 - 70, 140, 100, false))
 buttons.push(new Button("bet 50", 30, 300, 140, 100, true))
@@ -79,7 +79,7 @@ buttons.push(new Button("bet 250", 30, 400, 140, 100, true))
 buttons.push(new Button("bet 500", 30, 500, 140, 100, true))
 buttons.push(new Button("bet all in", 30, 600, 180, 100, true))
 
-
+//draws all the buttons in the buttons array
 const drawbuttons = () => {
     buttons.forEach(button => {
         if (!button.enabled) return
@@ -97,11 +97,12 @@ const drawbuttons = () => {
     })
 }
 
-
+//draws the card inputed at the x and y position, the scaleDownFactor is used to scale down the image to fit good in the canvas
 const drawCard = (card, x, y, scaleDownFactor) => {
     ctx.drawImage(card.image, x, y, card.image.naturalWidth/scaleDownFactor, card.image.naturalHeight/scaleDownFactor)
 }
 
+//draws the player cards on the canvas
 const drawPlayerCards = () => {
     const scaleDownFactor = 3
     playerCards.forEach(card => {
@@ -109,6 +110,7 @@ const drawPlayerCards = () => {
     });
 }
 
+//draws the house cards on the canvas
 const drawHouseCards = () => {
     const scaleDownFactor = 3
     houseCards.forEach(card => {
@@ -116,13 +118,14 @@ const drawHouseCards = () => {
     });
 }
 
-
+//draws the inputed text at the x and y position with the inputed color and size
 const drawtext = (text, posX, posY, color, size) => {
     ctx.font = `${size}px serif`
     ctx.fillStyle = color
     ctx.fillText(text, posX, posY)
 }
 
+//broken :P
 const cardSum = (hand) => {
     let sum = 0
     hand.forEach(card => {
@@ -202,8 +205,8 @@ function draw() {
     drawbuttons()
     drawtext(`cash: ${cash}`, 10, 50, "lightgreen", 30)
     drawtext(`bet: ${bet}`, 10, 100, "lightgreen", 30)
-    drawtext(`CardSum: ${cardSum(playerCards)}`, 900, 600, "lightgreen", 30 )
-    drawtext(`CardSum: ${cardSum(houseCards)}`, 900, 150, "lightgreen", 30 )
+    drawtext(`CardSum: ${cardSum(playerCards)}`, canvas.width/2, canvas.height*0.9, "lightgreen", 30 )
+    drawtext(`CardSum: ${cardSum(houseCards)}`, canvas.width/2, 150, "lightgreen", 30 )
     requestAnimationFrame(draw);
 };
 requestAnimationFrame(draw);

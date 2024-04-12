@@ -9,11 +9,3 @@ img {
     display: none;
 }
 
-p {
-    font-size: 40px;
-    font-weight: bold;
-    color: red;
-    position: absolute;
-    top: 20%;
-    left: 85%;
-}
