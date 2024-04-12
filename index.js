@@ -1,7 +1,7 @@
 class Card {
-    constructor(type, cardType) {
+    constructor(type, cardType, hidden) {
         this.type = type //hearts, spades, diamond, clubs
-        
+        this.hidden = hidden
         switch (cardType) {
             case 1:
                 this.name = "ace"
@@ -24,7 +24,7 @@ class Card {
                 this.value = cardType
                 break;
             }//jack, queen, king = 10
-        this.image = new Image()
+        this.image = new Image(500, 726)
         this.image.src = "./cards/" + this.name + "_of_" + this.type + ".png"
         document.body.appendChild(this.image)
     }
@@ -49,14 +49,20 @@ const restockCards = () => {
     cardPile = []
     for(i=0; i<types.length; i++){
         for(j=1; j<=13;j++){
-            const card = new Card(types[i], j);
+            const card = new Card(types[i], j, false);
             cardPile.push(card)
         }
     }
 }
 
-const pickUpCard = (cards, cPile) => {
-    cards.push(cPile.splice((Math.floor(Math.random() * cPile.length)), 1)[0]);
+const pickUpCard = (cards, cPile, hidden) => {
+    if (!hidden) {
+        cards.push(cPile.splice((Math.floor(Math.random() * cPile.length)), 1)[0]);
+    } else {
+        card = cPile.splice((Math.floor(Math.random() * cPile.length)), 1)[0]
+        card.hidden = true
+        cards.push(card)
+    }
 }
 
 class Button {
@@ -106,7 +112,7 @@ const drawCard = (card, x, y, scaleDownFactor) => {
 const drawPlayerCards = () => {
     const scaleDownFactor = 3
     playerCards.forEach(card => {
-        drawCard(card, (canvas.width*0.6/playerCards.length+1)*(playerCards.indexOf(card) + 1) - canvas.width*0.6/(playerCards.length+1) + canvas.width*0.15, 450, scaleDownFactor)
+        drawCard(card, (canvas.width*0.3/playerCards.length+1)*(playerCards.indexOf(card) + 1) - canvas.width*0.3/(playerCards.length+1) + canvas.width*0.30, 450, scaleDownFactor)
     });
 }
 
@@ -151,7 +157,7 @@ canvas.addEventListener('click', function(event) {
     let i = 0;
     while (i < buttons.length) {
         const button = buttons[i];
-        if (tuching(mousePosition, button)) {
+        if (tuching(mousePosition, button) && button.enabled) {
             switch (button.name.split(" ")[0].toLowerCase()) {
                 case "hit":
                     if (bet > 0) {
@@ -170,6 +176,12 @@ canvas.addEventListener('click', function(event) {
                     buttons[buttons.indexOf(buttons.find(button => button.name == "stand"))].enabled = true
                     buttons[buttons.indexOf(buttons.find(button => button.name == "hit"))].enabled = true
                     button.enabled = false
+                    cash -= bet
+                    playing = true
+                    pickUpCard(playerCards, cardPile, false)
+                    pickUpCard(playerCards, cardPile, false)
+                    pickUpCard(houseCards, cardPile, true)
+                    pickUpCard(houseCards, cardPile, false)
                 case "bet":
                     if (button.name.split(" ")[1] == "all") {
                         bet = cash
@@ -191,22 +203,20 @@ let cash = 1000
 let bet = 0
 
 restockCards()
-pickUpCard(playerCards, cardPile)
-pickUpCard(houseCards, cardPile)
-pickUpCard(houseCards, cardPile)
-console.log(playerCards)
+
+let playing = false 
+
 
 function draw() {
     ctx.drawImage(background, 0, 0, background.width, background.height, 0, 0, canvas.width, canvas.height);
-    drawCard(playerCards[0], 0, 0)
     drawPlayerCards()
     drawHouseCards()
     cardSum(playerCards)
     drawbuttons()
     drawtext(`cash: ${cash}`, 10, 50, "lightgreen", 30)
     drawtext(`bet: ${bet}`, 10, 100, "lightgreen", 30)
-    drawtext(`CardSum: ${cardSum(playerCards)}`, canvas.width/2, canvas.height*0.9, "lightgreen", 30 )
-    drawtext(`CardSum: ${cardSum(houseCards)}`, canvas.width/2, 150, "lightgreen", 30 )
+    drawtext(`CardSum: ${cardSum(playerCards)}`, canvas.width*0.8, canvas.height*0.9, "lightgreen", 30 )
+    drawtext(`CardSum: ${cardSum(houseCards)}`, canvas.width*0.8, 150, "lightgreen", 30 )
     requestAnimationFrame(draw);
 };
 requestAnimationFrame(draw);
