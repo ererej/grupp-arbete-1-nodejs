@@ -127,9 +127,9 @@ const drawtext = (text, posX, posY, color, size) => {
 
 //broken :P
 const cardSum = (hand) => {
-    let sum = 0
+    let sum = 0;
     hand.forEach(card => {
-        sum =+ card.value 
+        sum = sum + card.value; 
     });
     return sum 
 }
