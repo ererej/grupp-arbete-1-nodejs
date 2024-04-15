@@ -1,3 +1,35 @@
+class position {
+    constructor(x, y, targetX, targetY, speed) {
+        this.x = x
+        this.y = y
+        this.targetX = targetX
+        this.targetY = targetY
+        this.speed = speed
+    }
+
+    move() {
+        if (Math.abs(this.x-this.targetX) < this.speed) {
+            this.x = this.targetX
+        } else {
+            if (this.x < this.targetX) {
+                this.x += this.speed
+            } else if (this.x > this.targetX) {
+                this.x -= this.speed
+            }
+        }
+        if (Math.abs(this.y-this.targetY) < this.speed) {
+            this.y = this.targetY
+        } else {
+            if (this.y < this.targetY) {
+                this.y += this.speed
+            } else if (this.y > this.targetY) {
+                this.y -= this.speed
+            }
+        }
+    }
+}
+
+
 class Card {
     constructor(type, cardType, hidden) {
         this.type = type //hearts, spades, diamond, clubs
@@ -27,6 +59,7 @@ class Card {
         this.image = new Image(500, 726)
         this.image.src = "./cards/" + this.name + "_of_" + this.type + ".png"
         document.body.appendChild(this.image)
+        this.position = new position(canvas.width*0.9, canvas.height*0.5, 0, 0, 5)
     }
 }
 
@@ -104,15 +137,18 @@ const drawbuttons = () => {
 }
 
 //draws the card inputed at the x and y position, the scaleDownFactor is used to scale down the image to fit good in the canvas
-const drawCard = (card, x, y, scaleDownFactor) => {
-    ctx.drawImage(card.image, x, y, card.image.naturalWidth/scaleDownFactor, card.image.naturalHeight/scaleDownFactor)
+const drawCard = (card, /*x, y,*/ scaleDownFactor) => {
+    card.position.move()
+    ctx.drawImage(card.image, card.position.x, card.position.y, card.image.naturalWidth/scaleDownFactor, card.image.naturalHeight/scaleDownFactor)
 }
 
 //draws the player cards on the canvas
 const drawPlayerCards = () => {
     const scaleDownFactor = 3
     playerCards.forEach(card => {
-        drawCard(card, (canvas.width*0.3/playerCards.length+1)*(playerCards.indexOf(card) + 1) - canvas.width*0.3/(playerCards.length+1) + canvas.width*0.30, 450, scaleDownFactor)
+        card.position.targetX = (canvas.width*0.3/playerCards.length+1)*(playerCards.indexOf(card) + 1) - canvas.width*0.3/(playerCards.length+1) + canvas.width*0.30
+        card.position.targetY = canvas.height*0.6
+        drawCard(card, scaleDownFactor)
     });
 }
 
@@ -120,7 +156,9 @@ const drawPlayerCards = () => {
 const drawHouseCards = () => {
     const scaleDownFactor = 3
     houseCards.forEach(card => {
-        drawCard(card, (canvas.width*0.6/houseCards.length+1)*(houseCards.indexOf(card) + 1) - canvas.width*0.6/(houseCards.length+1) + canvas.width*0.15, 10, scaleDownFactor)
+        card.position.targetX = (canvas.width*0.3/houseCards.length+1)*(houseCards.indexOf(card) + 1) - canvas.width*0.3/(houseCards.length+1) + canvas.width*0.30
+        card.position.targetY = canvas.height*0.05
+        drawCard(card, scaleDownFactor)
     });
 }
 
