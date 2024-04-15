@@ -69,7 +69,6 @@ const background = document.getElementById("background")
 
 
 
-
 const restockCards = () => {
     cardPile = []
     for(i=0; i<types.length; i++){
@@ -102,7 +101,11 @@ class Button {
     }
 }
 let buttons = []
-buttons.push(new Button("hit", canvas.width*0.3, 300, 140, 100))
+buttons.push(new Button("WINN", canvas.width/2 - 50, canvas.height/2 - 70, 140, 100, false))
+buttons.push(new Button("PUSH", canvas.width/2 - 50, canvas.height/2 - 70, 140, 100, false))
+buttons.push(new Button("BUST", canvas.width/2 - 50, canvas.height/2 - 70, 140, 100, false))
+buttons.push(new Button("Restart", canvas.width/2 - 50, canvas.height/2 - 70, 140, 100, false))
+buttons.push(new Button("hit",  440, 300, 140, 100))
 buttons.push(new Button("stand", 900, 300, 140, 100))
 buttons.push(new Button("start", canvas.width/2 - 50, canvas.height/2 - 70, 140, 100, false))
 buttons.push(new Button("bet 50", 30, 300, 140, 100, true))
@@ -192,7 +195,26 @@ canvas.addEventListener('click', function(event) {
                 case "hit":
                     pickUpCard(playerCards, cardPile)
                     break;
-                case "stand":
+                case "stand": // Vi måte gör en start funktion som callas efter varje påstående eller va fan
+                    if(cardSum(houseCards) > cardSum(playerCards)){ 
+                            cash = cash - bet 
+                        }else{
+                            for (let j = 0; cardSum(playerCards) > cardSum(houseCards) ||cardSum(houseCards) == 21 ; j++) {
+                                pickUpCard(houseCards, cardPile, false)
+                            }
+                        }
+                        if(cardSum(houseCards) == cardSum(playerCards)){
+                            cash = cash
+                        }else if(cardSum(houseCards) == 21){
+                            drawbuttons(buttons[3], true)
+                            cash = cash - bet 
+                        }else if(cardSum(playerCards) == 21){
+                            drawbuttons(buttons[1], true)
+                            cash = cash + bet 
+                        }else{
+                            drawbuttons(buttons[3], true)
+                        }
+                    
                     break;
                 case "start":
                     for (let i =0; i < buttons.length; i++) {
