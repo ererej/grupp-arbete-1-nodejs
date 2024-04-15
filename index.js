@@ -1,4 +1,4 @@
-class position {
+class Position {
     constructor(x, y, targetX, targetY, speed) {
         this.x = x
         this.y = y
@@ -8,24 +8,16 @@ class position {
     }
 
     move() {
-        if (Math.abs(this.x-this.targetX) < this.speed) {
+        if (Math.abs(this.x-this.targetX) < this.speed && Math.abs(this.y-this.targetY) < this.speed) {
             this.x = this.targetX
-        } else {
-            if (this.x < this.targetX) {
-                this.x += this.speed
-            } else if (this.x > this.targetX) {
-                this.x -= this.speed
-            }
-        }
-        if (Math.abs(this.y-this.targetY) < this.speed) {
             this.y = this.targetY
-        } else {
-            if (this.y < this.targetY) {
-                this.y += this.speed
-            } else if (this.y > this.targetY) {
-                this.y -= this.speed
-            }
+            return
         }
+        const tx = this.targetX - this.x
+        const ty = this.targetY - this.y
+        const dist = Math.sqrt(tx * tx + ty * ty)
+        this.x += (tx/dist) * this.speed
+        this.y += (ty/dist) * this.speed
     }
 }
 
@@ -59,7 +51,7 @@ class Card {
         this.image = new Image(500, 726)
         this.image.src = "./cards/" + this.name + "_of_" + this.type + ".png"
         document.body.appendChild(this.image)
-        this.position = new position(canvas.width*0.9, canvas.height*0.5, 0, 0, 5)
+        this.position = new Position(canvas.width*0.9, canvas.height*0.5, 0, 0, 15)
     }
 }
 
@@ -198,11 +190,8 @@ canvas.addEventListener('click', function(event) {
         if (tuching(mousePosition, button) && button.enabled) {
             switch (button.name.split(" ")[0].toLowerCase()) {
                 case "hit":
-                    if (bet > 0) {
-                        pickUpCard(playerCards, cardPile)
-                        break;
-                    }
-                    break
+                    pickUpCard(playerCards, cardPile)
+                    break;
                 case "stand":
                     break;
                 case "start":
