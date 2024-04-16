@@ -62,7 +62,9 @@ const types =["hearts", "spades", "diamonds", "clubs"]
 
 let canvas = document.getElementById("myCanvas")
 let ctx = canvas.getContext("2d")
-
+const backsideOfCard = new Image(500, 726)
+backsideOfCard.src = "./cards/Backside_of_card.png"
+document.body.appendChild(backsideOfCard)
 const background = document.getElementById("background")
 
 
@@ -133,7 +135,11 @@ const drawbuttons = () => {
 //draws the card inputed at the x and y position, the scaleDownFactor is used to scale down the image to fit good in the canvas
 const drawCard = (card, /*x, y,*/ scaleDownFactor) => {
     card.position.move()
+    if(card.hidden){
+        ctx.drawImage(backsideOfCard, card.position.x, card.position.y, card.naturalWidth/scaleDownFactor, card.naturalHeight/scaleDownFactor)
+    } else {
     ctx.drawImage(card.image, card.position.x, card.position.y, card.image.naturalWidth/scaleDownFactor, card.image.naturalHeight/scaleDownFactor)
+    }
 }
 
 //draws the player cards on the canvas
