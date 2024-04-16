@@ -74,6 +74,7 @@ const background = document.getElementById("background")
 
 const restockCards = () => {
     cardPile = []
+    
     for(i=0; i<types.length; i++){
         for(j=1; j<=13;j++){
             const card = new Card(types[i], j, false);
@@ -109,6 +110,11 @@ let buttons = []
 //draws all the buttons in the buttons array
 const drawbuttons = () => {
     buttons.forEach(button => {
+        if (button.name.split(" ")[0].toLowerCase() == "bet") {
+            if (parseInt(button.name.split(" ")[1]) + bet > cash) {
+                button.enabled = false
+            }
+        }
         if (!button.enabled) return
         ctx.beginPath()
         ctx.rect(button.x, button.y, button.width, button.height)
@@ -175,7 +181,6 @@ class Chip {
         this.value = value
         this.image = new Image(5000, 5000)
         this.image.src = "./chips/" + value + "_casino_chip.png"
-        console.log(this.image)
         document.body.appendChild(this.image)
         this.position = new Position(canvas.width*0.5, canvas.height, x, y, 15)
     }
@@ -263,7 +268,6 @@ canvas.addEventListener('click', function(event) {
                         if (cash >= parseInt(button.name.split(" ")[1]) + bet) {
                             bet += parseInt(button.name.split(" ")[1])
                             bets.push(new Chip(parseInt(button.name.split(" ")[1]), 100, 100))
-                            console.log(bets)
                             buttons[buttons.indexOf(buttons.find(button => button.name == "start"))].enabled = true
                         } 
                     }
