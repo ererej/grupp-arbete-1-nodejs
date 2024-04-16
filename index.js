@@ -221,6 +221,13 @@ canvas.addEventListener('click', function(event) {
             switch (button.name.split(" ")[0].toLowerCase()) {
                 case "hit":
                     pickUpCard(playerCards, cardPile)
+                    if(cardSum(playerCards) > 21){
+
+                        setTimeout(() => {
+                            restart()
+                        }
+                        , 2000)
+                    }
                     break;
                 case "stand": // Vi måte gör en start funktion som callas efter varje påstående eller va fan
                         if(cardSum(playerCards) > 21){
@@ -245,7 +252,10 @@ canvas.addEventListener('click', function(event) {
                                 cash = cash + bet * 2
                             }
                         }
-                        restart()
+                        setTimeout(() => {
+                            restart()
+                        }
+                        ,2700)
 
 
                     break;
