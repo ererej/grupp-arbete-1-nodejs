@@ -70,8 +70,7 @@ const types =["hearts", "spades", "diamonds", "clubs"]
 
 let canvas = document.getElementById("myCanvas")
 let ctx = canvas.getContext("2d")
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+
 const background = document.getElementById("background")
 
 
@@ -246,6 +245,8 @@ let playing = false
 
 
 function draw() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
     ctx.drawImage(background, 0, 0, background.width, background.height, 0, 0, canvas.width, canvas.height);
     drawPlayerCards()
     drawHouseCards()
