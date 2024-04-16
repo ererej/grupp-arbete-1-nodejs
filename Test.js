@@ -70,3 +70,25 @@ ctx.lineTo(300, 150);
 
 // Draw the Path
 ctx.stroke();
+
+
+if(cardSum(houseCards) > cardSum(playerCards) || cardSum(houseCards) == 21){ 
+  cash = cash - bet 
+  restart()
+}else{
+  while(cardSum(playerCards) > cardSum(houseCards) || cardSum(houseCards) == 21){
+      pickUpCard(houseCards, cardPile, false)
+  }
+}
+if(cardSum(houseCards) == cardSum(playerCards)){
+  //push!!!
+  restart()
+}else if(cardSum(houseCards) == 21){
+  cash = cash - bet 
+  restart()
+}else if(cardSum(playerCards) == 21){
+  cash = cash + bet 
+  restart()
+}else{
+  restart()
+}

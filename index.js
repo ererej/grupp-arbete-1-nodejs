@@ -223,27 +223,31 @@ canvas.addEventListener('click', function(event) {
                     pickUpCard(playerCards, cardPile)
                     break;
                 case "stand": // Vi måte gör en start funktion som callas efter varje påstående eller va fan
-                    if(cardSum(houseCards) > cardSum(playerCards) || cardSum(houseCards) == 21){ 
-                            cash = cash - bet 
-                            restart()
+                        if(cardSum(playerCards) > 21){
+                            // BUST, DEALER WINNS
+                        }else if(cardSum(houseCards) == 21 && cardSum(playerCards) == 21){
+                            // PUSH
                         }else{
-                            while(cardSum(playerCards) > cardSum(houseCards) || cardSum(houseCards) == 21){
+                            while(cardSum(houseCards) < 17){
                                 pickUpCard(houseCards, cardPile, false)
                             }
+                            if (cardSum(houseCards) >= 17 && cardSum(houseCards) < 21 && cardSum(houseCards) == cardSum(playerCards)) {
+                                cash = cash + bet 
+                                // PUSH
+                            }else if(cardSum(houseCards) > 21){
+                                cash = cash + bet *2
+                                // BUST, PLAYER WINNS
+                            }else if(cardSum(houseCards) == 21){
+                                // DEALER WINNS
+                            }else if (cardSum(houseCards) > cardSum(playerCards)){
+                                //DEALER WINS
+                            }else if (cardSum(houseCards) < cardSum(playerCards)){
+                                cash = cash + bet * 2
+                            }
                         }
-                        if(cardSum(houseCards) == cardSum(playerCards)){
-                            //push!!!
-                            restart()
-                        }else if(cardSum(houseCards) == 21){
-                            cash = cash - bet 
-                            restart()
-                        }else if(cardSum(playerCards) == 21){
-                            cash = cash + bet 
-                            restart()
-                        }else{
-                            restart()
-                        }
-                    
+                        restart()
+
+
                     break;
                 case "start":
                     for (let i =0; i < buttons.length; i++) {
@@ -309,7 +313,6 @@ function draw() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
     ctx.drawImage(background, 0, 0, background.width, background.height, 0, 0, canvas.width, canvas.height);
-   
     drawPlayerCards()
     drawHouseCards()
     cardSum(playerCards)
