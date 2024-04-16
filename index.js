@@ -1,4 +1,4 @@
-class position {
+class Position {
     constructor(x, y, targetX, targetY, speed) {
         this.x = x
         this.y = y
@@ -8,24 +8,16 @@ class position {
     }
 
     move() {
-        if (Math.abs(this.x-this.targetX) < this.speed) {
+        if (Math.abs(this.x-this.targetX) < this.speed && Math.abs(this.y-this.targetY) < this.speed) {
             this.x = this.targetX
-        } else {
-            if (this.x < this.targetX) {
-                this.x += this.speed
-            } else if (this.x > this.targetX) {
-                this.x -= this.speed
-            }
-        }
-        if (Math.abs(this.y-this.targetY) < this.speed) {
             this.y = this.targetY
-        } else {
-            if (this.y < this.targetY) {
-                this.y += this.speed
-            } else if (this.y > this.targetY) {
-                this.y -= this.speed
-            }
+            return
         }
+        const tx = this.targetX - this.x
+        const ty = this.targetY - this.y
+        const dist = Math.sqrt(tx * tx + ty * ty)
+        this.x += (tx/dist) * this.speed
+        this.y += (ty/dist) * this.speed
     }
 }
 
@@ -59,7 +51,7 @@ class Card {
         this.image = new Image(500, 726)
         this.image.src = "./cards/" + this.name + "_of_" + this.type + ".png"
         document.body.appendChild(this.image)
-        this.position = new position(canvas.width*0.9, canvas.height*0.5, 0, 0, 5)
+        this.position = new Position(canvas.width*0.9, canvas.height*0.5, 0, 0, 15)
     }
 }
 
@@ -72,7 +64,6 @@ let canvas = document.getElementById("myCanvas")
 let ctx = canvas.getContext("2d")
 
 const background = document.getElementById("background")
-
 
 
 
@@ -109,7 +100,11 @@ class Button {
     }
 }
 let buttons = []
-buttons.push(new Button("hit", canvas.width*0.3, 300, 140, 100))
+buttons.push(new Button("WINN", canvas.width/2 - 50, canvas.height/2 - 70, 140, 100, false))
+buttons.push(new Button("PUSH", canvas.width/2 - 50, canvas.height/2 - 70, 140, 100, false))
+buttons.push(new Button("BUST", canvas.width/2 - 50, canvas.height/2 - 70, 140, 100, false))
+buttons.push(new Button("Restart", canvas.width/2 - 50, canvas.height/2 - 70, 140, 100, false))
+buttons.push(new Button("hit",  440, 300, 140, 100))
 buttons.push(new Button("stand", 900, 300, 140, 100))
 buttons.push(new Button("start", canvas.width/2 - 50, canvas.height/2 - 70, 140, 100, false))
 buttons.push(new Button("bet 50", 30, 300, 140, 100, true))
@@ -197,12 +192,28 @@ canvas.addEventListener('click', function(event) {
         if (tuching(mousePosition, button) && button.enabled) {
             switch (button.name.split(" ")[0].toLowerCase()) {
                 case "hit":
-                    if (bet > 0) {
-                        pickUpCard(playerCards, cardPile)
-                        break;
-                    }
-                    break
-                case "stand":
+                    pickUpCard(playerCards, cardPile)
+                    break;
+                case "stand": // Vi måte gör en start funktion som callas efter varje påstående eller va fan
+                    if(cardSum(houseCards) > cardSum(playerCards)){ 
+                            cash = cash - bet 
+                        }else{
+                            for (let j = 0; cardSum(playerCards) > cardSum(houseCards) ||cardSum(houseCards) == 21 ; j++) {
+                                pickUpCard(houseCards, cardPile, false)
+                            }
+                        }
+                        if(cardSum(houseCards) == cardSum(playerCards)){
+                            cash = cash
+                        }else if(cardSum(houseCards) == 21){
+                            drawbuttons(buttons[3], true)
+                            cash = cash - bet 
+                        }else if(cardSum(playerCards) == 21){
+                            drawbuttons(buttons[1], true)
+                            cash = cash + bet 
+                        }else{
+                            drawbuttons(buttons[3], true)
+                        }
+                    
                     break;
                 case "start":
                     for (let i =0; i < buttons.length; i++) {
