@@ -102,12 +102,12 @@ class Button {
     }
 }
 let buttons = []
-buttons.push(new Button("hit", canvas.width*0.3, 300, 140, 100))
-buttons.push(new Button("stand", 900, 300, 140, 100))
+buttons.push(new Button("hit", canvas.width*0.3, 300, 140, 100, false))
+buttons.push(new Button("stand", 900, 300, 140, 100, false))
 buttons.push(new Button("start", canvas.width/2 - 50, canvas.height/2 - 70, 140, 100, false))
-buttons.push(new Button("bet 50", 30, 300, 140, 100, true))
-buttons.push(new Button("bet 250", 30, 400, 140, 100, true))
-buttons.push(new Button("bet 500", 30, 500, 140, 100, true))
+buttons.push(new Button("bet 10", 30, 300, 140, 100, true))
+buttons.push(new Button("bet 50", 30, 400, 140, 100, true))
+buttons.push(new Button("bet 250", 30, 500, 140, 100, true))
 buttons.push(new Button("bet all in", 30, 600, 180, 100, true))
 
 //draws all the buttons in the buttons array
@@ -170,6 +170,24 @@ const cardSum = (hand) => {
     return sum 
 }
 
+class Chip {
+    constructor(value, x, y) {
+        this.value = value
+        this.image = new Image(5000, 5000)
+        this.image.src = "./chips/" + value + "_casino_chip.png"
+        console.log(this.image)
+        document.body.appendChild(this.image)
+        this.position = new Position(canvas.width*0.5, canvas.height, x, y, 15)
+    }
+}   
+
+drawChips = (chips) => {
+    chips.forEach(chip => {
+        chip.position.move()
+        ctx.drawImage(chip.image, chip.position.x, (canvas.height*0.2/chips.length+1)*((chips.indexOf(chip) + 1)) - canvas.height*0.2/chips.length+1 + canvas.height*0.6, canvas.height*0.2, canvas.height*0.2)
+    })
+}
+
 const mousePos = (canvas, event) => {
     var boundingBox = canvas.getBoundingClientRect();
     return {
@@ -216,8 +234,10 @@ canvas.addEventListener('click', function(event) {
                     } else {
                         if (cash >= parseInt(button.name.split(" ")[1]) + bet) {
                             bet += parseInt(button.name.split(" ")[1])
+                            bets.push(new Chip(parseInt(button.name.split(" ")[1]), 100, 100))
+                            console.log(bets)
                             buttons[buttons.indexOf(buttons.find(button => button.name == "start"))].enabled = true
-                        }
+                        } 
                     }
                     break;
             }
@@ -228,7 +248,7 @@ canvas.addEventListener('click', function(event) {
 
 let cash = 1000
 let bet = 0
-
+let bets = []
 restockCards()
 
 let playing = false 
@@ -236,6 +256,7 @@ let playing = false
 
 function draw() {
     ctx.drawImage(background, 0, 0, background.width, background.height, 0, 0, canvas.width, canvas.height);
+   
     drawPlayerCards()
     drawHouseCards()
     cardSum(playerCards)
@@ -244,6 +265,7 @@ function draw() {
     drawtext(`bet: ${bet}`, 10, 100, "lightgreen", 30)
     drawtext(`CardSum: ${cardSum(playerCards)}`, canvas.width*0.8, canvas.height*0.9, "lightgreen", 30 )
     drawtext(`CardSum: ${cardSum(houseCards)}`, canvas.width*0.8, 150, "lightgreen", 30 )
+    drawChips(bets)
     requestAnimationFrame(draw);
 };
 requestAnimationFrame(draw);
