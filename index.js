@@ -64,6 +64,9 @@ let canvas = document.getElementById("myCanvas")
 let ctx = canvas.getContext("2d")
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
+const backsideOfCard = new Image(500, 726)
+backsideOfCard.src = "./cards/Backside_of_card.png"
+document.body.appendChild(backsideOfCard)
 const background = document.getElementById("background")
 
 
@@ -124,7 +127,11 @@ const drawbuttons = () => {
 //draws the card inputed at the x and y position, the scaleDownFactor is used to scale down the image to fit good in the canvas
 const drawCard = (card, /*x, y,*/ scaleDownFactor) => {
     card.position.move()
+    if(card.hidden){
+        ctx.drawImage(backsideOfCard, card.position.x, card.position.y, backsideOfCard.width/scaleDownFactor, backsideOfCard.height/scaleDownFactor)
+    } else {
     ctx.drawImage(card.image, card.position.x, card.position.y, card.image.naturalWidth/scaleDownFactor, card.image.naturalHeight/scaleDownFactor)
+    }
 }
 
 //draws the player cards on the canvas
@@ -162,6 +169,31 @@ const cardSum = (hand) => {
     });
     return sum 
 }
+
+class Chip {
+    constructor(value, x, y) {
+        this.value = value
+        this.image = new Image(5000, 5000)
+        this.image.src = "./chips/" + value + "_casino_chip.png"
+        console.log(this.image)
+        document.body.appendChild(this.image)
+        this.position = new Position(canvas.width*0.5, canvas.height, x, y, 15)
+    }
+}   
+
+const drawChip = (chip, size) => {
+    chip.position.move()
+    ctx.drawImage(chip.image, chip.position.x, chip.position.y, size, size)
+}
+
+const drawChips = (chips) => {
+    size = canvas.height*0.2
+    chips.forEach(chip => {
+        chip.position.targetX = canvas.width*0.15
+        chip.position.targetY = (canvas.height*0.2/chips.length+1)*(chips.indexOf(chip) + 1) - canvas.height*0.2/chips.length+1 + canvas.height*0.5
+        drawChip(chip, size)
+    })
+    }
 
 const mousePos = (canvas, event) => {
     var boundingBox = canvas.getBoundingClientRect();
@@ -230,8 +262,10 @@ canvas.addEventListener('click', function(event) {
                     } else {
                         if (cash >= parseInt(button.name.split(" ")[1]) + bet) {
                             bet += parseInt(button.name.split(" ")[1])
+                            bets.push(new Chip(parseInt(button.name.split(" ")[1]), 100, 100))
+                            console.log(bets)
                             buttons[buttons.indexOf(buttons.find(button => button.name == "start"))].enabled = true
-                        }
+                        } 
                     }
                     break;
             }
@@ -250,27 +284,28 @@ function restart(){
     buttons.push(new Button("PUSH", canvas.width/2 - 50, canvas.height/2 - 70, 140, 100, false))
     buttons.push(new Button("BUST", canvas.width/2 - 50, canvas.height/2 - 70, 140, 100, false))
     buttons.push(new Button("Restart", canvas.width/2 - 50, canvas.height/2 - 70, 140, 100, false))
-    buttons.push(new Button("hit",  440, 300, 140, 100))
-    buttons.push(new Button("stand", 900, 300, 140, 100))
-    buttons.push(new Button("start", canvas.width/2 - 50, canvas.height/2 - 70, 140, 100, false))
-    buttons.push(new Button("bet 50", 30, 300, 140, 100, true))
-    buttons.push(new Button("bet 250", 30, 400, 140, 100, true))
-    buttons.push(new Button("bet 500", 30, 500, 140, 100, true))
-    buttons.push(new Button("bet all in", 30, 600, 180, 100, true))
+    buttons.push(new Button("hit",  canvas.width*0.3, 300, 140, 100, false))
+    buttons.push(new Button("stand", 900, 300, 140, 100, false))
+    buttons.push(new Button("start", canvas.width/2, canvas.height/2, 140, 100, false))
+    buttons.push(new Button("bet 10", 30, 300, 140, 100, true))
+    buttons.push(new Button("bet 50", 30, 400, 140, 100, true))
+    buttons.push(new Button("bet 250", 30, 500, 140, 100, true))
 
-    
 }
 
 let cash = 1000
 let bet = 0
-
+let bets = []
 restockCards()
 
 let playing = false 
 
 
 function draw() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
     ctx.drawImage(background, 0, 0, background.width, background.height, 0, 0, canvas.width, canvas.height);
+   
     drawPlayerCards()
     drawHouseCards()
     cardSum(playerCards)
@@ -279,6 +314,7 @@ function draw() {
     drawtext(`bet: ${bet}`, 10, 100, "lightgreen", 30)
     drawtext(`CardSum: ${cardSum(playerCards)}`, canvas.width*0.8, canvas.height*0.9, "lightgreen", 30 )
     drawtext(`CardSum: ${cardSum(houseCards)}`, canvas.width*0.8, 150, "lightgreen", 30 )
+    drawChips(bets)
     requestAnimationFrame(draw);
 };
 restart()
