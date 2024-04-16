@@ -165,7 +165,7 @@ const drawtext = (text, posX, posY, color, size) => {
 const cardSum = (hand) => {
     let sum = 0;
     hand.forEach(card => {
-        sum = sum + card.value; 
+        sum = sum + card.value - card.hidden*card.value; 
     });
     return sum 
 }
@@ -290,7 +290,7 @@ function restart(){
     buttons.push(new Button("bet 10", 30, 300, 140, 100, true))
     buttons.push(new Button("bet 50", 30, 400, 140, 100, true))
     buttons.push(new Button("bet 250", 30, 500, 140, 100, true))
-
+    buttons.push(new Button("bet 1000", 30, 600, 140, 100, true))
 }
 
 let cash = 1000
