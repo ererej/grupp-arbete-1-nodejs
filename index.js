@@ -62,10 +62,10 @@ const types =["hearts", "spades", "diamonds", "clubs"]
 
 let canvas = document.getElementById("myCanvas")
 let ctx = canvas.getContext("2d")
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+const backsideOfCard = new Image(500, 726)
+backsideOfCard.src = "./cards/Backside_of_card.png"
+document.body.appendChild(backsideOfCard)
 const background = document.getElementById("background")
-
 
 
 
@@ -102,7 +102,11 @@ class Button {
     }
 }
 let buttons = []
-buttons.push(new Button("hit", canvas.width*0.3, 300, 140, 100, false))
+buttons.push(new Button("WINN", canvas.width/2 - 50, canvas.height/2 - 70, 140, 100, false))
+buttons.push(new Button("PUSH", canvas.width/2 - 50, canvas.height/2 - 70, 140, 100, false))
+buttons.push(new Button("BUST", canvas.width/2 - 50, canvas.height/2 - 70, 140, 100, false))
+buttons.push(new Button("Restart", canvas.width/2 - 50, canvas.height/2 - 70, 140, 100, false))
+buttons.push(new Button("hit",  canvas.width*0.3, 300, 140, 100, false))
 buttons.push(new Button("stand", 900, 300, 140, 100, false))
 buttons.push(new Button("start", canvas.width/2 - 50, canvas.height/2 - 70, 140, 100, false))
 buttons.push(new Button("bet 10", 30, 300, 140, 100, true))
@@ -131,7 +135,11 @@ const drawbuttons = () => {
 //draws the card inputed at the x and y position, the scaleDownFactor is used to scale down the image to fit good in the canvas
 const drawCard = (card, /*x, y,*/ scaleDownFactor) => {
     card.position.move()
+    if(card.hidden){
+        ctx.drawImage(backsideOfCard, card.position.x, card.position.y, card.naturalWidth/scaleDownFactor, card.naturalHeight/scaleDownFactor)
+    } else {
     ctx.drawImage(card.image, card.position.x, card.position.y, card.image.naturalWidth/scaleDownFactor, card.image.naturalHeight/scaleDownFactor)
+    }
 }
 
 //draws the player cards on the canvas
@@ -210,7 +218,26 @@ canvas.addEventListener('click', function(event) {
                 case "hit":
                     pickUpCard(playerCards, cardPile)
                     break;
-                case "stand":
+                case "stand": // Vi måte gör en start funktion som callas efter varje påstående eller va fan
+                    if(cardSum(houseCards) > cardSum(playerCards)){ 
+                            cash = cash - bet 
+                        }else{
+                            for (let j = 0; cardSum(playerCards) > cardSum(houseCards) ||cardSum(houseCards) == 21 ; j++) {
+                                pickUpCard(houseCards, cardPile, false)
+                            }
+                        }
+                        if(cardSum(houseCards) == cardSum(playerCards)){
+                            cash = cash
+                        }else if(cardSum(houseCards) == 21){
+                            drawbuttons(buttons[3], true)
+                            cash = cash - bet 
+                        }else if(cardSum(playerCards) == 21){
+                            drawbuttons(buttons[1], true)
+                            cash = cash + bet 
+                        }else{
+                            drawbuttons(buttons[3], true)
+                        }
+                    
                     break;
                 case "start":
                     for (let i =0; i < buttons.length; i++) {
@@ -255,6 +282,8 @@ let playing = false
 
 
 function draw() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
     ctx.drawImage(background, 0, 0, background.width, background.height, 0, 0, canvas.width, canvas.height);
    
     drawPlayerCards()
