@@ -62,6 +62,8 @@ const types =["hearts", "spades", "diamonds", "clubs"]
 
 let canvas = document.getElementById("myCanvas")
 let ctx = canvas.getContext("2d")
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
 const backsideOfCard = new Image(500, 726)
 backsideOfCard.src = "./cards/Backside_of_card.png"
 document.body.appendChild(backsideOfCard)
@@ -108,7 +110,7 @@ buttons.push(new Button("BUST", canvas.width/2 - 50, canvas.height/2 - 70, 140, 
 buttons.push(new Button("Restart", canvas.width/2 - 50, canvas.height/2 - 70, 140, 100, false))
 buttons.push(new Button("hit",  canvas.width*0.3, 300, 140, 100, false))
 buttons.push(new Button("stand", 900, 300, 140, 100, false))
-buttons.push(new Button("start", canvas.width/2 - 50, canvas.height/2 - 70, 140, 100, false))
+buttons.push(new Button("start", canvas.width/2, canvas.height/2, 140, 100, false))
 buttons.push(new Button("bet 10", 30, 300, 140, 100, true))
 buttons.push(new Button("bet 50", 30, 400, 140, 100, true))
 buttons.push(new Button("bet 250", 30, 500, 140, 100, true))
@@ -136,7 +138,7 @@ const drawbuttons = () => {
 const drawCard = (card, /*x, y,*/ scaleDownFactor) => {
     card.position.move()
     if(card.hidden){
-        ctx.drawImage(backsideOfCard, card.position.x, card.position.y, card.naturalWidth/scaleDownFactor, card.naturalHeight/scaleDownFactor)
+        ctx.drawImage(backsideOfCard, card.position.x, card.position.y, backsideOfCard.width/scaleDownFactor, backsideOfCard.height/scaleDownFactor)
     } else {
     ctx.drawImage(card.image, card.position.x, card.position.y, card.image.naturalWidth/scaleDownFactor, card.image.naturalHeight/scaleDownFactor)
     }
@@ -189,12 +191,19 @@ class Chip {
     }
 }   
 
-drawChips = (chips) => {
-    chips.forEach(chip => {
-        chip.position.move()
-        ctx.drawImage(chip.image, chip.position.x, (canvas.height*0.2/chips.length+1)*((chips.indexOf(chip) + 1)) - canvas.height*0.2/chips.length+1 + canvas.height*0.6, canvas.height*0.2, canvas.height*0.2)
-    })
+const drawChip = (chip, size) => {
+    chip.position.move()
+    ctx.drawImage(chip.image, chip.position.x, chip.position.y, size, size)
 }
+
+const drawChips = (chips) => {
+    size = canvas.height*0.2
+    chips.forEach(chip => {
+        chip.position.targetX = canvas.width*0.15
+        chip.position.targetY = (canvas.height*0.2/chips.length+1)*(chips.indexOf(chip) + 1) - canvas.height*0.2/chips.length+1 + canvas.height*0.5
+        drawChip(chip, size)
+    })
+    }
 
 const mousePos = (canvas, event) => {
     var boundingBox = canvas.getBoundingClientRect();
