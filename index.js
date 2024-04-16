@@ -101,17 +101,7 @@ class Button {
     }
 }
 let buttons = []
-buttons.push(new Button("WINN", canvas.width/2 - 50, canvas.height/2 - 70, 140, 100, false))
-buttons.push(new Button("PUSH", canvas.width/2 - 50, canvas.height/2 - 70, 140, 100, false))
-buttons.push(new Button("BUST", canvas.width/2 - 50, canvas.height/2 - 70, 140, 100, false))
-buttons.push(new Button("Restart", canvas.width/2 - 50, canvas.height/2 - 70, 140, 100, false))
-buttons.push(new Button("hit",  440, 300, 140, 100))
-buttons.push(new Button("stand", 900, 300, 140, 100))
-buttons.push(new Button("start", canvas.width/2 - 50, canvas.height/2 - 70, 140, 100, false))
-buttons.push(new Button("bet 50", 30, 300, 140, 100, true))
-buttons.push(new Button("bet 250", 30, 400, 140, 100, true))
-buttons.push(new Button("bet 500", 30, 500, 140, 100, true))
-buttons.push(new Button("bet all in", 30, 600, 180, 100, true))
+
 
 //draws all the buttons in the buttons array
 const drawbuttons = () => {
@@ -196,23 +186,25 @@ canvas.addEventListener('click', function(event) {
                     pickUpCard(playerCards, cardPile)
                     break;
                 case "stand": // Vi måte gör en start funktion som callas efter varje påstående eller va fan
-                    if(cardSum(houseCards) > cardSum(playerCards)){ 
+                    if(cardSum(houseCards) > cardSum(playerCards) || cardSum(houseCards) == 21){ 
                             cash = cash - bet 
+                            restart()
                         }else{
-                            for (let j = 0; cardSum(playerCards) > cardSum(houseCards) ||cardSum(houseCards) == 21 ; j++) {
+                            while(cardSum(playerCards) > cardSum(houseCards) || cardSum(houseCards) == 21){
                                 pickUpCard(houseCards, cardPile, false)
                             }
                         }
                         if(cardSum(houseCards) == cardSum(playerCards)){
-                            cash = cash
+                            //push!!!
+                            restart()
                         }else if(cardSum(houseCards) == 21){
-                            drawbuttons(buttons[3], true)
                             cash = cash - bet 
+                            restart()
                         }else if(cardSum(playerCards) == 21){
-                            drawbuttons(buttons[1], true)
                             cash = cash + bet 
+                            restart()
                         }else{
-                            drawbuttons(buttons[3], true)
+                            restart()
                         }
                     
                     break;
@@ -248,6 +240,27 @@ canvas.addEventListener('click', function(event) {
     }
 }, false)
 
+function restart(){
+    bet = 0
+    houseCards = []
+    playerCards = []
+    bets = []
+    buttons = []
+    buttons.push(new Button("WINN", canvas.width/2 - 50, canvas.height/2 - 70, 140, 100, false))
+    buttons.push(new Button("PUSH", canvas.width/2 - 50, canvas.height/2 - 70, 140, 100, false))
+    buttons.push(new Button("BUST", canvas.width/2 - 50, canvas.height/2 - 70, 140, 100, false))
+    buttons.push(new Button("Restart", canvas.width/2 - 50, canvas.height/2 - 70, 140, 100, false))
+    buttons.push(new Button("hit",  440, 300, 140, 100))
+    buttons.push(new Button("stand", 900, 300, 140, 100))
+    buttons.push(new Button("start", canvas.width/2 - 50, canvas.height/2 - 70, 140, 100, false))
+    buttons.push(new Button("bet 50", 30, 300, 140, 100, true))
+    buttons.push(new Button("bet 250", 30, 400, 140, 100, true))
+    buttons.push(new Button("bet 500", 30, 500, 140, 100, true))
+    buttons.push(new Button("bet all in", 30, 600, 180, 100, true))
+
+    
+}
+
 let cash = 1000
 let bet = 0
 
@@ -268,5 +281,8 @@ function draw() {
     drawtext(`CardSum: ${cardSum(houseCards)}`, canvas.width*0.8, 150, "lightgreen", 30 )
     requestAnimationFrame(draw);
 };
+restart()
 requestAnimationFrame(draw);
+
+
 
