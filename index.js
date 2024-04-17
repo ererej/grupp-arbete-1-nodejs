@@ -51,7 +51,7 @@ class Card {
         this.image = new Image(500, 726)
         this.image.src = "./cards/" + this.name + "_of_" + this.type + ".png"
         document.body.appendChild(this.image)
-        this.position = new Position(canvas.width*0.9, canvas.height*0.5, 0, 0, 15)
+        this.position = new Position(canvas.width*0.9, canvas.height*0.5, 0, 0, 20)
     }
 }
 
@@ -60,8 +60,16 @@ let houseCards = []
 let playerCards = []
 const types =["hearts", "spades", "diamonds", "clubs"]
 
-let canvas = document.getElementById("myCanvas")
-let ctx = canvas.getContext("2d")
+const canvas = document.getElementById("myCanvas")
+
+/**
+ * @type CanvasRenderingContext2D
+ */
+const ctx = canvas.getContext("2d");
+if (!ctx instanceof CanvasRenderingContext2D){
+    throw new Error("Canvas canvasar inte")
+}
+
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 const backsideOfCard = new Image(500, 726)
@@ -74,11 +82,12 @@ const background = document.getElementById("background")
 
 const restockCards = () => {
     cardPile = []
-    
-    for(i=0; i<types.length; i++){
-        for(j=1; j<=13;j++){
-            const card = new Card(types[i], j, false);
-            cardPile.push(card)
+    for(l=0; l<2; l++){
+        for(i=0; i<types.length; i++){
+            for(j=1; j<=13;j++){
+                const card = new Card(types[i], j, false);
+                cardPile.push(card)
+            }
         }
     }
 }
@@ -182,7 +191,7 @@ class Chip {
         this.image = new Image(5000, 5000)
         this.image.src = "./chips/" + value + "_casino_chip.png"
         document.body.appendChild(this.image)
-        this.position = new Position(canvas.width*0.5, canvas.height, x, y, 15)
+        this.position = new Position(canvas.width*0.5, canvas.height, x, y, 25)
     }
 }   
 
@@ -222,11 +231,19 @@ canvas.addEventListener('click', function(event) {
                 case "hit":
                     pickUpCard(playerCards, cardPile)
                     if(cardSum(playerCards) > 21){
-
+                        buttons[buttons.indexOf(buttons.find(button => button.name == "stand"))].enabled = false
+                        buttons[buttons.indexOf(buttons.find(button => button.name == "hit"))].enabled = false
                         setTimeout(() => {
                             restart()
                         }
                         , 2000)
+                    } else if (cardSum(playerCards) === 21) {
+                        cash += bet * 2
+                        splachText = "you win!!!"
+                        setTimeout(() => {
+                            restart();
+                        }, 2700);
+                        splachText = ""
                     }
                     break;
                 case "stand": // Vi måte gör en start funktion som callas efter varje påstående eller va fan
@@ -275,6 +292,14 @@ canvas.addEventListener('click', function(event) {
                     pickUpCard(playerCards, cardPile, false)
                     pickUpCard(houseCards, cardPile, true)
                     pickUpCard(houseCards, cardPile, false)
+                    if (cardSum(playerCards) === 21) {
+                        cash += bet *2.5
+                        splachText = "BLACKJACK!!!"
+                        setTimeout(() => {
+                            restart();
+                        }, 2700);
+                        splachText = ""
+                    }
                 case "bet":
                     if (button.name.split(" ")[1] == "all") {
                         bet = cash
@@ -318,7 +343,7 @@ let bets = []
 restockCards()
 
 let playing = false 
-
+let splachText = ""
 
 function draw() {
     canvas.width = window.innerWidth;
@@ -332,6 +357,10 @@ function draw() {
     drawtext(`bet: ${bet}`, 10, 100, "lightgreen", 30)
     drawtext(`CardSum: ${cardSum(playerCards)}`, canvas.width*0.8, canvas.height*0.9, "lightgreen", 30 )
     drawtext(`CardSum: ${cardSum(houseCards)}`, canvas.width*0.8, 150, "lightgreen", 30 )
+    drawtext(splachText, canvas.width/2, canvas.height/2, "red", 100)
+    if (splachText) {
+        console.log(splachText)
+    }
     drawChips(bets)
     requestAnimationFrame(draw);
 };
