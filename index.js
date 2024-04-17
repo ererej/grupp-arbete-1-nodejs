@@ -230,6 +230,7 @@ canvas.addEventListener('click', function(event) {
                     }
                     break;
                 case "stand": // Vi måte gör en start funktion som callas efter varje påstående eller va fan
+                    houseCards.forEach(card => card.hidden = false)
                         if(cardSum(playerCards) > 21){
                             // BUST, DEALER WINNS
                         }else if(cardSum(houseCards) == 21 && cardSum(playerCards) == 21){
