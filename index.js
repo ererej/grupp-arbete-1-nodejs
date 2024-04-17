@@ -243,8 +243,8 @@ canvas.addEventListener('click', function(event) {
                         splachText = "you win!!!"
                         setTimeout(() => {
                             restart();
+                            splachText = ""
                         }, 2700);
-                        splachText = ""
                     }
                     break;
                 case "stand": // Vi måte gör en start funktion som callas efter varje påstående eller va fan
@@ -300,8 +300,8 @@ canvas.addEventListener('click', function(event) {
                         splachText = "BLACKJACK!!!"
                         setTimeout(() => {
                             restart();
+                            splachText = ""
                         }, 2700);
-                        splachText = ""
                     }
                 case "bet":
                     if (button.name.split(" ")[1] == "all") {
