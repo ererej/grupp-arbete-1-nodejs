@@ -229,6 +229,7 @@ canvas.addEventListener('click', function(event) {
         if (tuching(mousePosition, button) && button.enabled) {
             switch (button.name.split(" ")[0].toLowerCase()) {
                 case "hit":
+                    buttons[buttons.indexOf(buttons.find(button => button.name == "hit"))].disable = false
                     pickUpCard(playerCards, cardPile)
                     if(cardSum(playerCards) > 21){
                         buttons[buttons.indexOf(buttons.find(button => button.name == "stand"))].enabled = false
@@ -247,6 +248,8 @@ canvas.addEventListener('click', function(event) {
                     }
                     break;
                 case "stand": // Vi måte gör en start funktion som callas efter varje påstående eller va fan
+                    buttons[buttons.indexOf(buttons.find(button => button.name == "stand"))].enabled = false
+                    buttons[buttons.indexOf(buttons.find(button => button.name == "hit"))].enabled = false
                     houseCards.forEach(card => card.hidden = false)
                         if(cardSum(playerCards) > 21){
                             // BUST, DEALER WINNS
