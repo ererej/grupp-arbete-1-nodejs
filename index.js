@@ -25,6 +25,7 @@ class Position {
 class Card {
     constructor(type, cardType, hidden) {
         this.type = type //hearts, spades, diamond, clubs
+        this.cardType = cardType //1-13
         this.hidden = hidden
         switch (cardType) {
             case 1:
@@ -51,7 +52,7 @@ class Card {
         this.image = new Image(500, 726)
         this.image.src = "./cards/" + this.name + "_of_" + this.type + ".png"
         document.body.appendChild(this.image)
-        this.position = new Position(canvas.width*0.9, canvas.height*0.5, 0, 0, 20)
+        this.position = new Position(canvas.width*0.85, canvas.height*0.6, 0, 0, 20)
     }
 }
 
@@ -255,7 +256,7 @@ canvas.addEventListener('click', function(event) {
                             restart()
                         }
                         , 2000)
-                    } else if (cardSum(playerCards) === 21) {
+                    } else if(cardSum(playerCards) === 21) {
                         cash += bet * 2
                         splachText = "you win!!!"
                         setTimeout(() => {
@@ -372,18 +373,20 @@ function draw() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
     ctx.drawImage(background, 0, 0, background.width, background.height, 0, 0, canvas.width, canvas.height);
+    ctx.drawImage(backsideOfCard, canvas.width*0.85, canvas.height*0.6, backsideOfCard.width/3, backsideOfCard.height/3)        
     drawPlayerCards()
     drawHouseCards()
     cardSum(playerCards)
     drawbuttons()
     drawtext(`cash: ${cash}`, 10, 50, "lightgreen", 30)
     drawtext(`bet: ${bet}`, 10, 100, "lightgreen", 30)
-    drawtext(`CardSum: ${cardSum(playerCards)}`, canvas.width*0.8, canvas.height*0.9, "lightgreen", 30 )
-    drawtext(`CardSum: ${cardSum(houseCards)}`, canvas.width*0.8, 150, "lightgreen", 30 )
-    drawtext(splachText, canvas.width/2, canvas.height/2, "red", 100)
+    drawtext(`CardSum: ${cardSum(playerCards)}`, canvas.width*0.7, canvas.height*0.9, "lightgreen", 30 )
+    drawtext(`CardSum: ${cardSum(houseCards)}`, canvas.width*0.7, 150, "lightgreen", 30)
+    drawtext(splachText, canvas.width/2 - ctx.measureText(splachText)/2, canvas.height/2, "red", 100)
     if (splachText) {
         console.log(splachText)
     }
+    
     drawChips(bets)
     requestAnimationFrame(draw);
 };
