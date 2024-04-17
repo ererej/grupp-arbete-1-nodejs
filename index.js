@@ -348,13 +348,16 @@ function restart(){
     buttons.push(new Button("PUSH", canvas.width/2 - 50, canvas.height/2 - 70, 140, 100, false))
     buttons.push(new Button("BUST", canvas.width/2 - 50, canvas.height/2 - 70, 140, 100, false))
     buttons.push(new Button("Restart", canvas.width/2 - 50, canvas.height/2 - 70, 140, 100, false))
-    buttons.push(new Button("hit",  canvas.width*0.3, 300, 140, 100, false))
-    buttons.push(new Button("stand", 900, 300, 140, 100, false))
-    buttons.push(new Button("start", canvas.width/2, canvas.height/2, 140, 100, false))
+    buttons.push(new Button("hit",  canvas.width*0.3, 300, 140, 100, false, ))
+    buttons.push(new Button("stand", 900, 300, 140, 100, false, ))
+    buttons.push(new Button("start", canvas.width/2, canvas.height/2, 140, 100, false, ))
     buttons.push(new Button("bet 10", 30, canvas.height*0.26, canvas.height*0.2, canvas.height*0.2, true, "./chips/10_casino_chip.png"))
     buttons.push(new Button("bet 50", 30, canvas.height*0.44, canvas.height*0.2, canvas.height*0.2, true, "./chips/50_casino_chip.png"))
     buttons.push(new Button("bet 250", 30, canvas.height*0.62, canvas.height*0.2, canvas.height*0.2, true, "./chips/250_casino_chip.png"))
     buttons.push(new Button("bet 1000", 30, canvas.height*0.8, canvas.height*0.2, canvas.height*0.2, true, "./chips/1000_casino_chip.png"))
+    if(cardPile.length  < 52){
+        restockCards()
+    }
 }
 
 let cash = 1000
