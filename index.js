@@ -103,7 +103,7 @@ const pickUpCard = (cards, cPile, hidden) => {
 }
 
 class Button {
-    constructor(name, x, y, width, height, enabled) {
+    constructor(name, x, y, width, height, enabled, imagePath) {
         this.name = name,
         this.id = name,
         this.x = x,
@@ -111,6 +111,11 @@ class Button {
         this.width = width,
         this.height = height
         this.enabled = enabled
+        if (imagePath) {
+            this.image = new Image
+            this.image.src = imagePath
+            document.body.appendChild(this.image)
+        }
     }
 }
 let buttons = []
@@ -119,23 +124,31 @@ let buttons = []
 //draws all the buttons in the buttons array
 const drawbuttons = () => {
     buttons.forEach(button => {
-        if (button.name.split(" ")[0].toLowerCase() == "bet") {
+        if (button.name.split(" ")[0].toLowerCase() == "bet") { //om det är en betting knapp:
             if (parseInt(button.name.split(" ")[1]) + bet > cash) {
                 button.enabled = false
             }
+            if (!button.enabled) return
+            ctx.drawImage(button.image, button.x, button.y, canvas.height*0.23, canvas.height*0.23)
+            ctx.font = "40px serif"
+            ctx.fillStyle = "blue"
+            const text = button.name.split(" ")[1]
+            const length = ctx.measureText(text)//längden av texten
+            ctx.fillText(text, button.x + canvas.height*0.23/2 - length.width/2, button.y + canvas.height*0.23/2 + 30/2/* idk varför det inte ska vara 40/2*/)
+        } else { //alla andra knappar
+            if (!button.enabled) return
+            ctx.beginPath()
+            ctx.rect(button.x, button.y, button.width, button.height)
+            ctx.fillStyle = 'rgba(225,225,225,0.5)'
+            ctx.fill()
+            ctx.lineWidth = 2
+            ctx.strokeStyle = '#000000'
+            ctx.stroke()
+            ctx.closePath()
+            ctx.font = '40px serif'
+            ctx.fillStyle = 'green'
+            ctx.fillText(button.name, button.x + button.width / 7, button.y + 64)
         }
-        if (!button.enabled) return
-        ctx.beginPath()
-        ctx.rect(button.x, button.y, button.width, button.height)
-        ctx.fillStyle = 'rgba(225,225,225,0.5)'
-        ctx.fill()
-        ctx.lineWidth = 2
-        ctx.strokeStyle = '#000000'
-        ctx.stroke()
-        ctx.closePath()
-        ctx.font = '40px serif'
-        ctx.fillStyle = 'green'
-        ctx.fillText(button.name, button.x + button.width / 7, button.y + 64)
     })
 }
 
@@ -334,10 +347,10 @@ function restart(){
     buttons.push(new Button("hit",  canvas.width*0.3, 300, 140, 100, false))
     buttons.push(new Button("stand", 900, 300, 140, 100, false))
     buttons.push(new Button("start", canvas.width/2, canvas.height/2, 140, 100, false))
-    buttons.push(new Button("bet 10", 30, 300, 140, 100, true))
-    buttons.push(new Button("bet 50", 30, 400, 140, 100, true))
-    buttons.push(new Button("bet 250", 30, 500, 140, 100, true))
-    buttons.push(new Button("bet 1000", 30, 600, 140, 100, true))
+    buttons.push(new Button("bet 10", 30, canvas.height*0.26, canvas.height*0.2, canvas.height*0.2, true, "./chips/10_casino_chip.png"))
+    buttons.push(new Button("bet 50", 30, canvas.height*0.44, canvas.height*0.2, canvas.height*0.2, true, "./chips/50_casino_chip.png"))
+    buttons.push(new Button("bet 250", 30, canvas.height*0.62, canvas.height*0.2, canvas.height*0.2, true, "./chips/250_casino_chip.png"))
+    buttons.push(new Button("bet 1000", 30, canvas.height*0.8, canvas.height*0.2, canvas.height*0.2, true, "./chips/1000_casino_chip.png"))
 }
 
 let cash = 1000
