@@ -286,6 +286,7 @@ canvas.addEventListener('click', function(event) {
                         houseCards.forEach(card => card.hidden = false)
                         buttons[buttons.indexOf(buttons.find(button => button.name == "stand"))].enabled = false
                         buttons[buttons.indexOf(buttons.find(button => button.name == "hit"))].enabled = false
+                        splachText = "BUST"
                         clearTable()
                     } else if(cardSum(playerCards) === 21) {
                         cash += bet * 2
@@ -307,16 +308,17 @@ canvas.addEventListener('click', function(event) {
                             }
                             if (cardSum(houseCards) >= 17 && cardSum(houseCards) < 21 && cardSum(houseCards) == cardSum(playerCards)) {
                                 cash = cash + bet 
-                                // PUSH
+                                splachText = "Push"
                             }else if(cardSum(houseCards) > 21){
                                 cash = cash + bet *2
-                                // BUST, PLAYER WINNS
+                                splachText = "You win!!!"
                             }else if(cardSum(houseCards) == 21){
-                                // DEALER WINNS
+                                splachText = "House win"
                             }else if (cardSum(houseCards) > cardSum(playerCards)){
-                                //DEALER WINS
+                                splachText = "House win"
                             }else if (cardSum(houseCards) < cardSum(playerCards)){
                                 cash = cash + bet * 2
+                                splachText = "You win!!!"
                             }
                         }
                         clearTable()
@@ -395,10 +397,10 @@ function draw() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
     ctx.drawImage(background, 0, 0, background.width, background.height, 0, 0, canvas.width, canvas.height);
-    if (cash <= 0 && bet <= 0) {
+    if (cash + bet < 10) {
         splachText = "You are too broke for this casino!"
         ctx.textAlign = "center"
-        drawtext(splachText, canvas.width/2 - ctx.measureText(splachText)/2, canvas.height/2, "red", 200)
+        drawtext(splachText, canvas.width/2, canvas.height/2, "red", 100)
         requestAnimationFrame(draw);
     } else {
         ctx.drawImage(backsideOfCard, canvas.width*0.85, canvas.height*0.6, backsideOfCard.width/3, backsideOfCard.height/3)        
