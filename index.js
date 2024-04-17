@@ -131,7 +131,11 @@ const drawbuttons = () => {
             if (!button.enabled) return
             ctx.drawImage(button.image, button.x, button.y, canvas.height*0.23, canvas.height*0.23)
             ctx.font = "40px serif"
-            ctx.fillStyle = "blue"
+            if (button.name.split(" ")[1] === "1000") {
+                ctx.fillStyle = "white"
+            } else {
+                ctx.fillStyle = "black"
+            }
             const text = button.name.split(" ")[1]
             const length = ctx.measureText(text)//längden av texten
             ctx.fillText(text, button.x + canvas.height*0.23/2 - length.width/2, button.y + canvas.height*0.23/2 + 30/2/* idk varför det inte ska vara 40/2*/)
@@ -199,12 +203,12 @@ const cardSum = (hand) => {
 }
 
 class Chip {
-    constructor(value, x, y) {
+    constructor(value, spawnX, spawnY, x, y) {
         this.value = value
         this.image = new Image(5000, 5000)
         this.image.src = "./chips/" + value + "_casino_chip.png"
         document.body.appendChild(this.image)
-        this.position = new Position(canvas.width*0.5, canvas.height, x, y, 25)
+        this.position = new Position(spawnX, spawnY, x, y, 25)
     }
 }   
 
@@ -323,7 +327,7 @@ canvas.addEventListener('click', function(event) {
                     } else {
                         if (cash >= parseInt(button.name.split(" ")[1]) + bet) {
                             bet += parseInt(button.name.split(" ")[1])
-                            bets.push(new Chip(parseInt(button.name.split(" ")[1]), 100, 100))
+                            bets.push(new Chip(parseInt(button.name.split(" ")[1]), button.x, button.y, 100, 100))
                             buttons[buttons.indexOf(buttons.find(button => button.name == "start"))].enabled = true
                         } 
                     }
