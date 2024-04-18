@@ -106,13 +106,14 @@ const pickUpCard = (cards, cPile, hidden) => {
 class Button {
     constructor(name, fontsize, x, y, enabled, imagePath) {
         this.name = name,
-        this.x = x,
-        this.y = y,
         this.fontsize = fontsize,
         ctx.font = `${fontsize}px serif`
         const width = ctx.measureText(name).width
-        this.width = width*1.8,
-        this.height = fontsize*1.4,
+        this.width = width*1.8, // *1.8 to make the button a bit wider then the text
+        this.height = fontsize*1.4,// *1.4 to make the button a bit taller then the text
+        this.x = x,
+        this.y = y,
+
         this.enabled = enabled
         if (imagePath) {
             this.image = new Image
@@ -120,6 +121,9 @@ class Button {
             document.body.appendChild(this.image)
             this.width = canvas.height*0.2
             this.height = canvas.height*0.2
+        } else {
+            this.x = x - this.width/2
+            this.y = y - this.height/2
         }
     }
 }
@@ -146,11 +150,9 @@ const drawbuttons = () => {
             ctx.fillText(text, button.x + canvas.height*0.23/2 - length.width/2, button.y + canvas.height*0.23/2 + 30/2/* idk varför det inte ska vara 40/2*/)
         } else { //alla andra knappar
             if (!button.enabled) return
-            const height = button.fontsize
-            ctx.font = `${height}px serif`
-            const width = ctx.measureText(button.name).width
+            ctx.font = `${button.fontsize}px serif`
             ctx.beginPath()
-            ctx.rect(button.x, button.y, width*1.8, height*1.4)
+            ctx.roundRect(button.x, button.y, button.width, button.height, button.height/2)
             ctx.fillStyle = 'rgba(225,225,225,0.5)'
             ctx.fill()
             ctx.lineWidth = 2
@@ -160,7 +162,7 @@ const drawbuttons = () => {
             
             ctx.fillStyle = 'green'
             ctx.textAlign = "center"
-            ctx.fillText(button.name, button.x + width*1.8/2, button.y + height*1.4/2 + height*1.4/4)
+            ctx.fillText(button.name, button.x + button.width/2, button.y + button.height/2 + button.height/4)
             ctx.textAlign = "start"
         }
     })
@@ -422,7 +424,7 @@ canvas.addEventListener('click', function(event) {
                         } 
                     }
                     break;
-                case "clear":
+                case "clear": //took to long to remember that the switch cased uses the first word of the name and to lower case
                     buttons[buttons.indexOf(buttons.find(button => button.name == "start"))].enabled = false
                     bet = 0
                     bets = []
@@ -448,7 +450,7 @@ function restart(){
     buttons.push(new Button("hit",  50, canvas.width*0.3, 300,  false, ))
     buttons.push(new Button("stand", 50, canvas.width*0.7, 300,  false, ))
     buttons.push(new Button("start", 50, canvas.width/2, canvas.height/2, false, ))
-    buttons.push(new Button("Clear bets", 40, canvas.width*0.13, canvas.height*0.85, true))
+    buttons.push(new Button("Clear bets", 40, canvas.width*0.22, canvas.height*0.85, true))
     buttons.push(new Button("bet 10", 50, 30, canvas.height*0.26,  true, "./chips/10_casino_chip.png"))
     buttons.push(new Button("bet 50", 40, 30, canvas.height*0.44,  true, "./chips/50_casino_chip.png"))
     buttons.push(new Button("bet 250", 40, 30, canvas.height*0.62,  true, "./chips/250_casino_chip.png"))
