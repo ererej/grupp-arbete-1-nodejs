@@ -140,10 +140,10 @@ const drawbuttons = () => {
             if (!button.enabled) return
             ctx.drawImage(button.image, button.x, button.y, canvas.height*0.23, canvas.height*0.23)
             ctx.font = `${button.fontsize}px serif`
-            if (button.name.split(" ")[1] === "1000") {
-                ctx.fillStyle = "white"
-            } else {
+            if (button.name.split(" ")[1] === "10") {
                 ctx.fillStyle = "black"
+            } else {
+                ctx.fillStyle = "white"
             }
             const text = button.name.split(" ")[1]
             const length = ctx.measureText(text)//längden av texten
@@ -258,6 +258,7 @@ return pos.x > button.x && pos.x < button.x + button.width && pos.y < button.y +
 }
 
 const clearTable = () => {
+    save()
     setTimeout(() => {
     setTimeout(() => {
         restart()
@@ -341,8 +342,9 @@ document.addEventListener("keydown", function(event){
             button = buttons[buttons.indexOf(buttons.find(button => button.name == "Restart"))]
             if(!button.enabled)break
                 cash = 1000
-                    restart()
-                    splachText = ""
+                save()
+                restart()
+                splachText = ""
             break;
             
     }
@@ -421,6 +423,7 @@ canvas.addEventListener('click', function(event) {
                     buttons[buttons.indexOf(buttons.find(button => button.name == "Clear bets"))].enabled = false
                     button.enabled = false
                     cash -= bet
+                    save()
                     playing = true
                     pickUpCard(playerCards, cardPile, false)
                     pickUpCard(playerCards, cardPile, false)
@@ -460,6 +463,7 @@ canvas.addEventListener('click', function(event) {
                     break;
                 case "restart":
                     cash = 1000
+                    save()
                     restart()
                     splachText = ""
                     break;
@@ -475,7 +479,7 @@ function restart(){
     playerCards = []
     bets = []
     buttons = []
-    buttons.push(new Button("Restart", 50, canvas.width/2, canvas.height/2, false))
+    buttons.push(new Button("Restart", 50, canvas.width/2, canvas.height*0.7, false))
     buttons.push(new Button("hit",  50, canvas.width*0.3, 300,  false, ))
     buttons.push(new Button("stand", 50, canvas.width*0.7, 300,  false, ))
     buttons.push(new Button("start", 50, canvas.width/2, canvas.height/2, false, ))
@@ -515,10 +519,14 @@ function getCookie(cname) {
 }
 
 let cash = 0
-if (getCookie("cash") == "") {
+if (getCookie("cash") === "") {
     setCookie("cash", "1000", 365)
 } else {
     cash = getCookie("cash")
+}
+
+const save = () => {
+    setCookie("cash", cash, 365)
 }
 
 let discardPile = []
