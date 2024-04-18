@@ -521,6 +521,7 @@ function getCookie(cname) {
 let cash = 0
 if (getCookie("cash") === "") {
     setCookie("cash", "1000", 365)
+    cash = getCookie("cash")
 } else {
     cash = getCookie("cash")
 }
