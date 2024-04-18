@@ -104,18 +104,23 @@ const pickUpCard = (cards, cPile, hidden) => {
 }
 
 class Button {
-    constructor(name, x, y, width, height, enabled, imagePath) {
+    constructor(name, fontsize, x, y, enabled, imagePath) {
         this.name = name,
         this.id = name,
         this.x = x,
         this.y = y,
-        this.width = width,
-        this.height = height
+        this.fontsize = fontsize,
+        ctx.font = `${fontsize}px serif`
+        const width = ctx.measureText(name).width
+        this.width = width*1.8,
+        this.height = fontsize*1.4,
         this.enabled = enabled
         if (imagePath) {
             this.image = new Image
             this.image.src = imagePath
             document.body.appendChild(this.image)
+            this.width = canvas.height*0.2
+            this.height = canvas.height*0.2
         }
     }
 }
@@ -131,7 +136,7 @@ const drawbuttons = () => {
             }
             if (!button.enabled) return
             ctx.drawImage(button.image, button.x, button.y, canvas.height*0.23, canvas.height*0.23)
-            ctx.font = "40px serif"
+            ctx.font = `${button.fontsize}px serif`
             if (button.name.split(" ")[1] === "1000") {
                 ctx.fillStyle = "white"
             } else {
@@ -142,17 +147,22 @@ const drawbuttons = () => {
             ctx.fillText(text, button.x + canvas.height*0.23/2 - length.width/2, button.y + canvas.height*0.23/2 + 30/2/* idk varför det inte ska vara 40/2*/)
         } else { //alla andra knappar
             if (!button.enabled) return
+            const height = button.fontsize
+            ctx.font = `${height}px serif`
+            const width = ctx.measureText(button.name).width
             ctx.beginPath()
-            ctx.rect(button.x, button.y, button.width, button.height)
+            ctx.rect(button.x, button.y, width*1.8, height*1.4)
             ctx.fillStyle = 'rgba(225,225,225,0.5)'
             ctx.fill()
             ctx.lineWidth = 2
             ctx.strokeStyle = '#000000'
             ctx.stroke()
             ctx.closePath()
-            ctx.font = '40px serif'
+            
             ctx.fillStyle = 'green'
-            ctx.fillText(button.name, button.x + button.width / 7, button.y + 64)
+            ctx.textAlign = "center"
+            ctx.fillText(button.name, button.x + width*1.8/2, button.y + height*1.4/2 + height*1.4/4)
+            ctx.textAlign = "start"
         }
     })
 }
@@ -414,14 +424,14 @@ function restart(){
     playerCards = []
     bets = []
     buttons = []
-    buttons.push(new Button("Restart", canvas.width/2 - 50, canvas.height/2 - 70, 140, 100, false))
-    buttons.push(new Button("hit",  canvas.width*0.3, 300, 140, 100, false, ))
-    buttons.push(new Button("stand", canvas.width*0.7, 300, 140, 100, false, ))
-    buttons.push(new Button("start", canvas.width/2, canvas.height/2, 140, 100, false, ))
-    buttons.push(new Button("bet 10", 30, canvas.height*0.26, canvas.height*0.2, canvas.height*0.2, true, "./chips/10_casino_chip.png"))
-    buttons.push(new Button("bet 50", 30, canvas.height*0.44, canvas.height*0.2, canvas.height*0.2, true, "./chips/50_casino_chip.png"))
-    buttons.push(new Button("bet 250", 30, canvas.height*0.62, canvas.height*0.2, canvas.height*0.2, true, "./chips/250_casino_chip.png"))
-    buttons.push(new Button("bet 1000", 30, canvas.height*0.8, canvas.height*0.2, canvas.height*0.2, true, "./chips/1000_casino_chip.png"))
+    buttons.push(new Button("Restart", 50, canvas.width/2 - 50, canvas.height/2 - 70, false))
+    buttons.push(new Button("hit",  50, canvas.width*0.3, 300,  false, ))
+    buttons.push(new Button("stand", 50, canvas.width*0.7, 300,  false, ))
+    buttons.push(new Button("start", 50, canvas.width/2, canvas.height/2, false, ))
+    buttons.push(new Button("bet 10", 50, 30, canvas.height*0.26,  true, "./chips/10_casino_chip.png"))
+    buttons.push(new Button("bet 50", 40, 30, canvas.height*0.44,  true, "./chips/50_casino_chip.png"))
+    buttons.push(new Button("bet 250", 40, 30, canvas.height*0.62,  true, "./chips/250_casino_chip.png"))
+    buttons.push(new Button("bet 1000", 40, 30, canvas.height*0.8,  true, "./chips/1000_casino_chip.png"))
     if(cardPile.length  < 52){
         restockCards()
         discardPile = []
