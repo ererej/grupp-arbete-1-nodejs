@@ -158,7 +158,7 @@ const drawbuttons = () => {
 }
 
 //draws the card inputed at the x and y position, the scaleDownFactor is used to scale down the image to fit good in the canvas
-const drawCard = (card, /*x, y,*/ scaleDownFactor) => {
+const drawCard = (card, scaleDownFactor) => {
     card.position.move()
     if(card.hidden){
         ctx.drawImage(backsideOfCard, card.position.x, card.position.y, backsideOfCard.width/scaleDownFactor, backsideOfCard.height/scaleDownFactor)
@@ -251,9 +251,12 @@ const clearTable = () => {
     setTimeout(() => {
         restart()
         splachText = ""
-        const card = discardPile[discardPile.length-1]
-        discardPile = []
-        discardPile.push(card)
+        if (!cardPile.length < 0) {
+         card = discardPile[discardPile.length-1]
+         discardPile = []
+         discardPile.push(card)
+        }
+
     }
     ,2700)
     playerCards.forEach(card => {  
@@ -331,7 +334,7 @@ canvas.addEventListener('click', function(event) {
                         splachText = "BUST"
                         clearTable()
                     } else if(cardSum(playerCards) === 21) {
-                        cash += bet * 2
+                        cash += bet * 2 
                         splachText = "you win!!!"
                         clearTable()
                     }
@@ -340,30 +343,28 @@ canvas.addEventListener('click', function(event) {
                     buttons[buttons.indexOf(buttons.find(button => button.name == "stand"))].enabled = false
                     buttons[buttons.indexOf(buttons.find(button => button.name == "hit"))].enabled = false
                     houseCards.forEach(card => card.hidden = false)
-                        if(cardSum(playerCards) > 21){
-                            // BUST, DEALER WINNS
-                        }else if(cardSum(houseCards) == 21 && cardSum(playerCards) == 21){
-                            // PUSH
-                        }else{
-                            while(cardSum(houseCards) < 17){
-                                pickUpCard(houseCards, cardPile, false)
-                            }
-                            if (cardSum(houseCards) >= 17 && cardSum(houseCards) < 21 && cardSum(houseCards) == cardSum(playerCards)) {
-                                cash = cash + bet 
-                                splachText = "Push"
-                            }else if(cardSum(houseCards) > 21){
-                                cash = cash + bet *2
-                                splachText = "You win!!!"
-                            }else if(cardSum(houseCards) == 21){
-                                splachText = "House win"
-                            }else if (cardSum(houseCards) > cardSum(playerCards)){
-                                splachText = "House win"
-                            }else if (cardSum(houseCards) < cardSum(playerCards)){
-                                cash = cash + bet * 2
-                                splachText = "You win!!!"
-                            }
+                    if(cardSum(houseCards) == 21 && cardSum(playerCards) == 21){
+                        splachText = "Push"
+                    }else{
+                        while(cardSum(houseCards) < 17){
+                            pickUpCard(houseCards, cardPile, false)
                         }
-                        clearTable()
+                        if (cardSum(houseCards) >= 17 && cardSum(houseCards) < 21 && cardSum(houseCards) == cardSum(playerCards)) {
+                            cash = cash + bet 
+                            splachText = "Push"
+                        }else if(cardSum(houseCards) > 21){
+                            cash = cash + bet *2
+                            splachText = "House busts!!!"
+                        }else if(cardSum(houseCards) == 21){//borde inte behövas
+                            splachText = "House wins"
+                        }else if (cardSum(houseCards) > cardSum(playerCards)){
+                            splachText = "House wins"
+                        }else if (cardSum(houseCards) < cardSum(playerCards)){
+                            cash = cash + bet * 2
+                            splachText = "You win!!!"
+                        }
+                    }
+                    clearTable()
 
                     break;
                 case "start":
@@ -424,6 +425,7 @@ function restart(){
     if(cardPile.length  < 52){
         restockCards()
         discardPile = []
+        console.log("restocked")
     }
 }
 let discardPile = []
