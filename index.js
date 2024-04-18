@@ -271,7 +271,49 @@ const clearTable = () => {
     }, 1000)
 }
 
-
+document.addEventListener("keydown", function(event){
+    let button = undefined
+    switch (event.key){
+        case "1":
+            button = buttons[buttons.indexOf(buttons.find(button => button.name == "bet 10"))]
+            if (!button.enabled) break;
+            if (cash >= parseInt(button.name.split(" ")[1]) + bet) {
+                bet += parseInt(button.name.split(" ")[1])
+                bets.push(new Chip(parseInt(button.name.split(" ")[1]), button.x, button.y, 100, 100))
+                buttons[buttons.indexOf(buttons.find(button => button.name == "start"))].enabled = true
+            }
+            break;
+        case "2":
+            button = buttons[buttons.indexOf(buttons.find(button => button.name == "bet 50"))]
+            if (!button.enabled) break;
+            if (cash >= parseInt(button.name.split(" ")[1]) + bet) {
+                bet += parseInt(button.name.split(" ")[1])
+                bets.push(new Chip(parseInt(button.name.split(" ")[1]), button.x, button.y, 100, 100))
+                buttons[buttons.indexOf(buttons.find(button => button.name == "start"))].enabled = true
+            }
+            break;
+        case "3":
+            button = buttons[buttons.indexOf(buttons.find(button => button.name == "bet 250"))]
+            if (!button.enabled) break;
+            if (cash >= parseInt(button.name.split(" ")[1]) + bet) {
+                bet += parseInt(button.name.split(" ")[1])
+                bets.push(new Chip(parseInt(button.name.split(" ")[1]), button.x, button.y, 100, 100))
+                buttons[buttons.indexOf(buttons.find(button => button.name == "start"))].enabled = true
+            }
+            break;
+        case "4":
+            button = buttons[buttons.indexOf(buttons.find(button => button.name == "bet 1000"))]
+            if (!button.enabled) break;
+            if (cash >= parseInt(button.name.split(" ")[1]) + bet) {
+                bet += parseInt(button.name.split(" ")[1])
+                bets.push(new Chip(parseInt(button.name.split(" ")[1]), button.x, button.y, 100, 100))
+                buttons[buttons.indexOf(buttons.find(button => button.name == "start"))].enabled = true
+            }
+            break;
+        case "delete":
+            
+    }
+});
 canvas.addEventListener('click', function(event) {
     var mousePosition = mousePos(canvas, event);
     let i = 0;
