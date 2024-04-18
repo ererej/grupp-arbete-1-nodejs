@@ -106,7 +106,6 @@ const pickUpCard = (cards, cPile, hidden) => {
 class Button {
     constructor(name, fontsize, x, y, enabled, imagePath) {
         this.name = name,
-        this.id = name,
         this.x = x,
         this.y = y,
         this.fontsize = fontsize,
@@ -323,10 +322,15 @@ document.addEventListener("keydown", function(event){
                 buttons[buttons.indexOf(buttons.find(button => button.name == "start"))].enabled = true
             }
             break;
-        case "d":
+        case "Backspace":
             button = buttons[buttons.indexOf(buttons.find(button => button.name == "Clear bets"))]
             if (!button.enabled) break;
             buttons[buttons.indexOf(buttons.find(button => button.name == "start"))].enabled = false
+            buttons.forEach(button => {
+                if (button.name.split(" ")[0] == "bet") {
+                    button.enabled = true
+                }
+            });
             bet = 0
             bets = []
 
@@ -418,12 +422,15 @@ canvas.addEventListener('click', function(event) {
                         } 
                     }
                     break;
-                case "Clear bets":
-                    button = buttons[buttons.indexOf(buttons.find(button => button.name == "Clear bets"))]
-                    if (!button.enabled) break;
+                case "clear":
                     buttons[buttons.indexOf(buttons.find(button => button.name == "start"))].enabled = false
                     bet = 0
                     bets = []
+                    buttons.forEach(button => {
+                        if (button.name.split(" ")[0] == "bet") {
+                            button.enabled = true
+                        }
+                    });
                     break;
                 }
         }
@@ -441,11 +448,12 @@ function restart(){
     buttons.push(new Button("hit",  50, canvas.width*0.3, 300,  false, ))
     buttons.push(new Button("stand", 50, canvas.width*0.7, 300,  false, ))
     buttons.push(new Button("start", 50, canvas.width/2, canvas.height/2, false, ))
+    buttons.push(new Button("Clear bets", 40, canvas.width*0.13, canvas.height*0.85, true))
     buttons.push(new Button("bet 10", 50, 30, canvas.height*0.26,  true, "./chips/10_casino_chip.png"))
     buttons.push(new Button("bet 50", 40, 30, canvas.height*0.44,  true, "./chips/50_casino_chip.png"))
     buttons.push(new Button("bet 250", 40, 30, canvas.height*0.62,  true, "./chips/250_casino_chip.png"))
     buttons.push(new Button("bet 1000", 40, 30, canvas.height*0.8,  true, "./chips/1000_casino_chip.png"))
-    buttons.push(new Button("Clear bets", 40, canvas.width*0.15, canvas.height*0.85, true))
+    
     if(cardPile.length  < 52){
         restockCards()
         discardPile = []
