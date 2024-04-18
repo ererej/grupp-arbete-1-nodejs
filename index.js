@@ -336,7 +336,14 @@ document.addEventListener("keydown", function(event){
             });
             bet = 0
             bets = []
-
+            break;
+        case "r":
+            button = buttons[buttons.indexOf(buttons.find(button => button.name == "Restart"))]
+            if(!button.enabled)break
+                cash = 1000
+                    restart()
+                    splachText = ""
+            break;
             
     }
 });
@@ -438,6 +445,11 @@ canvas.addEventListener('click', function(event) {
                         }
                     });
                     break;
+                case "restart":
+                    cash = 1000
+                    restart()
+                    splachText = ""
+                    break;
                 }
         }
         i++;
@@ -450,7 +462,7 @@ function restart(){
     playerCards = []
     bets = []
     buttons = []
-    buttons.push(new Button("Restart", 50, canvas.width/2 - 50, canvas.height/2 - 70, false))
+    buttons.push(new Button("Restart", 50, canvas.width/2, canvas.height/2, false))
     buttons.push(new Button("hit",  50, canvas.width*0.3, 300,  false, ))
     buttons.push(new Button("stand", 50, canvas.width*0.7, 300,  false, ))
     buttons.push(new Button("start", 50, canvas.width/2, canvas.height/2, false, ))
@@ -480,6 +492,8 @@ function draw() {
     canvas.height = window.innerHeight;
     ctx.drawImage(background, 0, 0, background.width, background.height, 0, 0, canvas.width, canvas.height);
     if (cash + bet < 10) {
+        buttons[buttons.indexOf(buttons.find(button => button.name == "Restart"))].enabled = true
+        drawbuttons()
         splachText = "You are too broke for this casino!"
         ctx.textAlign = "center"
         drawtext(splachText, canvas.width/2, canvas.height/2, "red", 100)
