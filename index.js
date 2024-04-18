@@ -395,6 +395,7 @@ canvas.addEventListener('click', function(event) {
                     }
                     buttons[buttons.indexOf(buttons.find(button => button.name == "stand"))].enabled = true
                     buttons[buttons.indexOf(buttons.find(button => button.name == "hit"))].enabled = true
+                    buttons[buttons.indexOf(buttons.find(button => button.name == "Clear bets"))].enabled = false
                     button.enabled = false
                     cash -= bet
                     playing = true
