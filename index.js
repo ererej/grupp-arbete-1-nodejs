@@ -269,7 +269,7 @@ const clearTable = () => {
         }
 
     }
-    ,2700)
+    ,1500)
     playerCards.forEach(card => {  
         card.position.targetX = canvas.width*0.85
         card.position.targetY = canvas.height*0.16
@@ -282,7 +282,7 @@ const clearTable = () => {
         discardPile.push(card)
     })
     houseCards = []
-    }, 1000)
+    }, 1500)
 }
 
 document.addEventListener("keydown", function(event){
@@ -357,6 +357,19 @@ canvas.addEventListener('click', function(event) {
                         splachText = "BUST"
                         clearTable()
                     } else if(cardSum(playerCards) === 21) {
+                        buttons[buttons.indexOf(buttons.find(button => button.name == "stand"))].enabled = false
+                        buttons[buttons.indexOf(buttons.find(button => button.name == "hit"))].enabled = false
+                        while (cardSum(houseCards) < 17) {
+                            pickUpCard(houseCards, cardPile, false)
+                        }
+                        if (cardSum(houseCards) > 21) {
+                            splachText = "House busts!!!"
+                            cash += bet * 2
+                            clearTable()
+                        } else if (cardSum(houseCards) == 21) {
+                            splachText = "Push!!!!!!"
+                            clearTable()
+                        }
                         cash += bet * 2 
                         splachText = "you win!!!"
                         clearTable()
