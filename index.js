@@ -323,7 +323,13 @@ document.addEventListener("keydown", function(event){
                 buttons[buttons.indexOf(buttons.find(button => button.name == "start"))].enabled = true
             }
             break;
-        case "delete":
+        case "d":
+            button = buttons[buttons.indexOf(buttons.find(button => button.name == "Clear bets"))]
+            if (!button.enabled) break;
+            buttons[buttons.indexOf(buttons.find(button => button.name == "start"))].enabled = false
+            bet = 0
+            bets = []
+
             
     }
 });
@@ -412,7 +418,14 @@ canvas.addEventListener('click', function(event) {
                         } 
                     }
                     break;
-            }
+                case "Clear bets":
+                    button = buttons[buttons.indexOf(buttons.find(button => button.name == "Clear bets"))]
+                    if (!button.enabled) break;
+                    buttons[buttons.indexOf(buttons.find(button => button.name == "start"))].enabled = false
+                    bet = 0
+                    bets = []
+                    break;
+                }
         }
         i++;
     }
@@ -432,6 +445,7 @@ function restart(){
     buttons.push(new Button("bet 50", 40, 30, canvas.height*0.44,  true, "./chips/50_casino_chip.png"))
     buttons.push(new Button("bet 250", 40, 30, canvas.height*0.62,  true, "./chips/250_casino_chip.png"))
     buttons.push(new Button("bet 1000", 40, 30, canvas.height*0.8,  true, "./chips/1000_casino_chip.png"))
+    buttons.push(new Button("Clear bets", 40, canvas.width*0.15, canvas.height*0.85, true))
     if(cardPile.length  < 52){
         restockCards()
         discardPile = []
