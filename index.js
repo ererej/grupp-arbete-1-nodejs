@@ -336,8 +336,8 @@ document.addEventListener("keydown", function(event){
             break;
         case "Backspace":
             button = buttons[buttons.indexOf(buttons.find(button => button.name == "Clear bets"))]
-            button.enabled = false
             if (!button.enabled) break;
+            button.enabled = false
             buttons[buttons.indexOf(buttons.find(button => button.name == "start"))].enabled = false
             buttons.forEach(button => {
                 if (button.name.split(" ")[0] == "bet") {
