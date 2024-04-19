@@ -49,8 +49,14 @@ class Card {
                 this.value = cardType
                 break;
             }//jack, queen, king = 10
-        this.image = new Image(500, 726)
-        this.image.src = "./cards/" + this.name + "_of_" + this.type + ".png"
+        this.image = document.getElementById("./cards/" + this.name + "_of_" + this.type + ".png")
+        if (this.image === null) {
+            this.image = new Image(500, 726)
+            this.image.src = "./cards/" + this.name + "_of_" + this.type + ".png"
+            const image = document.body.appendChild(this.image)
+            image.id = this.image.src
+        }
+       
         document.body.appendChild(this.image)
         this.position = new Position(canvas.width*0.85, canvas.height*0.6, 0, 0, 20)
     }
@@ -113,12 +119,15 @@ class Button {
         this.height = fontsize*1.4,// *1.4 to make the button a bit taller then the text
         this.x = x,
         this.y = y,
-
         this.enabled = enabled
         if (imagePath) {
-            this.image = new Image
-            this.image.src = imagePath
-            document.body.appendChild(this.image)
+            this.image = document.getElementById(imagePath)
+            if (this.image === null) {
+                this.image = new Image
+                this.image.src = imagePath
+                const image = document.body.appendChild(this.image)
+                image.id = this.image.src
+            }
             this.width = canvas.height*0.2
             this.height = canvas.height*0.2
         } else {
@@ -480,14 +489,14 @@ function restart(){
     bets = []
     buttons = []
     buttons.push(new Button("Restart", 50, canvas.width/2, canvas.height*0.7, false))
-    buttons.push(new Button("hit",  50, canvas.width*0.3, 300,  false, ))
-    buttons.push(new Button("stand", 50, canvas.width*0.7, 300,  false, ))
+    buttons.push(new Button("hit",  50, canvas.width*0.3, canvas.height*0.5,  false, ))
+    buttons.push(new Button("stand", 50, canvas.width*0.7, canvas.height*0.5,  false, ))
     buttons.push(new Button("start", 50, canvas.width/2, canvas.height/2, false, ))
-    buttons.push(new Button("Clear bets", 40, canvas.width*0.22, canvas.height*0.85, false))
-    buttons.push(new Button("bet 10", 50, 30, canvas.height*0.26,  true, "./chips/10_casino_chip.png"))
-    buttons.push(new Button("bet 50", 40, 30, canvas.height*0.44,  true, "./chips/50_casino_chip.png"))
-    buttons.push(new Button("bet 250", 40, 30, canvas.height*0.62,  true, "./chips/250_casino_chip.png"))
-    buttons.push(new Button("bet 1000", 40, 30, canvas.height*0.8,  true, "./chips/1000_casino_chip.png"))
+    buttons.push(new Button("Clear bets", 40, canvas.width*0.2, canvas.height*0.85, false))
+    buttons.push(new Button("bet 10", 50, canvas.width*0.005, canvas.height*0.26,  true, "./chips/10_casino_chip.png"))
+    buttons.push(new Button("bet 50", 40, canvas.width*0.005, canvas.height*0.44,  true, "./chips/50_casino_chip.png"))
+    buttons.push(new Button("bet 250", 40, canvas.width*0.005, canvas.height*0.62,  true, "./chips/250_casino_chip.png"))
+    buttons.push(new Button("bet 1000", 40, canvas.width*0.005, canvas.height*0.8,  true, "./chips/1000_casino_chip.png"))
     
     if(cardPile.length  < 52){
         restockCards()
