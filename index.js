@@ -528,7 +528,13 @@ function getCookie(cname) {
     }
     return "";
 }
-
+let highscore = 0
+if (getCookie("highscore") === "") {
+    setCookie("highscore", "1000",365)
+    highscore = getCookie("highscore")
+} else {
+    highscore = getCookie("highscore")
+}
 let cash = 0
 if (getCookie("cash") === "") {
     setCookie("cash", "1000", 365)
@@ -539,6 +545,10 @@ if (getCookie("cash") === "") {
 
 const save = () => {
     setCookie("cash", cash, 365)
+    if (cash > highscore){
+        setCookie("highscore", highscore, 365)
+        highscore = cash
+    }
 }
 
 let discardPile = []
@@ -567,8 +577,9 @@ function draw() {
         drawDiscardPile()
         cardSum(playerCards)
         drawbuttons()
-        drawtext(`cash: ${cash}`, 10, 50, "lightgreen", 30)
-        drawtext(`bet: ${bet}`, 10, 100, "lightgreen", 30)
+        drawtext(`Cash: ${cash}`, 10, 50, "lightgreen", 30)
+        drawtext(`Bet: ${bet}`, 10, 100, "lightgreen", 30)
+        drawtext(`Highscore: ${highscore}`, 10, 150, "lightgreen", 30)
         drawtext(`CardSum: ${cardSum(playerCards)}`, canvas.width*0.7, canvas.height*0.9, "lightgreen", 30 )
         drawtext(`CardSum: ${cardSum(houseCards)}`, canvas.width*0.7, 150, "lightgreen", 30)
         const splachTextLength = ctx.measureText(splachText)
