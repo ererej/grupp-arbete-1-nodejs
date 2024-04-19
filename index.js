@@ -443,10 +443,7 @@ canvas.addEventListener('click', function(event) {
                         cash += bet *2.5
                         splachText = "BLACKJACK!!!"
                         houseCards.forEach(card => card.hidden = false)
-                        setTimeout(() => {
-                            restart();
-                            splachText = ""
-                        }, 2700);
+                        clearTable()
                     }
                 case "bet":
                     if (button.name.split(" ")[1] == "all") {
