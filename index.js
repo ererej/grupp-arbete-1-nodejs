@@ -546,7 +546,7 @@ if (getCookie("cash") === "") {
 const save = () => {
     setCookie("cash", cash, 365)
     if (cash > highscore){
-        setCookie("highscore", highscore, 365)
+        setCookie("highscore", cash, 365)
         highscore = cash
     }
 }
