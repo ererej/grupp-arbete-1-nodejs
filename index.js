@@ -416,6 +416,7 @@ canvas.addEventListener('click', function(event) {
                         }else if (cardSum(houseCards) < cardSum(playerCards)){
                             cash = cash + bet * 2
                             splachText = "You win!!!"
+                            houseCards.forEach(card => card.hidden = false)
                         }
                     }
                     clearTable()
@@ -441,6 +442,7 @@ canvas.addEventListener('click', function(event) {
                     if (cardSum(playerCards) === 21) {
                         cash += bet *2.5
                         splachText = "BLACKJACK!!!"
+                        houseCards.forEach(card => card.hidden = false)
                         setTimeout(() => {
                             restart();
                             splachText = ""
