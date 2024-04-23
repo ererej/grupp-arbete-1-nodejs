@@ -297,26 +297,32 @@ canvas.addEventListener('click', function(event) {
                     buttons[buttons.indexOf(buttons.find(button => button.name == "stand"))].enabled = false
                     buttons[buttons.indexOf(buttons.find(button => button.name == "hit"))].enabled = false
                     houseCards.forEach(card => card.hidden = false)
-                        if(cardSum(playerCards) > 21){
-                            // BUST, DEALER WINNS
-                        }else if(cardSum(houseCards) == 21 && cardSum(playerCards) == 21){
-                            // PUSH
+                    if(cardSum(playerCards) > 21){
+                        // BUST, DEALER WINNS
+                    }else if(cardSum(houseCards) == 21 && cardSum(playerCards) == 21){
+                        // PUSH
                         }else{
                             while(cardSum(houseCards) < 17){
                                 pickUpCard(houseCards, cardPile, false)
                             }
                             if (cardSum(houseCards) >= 17 && cardSum(houseCards) < 21 && cardSum(houseCards) == cardSum(playerCards)) {
+                                ctx.drawImage(pushImg, 500, 600)
                                 cash = cash + bet 
                                 // PUSH
                             }else if(cardSum(houseCards) > 21){
                                 cash = cash + bet *2
+                                ctx.drawImage(winImg, 500, 600)
                                 // BUST, PLAYER WINNS
                             }else if(cardSum(houseCards) == 21){
+                                ctx.drawImage(bustImg, 500, 600)
                                 // DEALER WINNS
                             }else if (cardSum(houseCards) > cardSum(playerCards)){
+                                ctx.drawImage(bustImg, 500, 600)
                                 //DEALER WINS
                             }else if (cardSum(houseCards) < cardSum(playerCards)){
+                                ctx.drawImage(winImg, 500, 600)
                                 cash = cash + bet * 2
+                                
                             }
                         }
                         clearTable()
@@ -401,7 +407,7 @@ function draw() {
         drawtext(splachText, canvas.width/2 - ctx.measureText(splachText)/2, canvas.height/2, "red", 200)
         requestAnimationFrame(draw);
     } else {
-        ctx.drawImage(backsideOfCard, canvas.width*0.85, canvas.height*0.6, backsideOfCard.width/3, backsideOfCard.height/3)        
+        ctx.drawImage(backsideOfCard, canvas.width*0.85, canvas.height*0.6, backsideOfCard.width/3, backsideOfCard.height/3)      
         drawPlayerCards()
         drawHouseCards()
         drawDiscardPile()
