@@ -305,6 +305,7 @@ document.addEventListener("keydown", function(event){
                 bet += parseInt(button.name.split(" ")[1])
                 bets.push(new Chip(parseInt(button.name.split(" ")[1]), button.x, button.y, 100, 100))
                 buttons[buttons.indexOf(buttons.find(button => button.name == "start"))].enabled = true
+                buttons[buttons.indexOf(buttons.find(button => button.name == "Clear bets"))].enabled = true
             }
             break;
         case "2":
@@ -314,6 +315,7 @@ document.addEventListener("keydown", function(event){
                 bet += parseInt(button.name.split(" ")[1])
                 bets.push(new Chip(parseInt(button.name.split(" ")[1]), button.x, button.y, 100, 100))
                 buttons[buttons.indexOf(buttons.find(button => button.name == "start"))].enabled = true
+                buttons[buttons.indexOf(buttons.find(button => button.name == "Clear bets"))].enabled = true
             }
             break;
         case "3":
@@ -323,6 +325,7 @@ document.addEventListener("keydown", function(event){
                 bet += parseInt(button.name.split(" ")[1])
                 bets.push(new Chip(parseInt(button.name.split(" ")[1]), button.x, button.y, 100, 100))
                 buttons[buttons.indexOf(buttons.find(button => button.name == "start"))].enabled = true
+                buttons[buttons.indexOf(buttons.find(button => button.name == "Clear bets"))].enabled = true
             }
             break;
         case "4":
@@ -332,6 +335,7 @@ document.addEventListener("keydown", function(event){
                 bet += parseInt(button.name.split(" ")[1])
                 bets.push(new Chip(parseInt(button.name.split(" ")[1]), button.x, button.y, 100, 100))
                 buttons[buttons.indexOf(buttons.find(button => button.name == "start"))].enabled = true
+                buttons[buttons.indexOf(buttons.find(button => button.name == "Clear bets"))].enabled = true
             }
             break;
         case "Backspace":
