@@ -49,8 +49,14 @@ class Card {
                 this.value = cardType
                 break;
             }//jack, queen, king = 10
-        this.image = new Image(500, 726)
-        this.image.src = "./cards/" + this.name + "_of_" + this.type + ".png"
+        this.image = document.getElementById("./cards/" + this.name + "_of_" + this.type + ".png")
+        if (this.image === null) {
+            this.image = new Image(500, 726)
+            this.image.src = "./cards/" + this.name + "_of_" + this.type + ".png"
+            const image = document.body.appendChild(this.image)
+            image.id = this.image.src
+        }
+       
         document.body.appendChild(this.image)
         this.position = new Position(canvas.width*0.85, canvas.height*0.6, 0, 0, 20)
     }
@@ -104,18 +110,29 @@ const pickUpCard = (cards, cPile, hidden) => {
 }
 
 class Button {
-    constructor(name, x, y, width, height, enabled, imagePath) {
+    constructor(name, fontsize, x, y, enabled, imagePath) {
         this.name = name,
-        this.id = name,
+        this.fontsize = fontsize,
+        ctx.font = `${fontsize}px serif`
+        const width = ctx.measureText(name).width
+        this.width = width*1.8, // *1.8 to make the button a bit wider then the text
+        this.height = fontsize*1.4,// *1.4 to make the button a bit taller then the text
         this.x = x,
         this.y = y,
-        this.width = width,
-        this.height = height
         this.enabled = enabled
         if (imagePath) {
-            this.image = new Image
-            this.image.src = imagePath
-            document.body.appendChild(this.image)
+            this.image = document.getElementById(imagePath)
+            if (this.image === null) {
+                this.image = new Image
+                this.image.src = imagePath
+                const image = document.body.appendChild(this.image)
+                image.id = this.image.src
+            }
+            this.width = canvas.height*0.2
+            this.height = canvas.height*0.2
+        } else {
+            this.x = x - this.width/2
+            this.y = y - this.height/2
         }
     }
 }
@@ -131,34 +148,37 @@ const drawbuttons = () => {
             }
             if (!button.enabled) return
             ctx.drawImage(button.image, button.x, button.y, canvas.height*0.23, canvas.height*0.23)
-            ctx.font = "40px serif"
-            if (button.name.split(" ")[1] === "1000") {
-                ctx.fillStyle = "white"
-            } else {
+            ctx.font = `${button.fontsize}px serif`
+            if (button.name.split(" ")[1] === "10") {
                 ctx.fillStyle = "black"
+            } else {
+                ctx.fillStyle = "white"
             }
             const text = button.name.split(" ")[1]
             const length = ctx.measureText(text)//längden av texten
             ctx.fillText(text, button.x + canvas.height*0.23/2 - length.width/2, button.y + canvas.height*0.23/2 + 30/2/* idk varför det inte ska vara 40/2*/)
         } else { //alla andra knappar
             if (!button.enabled) return
+            ctx.font = `${button.fontsize}px serif`
             ctx.beginPath()
-            ctx.rect(button.x, button.y, button.width, button.height)
+            ctx.roundRect(button.x, button.y, button.width, button.height, button.height/2)
             ctx.fillStyle = 'rgba(225,225,225,0.5)'
             ctx.fill()
             ctx.lineWidth = 2
             ctx.strokeStyle = '#000000'
             ctx.stroke()
             ctx.closePath()
-            ctx.font = '40px serif'
+            
             ctx.fillStyle = 'green'
-            ctx.fillText(button.name, button.x + button.width / 7, button.y + 64)
+            ctx.textAlign = "center"
+            ctx.fillText(button.name, button.x + button.width/2, button.y + button.height/2 + button.height/4)
+            ctx.textAlign = "start"
         }
     })
 }
 
 //draws the card inputed at the x and y position, the scaleDownFactor is used to scale down the image to fit good in the canvas
-const drawCard = (card, /*x, y,*/ scaleDownFactor) => {
+const drawCard = (card, scaleDownFactor) => {
     card.position.move()
     if(card.hidden){
         ctx.drawImage(backsideOfCard, card.position.x, card.position.y, backsideOfCard.width/scaleDownFactor, backsideOfCard.height/scaleDownFactor)
@@ -247,15 +267,19 @@ return pos.x > button.x && pos.x < button.x + button.width && pos.y < button.y +
 }
 
 const clearTable = () => {
+    save()
     setTimeout(() => {
     setTimeout(() => {
         restart()
         splachText = ""
-        const card = discardPile[discardPile.length-1]
-        discardPile = []
-        discardPile.push(card)
+        if (!cardPile.length < 0) {
+         card = discardPile[discardPile.length-1]
+         discardPile = []
+         discardPile.push(card)
+        }
+
     }
-    ,2700)
+    ,1500)
     playerCards.forEach(card => {  
         card.position.targetX = canvas.width*0.85
         card.position.targetY = canvas.height*0.16
@@ -268,10 +292,66 @@ const clearTable = () => {
         discardPile.push(card)
     })
     houseCards = []
-    }, 1000)
+    }, 1500)
+}
+
+const addBet = (button) => {
+    if (cash >= parseInt(button.name.split(" ")[1]) + bet) {
+        bet += parseInt(button.name.split(" ")[1])
+        bets.push(new Chip(parseInt(button.name.split(" ")[1]), button.x, button.y, 100, 100))
+        buttons[buttons.indexOf(buttons.find(button => button.name == "start"))].enabled = true
+        buttons[buttons.indexOf(buttons.find(button => button.name == "Clear bets"))].enabled = true
+    }
 }
 
 
+document.addEventListener("keydown", function(event){
+    let button = undefined
+    switch (event.key){
+        case "1":
+            button = buttons[buttons.indexOf(buttons.find(button => button.name == "bet 10"))]
+            if (!button.enabled) break;
+            addBet(button)
+            break;
+        case "2":
+            button = buttons[buttons.indexOf(buttons.find(button => button.name == "bet 50"))]
+            if (!button.enabled) break;
+            addBet(button)
+            break;
+        case "3":
+            button = buttons[buttons.indexOf(buttons.find(button => button.name == "bet 250"))]
+            if (!button.enabled) break;
+            addBet(button)
+            break;
+        case "4":
+            button = buttons[buttons.indexOf(buttons.find(button => button.name == "bet 1000"))]
+            if (!button.enabled) break;
+            addBet(button)
+            break;
+        case "Backspace":
+            button = buttons[buttons.indexOf(buttons.find(button => button.name == "Clear bets"))]
+            if (!button.enabled) break;
+            button.enabled = false
+            buttons[buttons.indexOf(buttons.find(button => button.name == "start"))].enabled = false
+            buttons.forEach(button => {
+                if (button.name.split(" ")[0] == "bet") {
+                    button.enabled = true
+                }
+            });
+            bet = 0
+            bets = []
+            break;
+        case "r":
+            button = buttons[buttons.indexOf(buttons.find(button => button.name == "Restart"))]
+            if(!button.enabled)break
+                cash = 1000
+                save()
+                restart()
+                splachText = ""
+            break;
+            
+    }
+});
 canvas.addEventListener('click', function(event) {
     var mousePosition = mousePos(canvas, event);
     let i = 0;
@@ -286,9 +366,23 @@ canvas.addEventListener('click', function(event) {
                         houseCards.forEach(card => card.hidden = false)
                         buttons[buttons.indexOf(buttons.find(button => button.name == "stand"))].enabled = false
                         buttons[buttons.indexOf(buttons.find(button => button.name == "hit"))].enabled = false
+                        splachText = "BUST"
                         clearTable()
                     } else if(cardSum(playerCards) === 21) {
-                        cash += bet * 2
+                        buttons[buttons.indexOf(buttons.find(button => button.name == "stand"))].enabled = false
+                        buttons[buttons.indexOf(buttons.find(button => button.name == "hit"))].enabled = false
+                        while (cardSum(houseCards) < 17) {
+                            pickUpCard(houseCards, cardPile, false)
+                        }
+                        if (cardSum(houseCards) > 21) {
+                            splachText = "House busts!!!"
+                            cash += bet * 2
+                            clearTable()
+                        } else if (cardSum(houseCards) == 21) {
+                            splachText = "Push!!!!!!"
+                            clearTable()
+                        }
+                        cash += bet * 2 
                         splachText = "you win!!!"
                         clearTable()
                     }
@@ -297,35 +391,29 @@ canvas.addEventListener('click', function(event) {
                     buttons[buttons.indexOf(buttons.find(button => button.name == "stand"))].enabled = false
                     buttons[buttons.indexOf(buttons.find(button => button.name == "hit"))].enabled = false
                     houseCards.forEach(card => card.hidden = false)
-                    if(cardSum(playerCards) > 21){
-                        // BUST, DEALER WINNS
-                    }else if(cardSum(houseCards) == 21 && cardSum(playerCards) == 21){
-                        // PUSH
-                        }else{
-                            while(cardSum(houseCards) < 17){
-                                pickUpCard(houseCards, cardPile, false)
-                            }
-                            if (cardSum(houseCards) >= 17 && cardSum(houseCards) < 21 && cardSum(houseCards) == cardSum(playerCards)) {
-                                ctx.drawImage(pushImg, 500, 600)
-                                cash = cash + bet 
-                                // PUSH
-                            }else if(cardSum(houseCards) > 21){
-                                cash = cash + bet *2
-                                ctx.drawImage(winImg, 500, 600)
-                                // BUST, PLAYER WINNS
-                            }else if(cardSum(houseCards) == 21){
-                                ctx.drawImage(bustImg, 500, 600)
-                                // DEALER WINNS
-                            }else if (cardSum(houseCards) > cardSum(playerCards)){
-                                ctx.drawImage(bustImg, 500, 600)
-                                //DEALER WINS
-                            }else if (cardSum(houseCards) < cardSum(playerCards)){
-                                ctx.drawImage(winImg, 500, 600)
-                                cash = cash + bet * 2
-                                
-                            }
+                    if(cardSum(houseCards) == 21 && cardSum(playerCards) == 21){
+                        splachText = "Push"
+                    }else{
+                        while(cardSum(houseCards) < 17){
+                            pickUpCard(houseCards, cardPile, false)
                         }
-                        clearTable()
+                        if (cardSum(houseCards) >= 17 && cardSum(houseCards) < 21 && cardSum(houseCards) == cardSum(playerCards)) {
+                            cash = cash + bet 
+                            splachText = "Push"
+                        }else if(cardSum(houseCards) > 21){
+                            cash = cash + bet *2
+                            splachText = "House busts!!!"
+                        }else if(cardSum(houseCards) == 21){//borde inte behövas
+                            splachText = "House wins"
+                        }else if (cardSum(houseCards) > cardSum(playerCards)){
+                            splachText = "House wins"
+                        }else if (cardSum(houseCards) < cardSum(playerCards)){
+                            cash = cash + bet * 2
+                            splachText = "You win!!!"
+                            houseCards.forEach(card => card.hidden = false)
+                        }
+                    }
+                    clearTable()
 
                     break;
                 case "start":
@@ -336,8 +424,10 @@ canvas.addEventListener('click', function(event) {
                     }
                     buttons[buttons.indexOf(buttons.find(button => button.name == "stand"))].enabled = true
                     buttons[buttons.indexOf(buttons.find(button => button.name == "hit"))].enabled = true
+                    buttons[buttons.indexOf(buttons.find(button => button.name == "Clear bets"))].enabled = false
                     button.enabled = false
                     cash -= bet
+                    save()
                     playing = true
                     pickUpCard(playerCards, cardPile, false)
                     pickUpCard(playerCards, cardPile, false)
@@ -346,24 +436,35 @@ canvas.addEventListener('click', function(event) {
                     if (cardSum(playerCards) === 21) {
                         cash += bet *2.5
                         splachText = "BLACKJACK!!!"
-                        setTimeout(() => {
-                            restart();
-                            splachText = ""
-                        }, 2700);
+                        houseCards.forEach(card => card.hidden = false)
+                        clearTable()
                     }
                 case "bet":
                     if (button.name.split(" ")[1] == "all") {
                         bet = cash
                         buttons[buttons.indexOf(buttons.find(button => button.name == "start"))].enabled = true
                     } else {
-                        if (cash >= parseInt(button.name.split(" ")[1]) + bet) {
-                            bet += parseInt(button.name.split(" ")[1])
-                            bets.push(new Chip(parseInt(button.name.split(" ")[1]), button.x, button.y, 100, 100))
-                            buttons[buttons.indexOf(buttons.find(button => button.name == "start"))].enabled = true
-                        } 
-                    }
+                        addBet(button)
+                    } 
                     break;
-            }
+                case "clear": //took to long to remember that the switch cased uses the first word of the name and to lower case
+                    button.enabled = false
+                    buttons[buttons.indexOf(buttons.find(button => button.name == "start"))].enabled = false
+                    bet = 0
+                    bets = []
+                    buttons.forEach(button => {
+                        if (button.name.split(" ")[0] == "bet") {
+                            button.enabled = true
+                        }
+                    });
+                    break;
+                case "restart":
+                    cash = 1000
+                    save()
+                    restart()
+                    splachText = ""
+                    break;
+                }
         }
         i++;
     }
@@ -375,21 +476,68 @@ function restart(){
     playerCards = []
     bets = []
     buttons = []
-    buttons.push(new Button("Restart", canvas.width/2 - 50, canvas.height/2 - 70, 140, 100, false))
-    buttons.push(new Button("hit",  canvas.width*0.3, 300, 140, 100, false, ))
-    buttons.push(new Button("stand", canvas.width*0.7, 300, 140, 100, false, ))
-    buttons.push(new Button("start", canvas.width/2, canvas.height/2, 140, 100, false, ))
-    buttons.push(new Button("bet 10", 30, canvas.height*0.26, canvas.height*0.2, canvas.height*0.2, true, "./chips/10_casino_chip.png"))
-    buttons.push(new Button("bet 50", 30, canvas.height*0.44, canvas.height*0.2, canvas.height*0.2, true, "./chips/50_casino_chip.png"))
-    buttons.push(new Button("bet 250", 30, canvas.height*0.62, canvas.height*0.2, canvas.height*0.2, true, "./chips/250_casino_chip.png"))
-    buttons.push(new Button("bet 1000", 30, canvas.height*0.8, canvas.height*0.2, canvas.height*0.2, true, "./chips/1000_casino_chip.png"))
+    buttons.push(new Button("Restart", 50, canvas.width/2, canvas.height*0.7, false))
+    buttons.push(new Button("hit",  50, canvas.width*0.3, canvas.height*0.5,  false, ))
+    buttons.push(new Button("stand", 50, canvas.width*0.7, canvas.height*0.5,  false, ))
+    buttons.push(new Button("start", 50, canvas.width/2, canvas.height/2, false, ))
+    buttons.push(new Button("Clear bets", 40, canvas.width*0.2, canvas.height*0.85, false))
+    buttons.push(new Button("bet 10", 50, canvas.width*0.005, canvas.height*0.26,  true, "./chips/10_casino_chip.png"))
+    buttons.push(new Button("bet 50", 40, canvas.width*0.005, canvas.height*0.44,  true, "./chips/50_casino_chip.png"))
+    buttons.push(new Button("bet 250", 40, canvas.width*0.005, canvas.height*0.62,  true, "./chips/250_casino_chip.png"))
+    buttons.push(new Button("bet 1000", 40, canvas.width*0.005, canvas.height*0.8,  true, "./chips/1000_casino_chip.png"))
+    
     if(cardPile.length  < 52){
         restockCards()
         discardPile = []
+        console.log("restocked")
     }
 }
+
+function setCookie(cname, cvalue, exdays) {
+    const d = new Date();
+    d.setTime(d.getTime() + (exdays*24*60*60*1000));
+    let expires = "expires="+ d.toUTCString();
+    document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+}
+function getCookie(cname) {
+    let name = cname + "=";
+    let decodedCookie = decodeURIComponent(document.cookie);
+    let ca = decodedCookie.split(';');
+    for(let i = 0; i <ca.length; i++) {
+        let c = ca[i];
+        while (c.charAt(0) == ' ') {
+        c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+        return c.substring(name.length, c.length);
+        }
+    }
+    return "";
+}
+let highscore = 0
+if (getCookie("highscore") === "") {
+    setCookie("highscore", "1000",365)
+    highscore = getCookie("highscore")
+} else {
+    highscore = getCookie("highscore")
+}
+let cash = 0
+if (getCookie("cash") === "") {
+    setCookie("cash", "1000", 365)
+    cash = getCookie("cash")
+} else {
+    cash = getCookie("cash")
+}
+
+const save = () => {
+    setCookie("cash", cash, 365)
+    if (cash > highscore){
+        setCookie("highscore", cash, 365)
+        highscore = cash
+    }
+}
+
 let discardPile = []
-let cash = 1000
 let bet = 0
 let bets = []
 restockCards()
@@ -401,10 +549,12 @@ function draw() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
     ctx.drawImage(background, 0, 0, background.width, background.height, 0, 0, canvas.width, canvas.height);
-    if (cash <= 0 && bet <= 0) {
+    if (cash + bet < 10) {
+        buttons[buttons.indexOf(buttons.find(button => button.name == "Restart"))].enabled = true
+        drawbuttons()
         splachText = "You are too broke for this casino!"
         ctx.textAlign = "center"
-        drawtext(splachText, canvas.width/2 - ctx.measureText(splachText)/2, canvas.height/2, "red", 200)
+        drawtext(splachText, canvas.width/2, canvas.height/2, "red", 100)
         requestAnimationFrame(draw);
     } else {
         ctx.drawImage(backsideOfCard, canvas.width*0.85, canvas.height*0.6, backsideOfCard.width/3, backsideOfCard.height/3)      
@@ -413,8 +563,9 @@ function draw() {
         drawDiscardPile()
         cardSum(playerCards)
         drawbuttons()
-        drawtext(`cash: ${cash}`, 10, 50, "lightgreen", 30)
-        drawtext(`bet: ${bet}`, 10, 100, "lightgreen", 30)
+        drawtext(`Cash: ${cash}`, 10, 50, "lightgreen", 30)
+        drawtext(`Bet: ${bet}`, 10, 100, "lightgreen", 30)
+        drawtext(`Highscore: ${highscore}`, 10, 150, "lightgreen", 30)
         drawtext(`CardSum: ${cardSum(playerCards)}`, canvas.width*0.7, canvas.height*0.9, "lightgreen", 30 )
         drawtext(`CardSum: ${cardSum(houseCards)}`, canvas.width*0.7, 150, "lightgreen", 30)
         const splachTextLength = ctx.measureText(splachText)
