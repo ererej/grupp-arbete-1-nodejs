@@ -300,6 +300,7 @@ const addBet = (button) => {
         bet += parseInt(button.name.split(" ")[1])
         bets.push(new Chip(parseInt(button.name.split(" ")[1]), button.x, button.y, 100, 100))
         buttons[buttons.indexOf(buttons.find(button => button.name == "start"))].enabled = true
+        buttons[buttons.indexOf(buttons.find(button => button.name == "Clear bets"))].enabled = true
     }
 }
 
@@ -310,42 +311,22 @@ document.addEventListener("keydown", function(event){
         case "1":
             button = buttons[buttons.indexOf(buttons.find(button => button.name == "bet 10"))]
             if (!button.enabled) break;
-            if (cash >= parseInt(button.name.split(" ")[1]) + bet) {
-                bet += parseInt(button.name.split(" ")[1])
-                bets.push(new Chip(parseInt(button.name.split(" ")[1]), button.x, button.y, 100, 100))
-                buttons[buttons.indexOf(buttons.find(button => button.name == "start"))].enabled = true
-                buttons[buttons.indexOf(buttons.find(button => button.name == "Clear bets"))].enabled = true
-            }
+            addBet(button)
             break;
         case "2":
             button = buttons[buttons.indexOf(buttons.find(button => button.name == "bet 50"))]
             if (!button.enabled) break;
-            if (cash >= parseInt(button.name.split(" ")[1]) + bet) {
-                bet += parseInt(button.name.split(" ")[1])
-                bets.push(new Chip(parseInt(button.name.split(" ")[1]), button.x, button.y, 100, 100))
-                buttons[buttons.indexOf(buttons.find(button => button.name == "start"))].enabled = true
-                buttons[buttons.indexOf(buttons.find(button => button.name == "Clear bets"))].enabled = true
-            }
+            addBet(button)
             break;
         case "3":
             button = buttons[buttons.indexOf(buttons.find(button => button.name == "bet 250"))]
             if (!button.enabled) break;
-            if (cash >= parseInt(button.name.split(" ")[1]) + bet) {
-                bet += parseInt(button.name.split(" ")[1])
-                bets.push(new Chip(parseInt(button.name.split(" ")[1]), button.x, button.y, 100, 100))
-                buttons[buttons.indexOf(buttons.find(button => button.name == "start"))].enabled = true
-                buttons[buttons.indexOf(buttons.find(button => button.name == "Clear bets"))].enabled = true
-            }
+            addBet(button)
             break;
         case "4":
             button = buttons[buttons.indexOf(buttons.find(button => button.name == "bet 1000"))]
             if (!button.enabled) break;
-            if (cash >= parseInt(button.name.split(" ")[1]) + bet) {
-                bet += parseInt(button.name.split(" ")[1])
-                bets.push(new Chip(parseInt(button.name.split(" ")[1]), button.x, button.y, 100, 100))
-                buttons[buttons.indexOf(buttons.find(button => button.name == "start"))].enabled = true
-                buttons[buttons.indexOf(buttons.find(button => button.name == "Clear bets"))].enabled = true
-            }
+            addBet(button)
             break;
         case "Backspace":
             button = buttons[buttons.indexOf(buttons.find(button => button.name == "Clear bets"))]
@@ -463,13 +444,8 @@ canvas.addEventListener('click', function(event) {
                         bet = cash
                         buttons[buttons.indexOf(buttons.find(button => button.name == "start"))].enabled = true
                     } else {
-                        if (cash >= parseInt(button.name.split(" ")[1]) + bet) {
-                            bet += parseInt(button.name.split(" ")[1])
-                            bets.push(new Chip(parseInt(button.name.split(" ")[1]), button.x, button.y, 100, 100))
-                            buttons[buttons.indexOf(buttons.find(button => button.name == "start"))].enabled = true
-                            buttons[buttons.indexOf(buttons.find(button => button.name == "Clear bets"))].enabled = true
-                        } 
-                    }
+                        addBet(button)
+                    } 
                     break;
                 case "clear": //took to long to remember that the switch cased uses the first word of the name and to lower case
                     button.enabled = false
