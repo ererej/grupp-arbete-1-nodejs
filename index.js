@@ -295,6 +295,15 @@ const clearTable = () => {
     }, 1500)
 }
 
+const addBet = (button) => {
+    if (cash >= parseInt(button.name.split(" ")[1]) + bet) {
+        bet += parseInt(button.name.split(" ")[1])
+        bets.push(new Chip(parseInt(button.name.split(" ")[1]), button.x, button.y, 100, 100))
+        buttons[buttons.indexOf(buttons.find(button => button.name == "start"))].enabled = true
+    }
+}
+
+
 document.addEventListener("keydown", function(event){
     let button = undefined
     switch (event.key){
