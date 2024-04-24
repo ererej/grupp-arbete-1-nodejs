@@ -264,14 +264,28 @@ const drawtext = (text, posX, posY, color, size) => {
     ctx.fillText(text, posX, posY)
 }
 
-//counts the sum of the cards in the inputed hand
+
 const cardSum = (hand) => {
     let sum = 0;
+    let aceCount = 0;  
+
     hand.forEach(card => {
-        sum = sum + card.value - card.hidden*card.value; 
+        if (!card.hidden) {
+            sum += card.value; 
+            if (card.value === 11) { 
+                aceCount++;
+            }
+        }
     });
-    return sum 
+
+    while (sum > 21 && aceCount > 0) {
+        sum -= 10;  
+        aceCount--; 
+    }
+
+    return sum;
 }
+
 
 class Chip {
     constructor(value, spawnX, spawnY, x, y) {
