@@ -21,6 +21,24 @@ class Position {
     }
 }
 
+class Rotation {
+    constructor(rotation, targetRotation, speed) {
+        this.rotation = rotation
+        this.targetRotation = targetRotation
+        this.speed = speed
+    }
+    rotate() {
+        if (Math.abs(this.rotation-this.targetRotation) < this.speed) {
+            this.rotation = this.targetRotation
+            return
+        }
+        if (this.rotation < this.targetRotation) {
+            this.rotation += this.speed
+        } else {
+            this.rotation -= this.speed
+        }
+    }
+}
 
 class Card {
     constructor(type, cardType, hidden) {
@@ -56,9 +74,22 @@ class Card {
             const image = document.body.appendChild(this.image)
             image.id = this.image.src
         }
-       
-        document.body.appendChild(this.image)
+        this.backside = backsideOfCard
         this.position = new Position(canvas.width*0.85, canvas.height*0.6, 0, 0, 20)
+        if (hidden) {
+            this.rotation = new Rotation(180, 180, 7)
+        } else {
+            this.rotation = new Rotation(0, 0, 7) 
+        }
+    }
+
+    rotate() {
+        this.rotation.rotate()
+        if (this.rotation.rotation > 90) {
+            this.hidden = true
+        } else {
+            this.hidden = false
+        }
     }
 }
 
@@ -104,6 +135,8 @@ const pickUpCard = (cards, cPile, hidden) => {
         cards.push(cPile.splice((Math.floor(Math.random() * cPile.length)), 1)[0]);
     } else {
         card = cPile.splice((Math.floor(Math.random() * cPile.length)), 1)[0]
+        card.rotation.rotation = 180;
+        card.rotation.targetRotation = 180;
         card.hidden = true
         cards.push(card)
     }
@@ -180,11 +213,21 @@ const drawbuttons = () => {
 //draws the card inputed at the x and y position, the scaleDownFactor is used to scale down the image to fit good in the canvas
 const drawCard = (card, scaleDownFactor) => {
     card.position.move()
-    if(card.hidden){
-        ctx.drawImage(backsideOfCard, card.position.x, card.position.y, backsideOfCard.width/scaleDownFactor, backsideOfCard.height/scaleDownFactor)
+    card.rotate()
+    let image;
+    let rotation;
+    if(card.rotation.rotation > 90){
+        console.log(card.rotation.rotation)
+        image = card.backside
+        rotation = Math.abs(card.rotation.rotation-180)
+        console.log(rotation)
     } else {
-    ctx.drawImage(card.image, card.position.x, card.position.y, card.image.naturalWidth/scaleDownFactor, card.image.naturalHeight/scaleDownFactor)
+        image = card.image
+        rotation = card.rotation.rotation
     }
+    const width = Math.abs(image.width/scaleDownFactor - (image.width/scaleDownFactor/90)*rotation);
+
+    ctx.drawImage(image, card.position.x + (image.width/scaleDownFactor - width)/2, card.position.y, width, image.height/scaleDownFactor)
 }
 
 //draws the player cards on the canvas
@@ -248,7 +291,7 @@ const drawChip = (chip, size) => {
 const drawChips = (chips) => {
     size = canvas.height*0.2
     chips.forEach(chip => {
-        chip.position.targetX = canvas.width*0.15
+        chip.position.targetX = canvas.width*0.2
         chip.position.targetY = (canvas.height*0.2/chips.length+1)*(chips.indexOf(chip) + 1) - canvas.height*0.2/chips.length+1 + canvas.height*0.5
         drawChip(chip, size)
     })
@@ -385,7 +428,7 @@ canvas.addEventListener('click', function(event) {
                     buttons[buttons.indexOf(buttons.find(button => button.name == "hit"))].disable = false
                     pickUpCard(playerCards, cardPile)
                     if(cardSum(playerCards) > 21){
-                        houseCards.forEach(card => card.hidden = false)
+                        houseCards.forEach(card => card.rotation.targetRotation = 0)
                         buttons[buttons.indexOf(buttons.find(button => button.name == "stand"))].enabled = false
                         buttons[buttons.indexOf(buttons.find(button => button.name == "hit"))].enabled = false
                         splachText = "BUST"
@@ -393,7 +436,7 @@ canvas.addEventListener('click', function(event) {
                     } else if(cardSum(playerCards) === 21) {
                         buttons[buttons.indexOf(buttons.find(button => button.name == "stand"))].enabled = false
                         buttons[buttons.indexOf(buttons.find(button => button.name == "hit"))].enabled = false
-                        houseCards.forEach(card => card.hidden = false)
+                        houseCards.forEach(card => card.rotation.targetRotation = 0)
                         while (cardSum(houseCards) < 17) {
                             pickUpCard(houseCards, cardPile, false)
                         }
@@ -414,7 +457,7 @@ canvas.addEventListener('click', function(event) {
                 case "stand": // Vi måte gör en start funktion som callas efter varje påstående eller va fan
                     buttons[buttons.indexOf(buttons.find(button => button.name == "stand"))].enabled = false
                     buttons[buttons.indexOf(buttons.find(button => button.name == "hit"))].enabled = false
-                    houseCards.forEach(card => card.hidden = false)
+                    houseCards.forEach(card => card.rotation.targetRotation = 0)
                     if(cardSum(houseCards) == 21 && cardSum(playerCards) == 21){
                         splachText = "Push"
                     }else{
@@ -427,7 +470,7 @@ canvas.addEventListener('click', function(event) {
                         }else if(cardSum(houseCards) > 21){
                             cash = cash + bet *2
                             splachText = "House busts!!!"
-                        }else if(cardSum(houseCards) == 21){//borde inte behövas
+                        }else if(cardSum(houseCards) == 21){
                             splachText = "House wins"
                         }else if (cardSum(houseCards) > cardSum(playerCards)){
                             splachText = "House wins"
