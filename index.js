@@ -328,6 +328,26 @@ document.addEventListener("keydown", function(event){
             if (!button.enabled) break;
             addBet(button)
             break;
+        case "5":
+            button = buttons[buttons.indexOf(buttons.find(button => button.name == "bet 2500"))]
+            if (!button.enabled) break;
+            addBet(button)
+            break;
+        case "6":
+            button = buttons[buttons.indexOf(buttons.find(button => button.name == "bet 5000"))]
+            if (!button.enabled) break;
+            addBet(button)
+            break;
+        case "7":
+            button = buttons[buttons.indexOf(buttons.find(button => button.name == "bet 10000"))]
+            if (!button.enabled) break;
+            addBet(button)
+            break;
+        case "8":
+            button = buttons[buttons.indexOf(buttons.find(button => button.name == "bet 50000"))]
+            if (!button.enabled) break;
+            addBet(button)
+            break;
         case "Backspace":
             button = buttons[buttons.indexOf(buttons.find(button => button.name == "Clear bets"))]
             if (!button.enabled) break;
@@ -349,6 +369,8 @@ document.addEventListener("keydown", function(event){
                 restart()
                 splachText = ""
             break;
+        default:
+
             
     }
 });
