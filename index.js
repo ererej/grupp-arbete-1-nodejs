@@ -342,6 +342,26 @@ document.addEventListener("keydown", function(event){
             if (!button.enabled) break;
             addBet(button)
             break;
+        case "5":
+            button = buttons[buttons.indexOf(buttons.find(button => button.name == "bet 2500"))]
+            if (!button.enabled) break;
+            addBet(button)
+            break;
+        case "6":
+            button = buttons[buttons.indexOf(buttons.find(button => button.name == "bet 5000"))]
+            if (!button.enabled) break;
+            addBet(button)
+            break;
+        case "7":
+            button = buttons[buttons.indexOf(buttons.find(button => button.name == "bet 10000"))]
+            if (!button.enabled) break;
+            addBet(button)
+            break;
+        case "8":
+            button = buttons[buttons.indexOf(buttons.find(button => button.name == "bet 50000"))]
+            if (!button.enabled) break;
+            addBet(button)
+            break;
         case "Backspace":
             button = buttons[buttons.indexOf(buttons.find(button => button.name == "Clear bets"))]
             if (!button.enabled) break;
@@ -363,6 +383,8 @@ document.addEventListener("keydown", function(event){
                 restart()
                 splachText = ""
             break;
+        default:
+
             
     }
 });
@@ -385,6 +407,7 @@ canvas.addEventListener('click', function(event) {
                     } else if(cardSum(playerCards) === 21) {
                         buttons[buttons.indexOf(buttons.find(button => button.name == "stand"))].enabled = false
                         buttons[buttons.indexOf(buttons.find(button => button.name == "hit"))].enabled = false
+                        houseCards.forEach(card => card.hidden = false)
                         while (cardSum(houseCards) < 17) {
                             pickUpCard(houseCards, cardPile, false)
                         }
@@ -394,6 +417,7 @@ canvas.addEventListener('click', function(event) {
                             clearTable()
                         } else if (cardSum(houseCards) == 21) {
                             splachText = "Push!!!!!!"
+                            cash += bet
                             clearTable()
                         }
                         cash += bet * 2 
@@ -495,10 +519,16 @@ function restart(){
     buttons.push(new Button("stand", 50, canvas.width*0.7, canvas.height*0.5,  false, ))
     buttons.push(new Button("start", 50, canvas.width/2, canvas.height/2, false, ))
     buttons.push(new Button("Clear bets", 40, canvas.width*0.2, canvas.height*0.85, false))
+    const clearButton = buttons[buttons.indexOf(buttons.find(button => button.name == "Clear bets"))]
+    buttons[buttons.indexOf(buttons.find(button => button.name == "Clear bets"))].y = canvas.height*0.95 - clearButton.height
     buttons.push(new Button("bet 10", 50, canvas.width*0.005, canvas.height*0.26,  true, "./chips/10_casino_chip.png"))
     buttons.push(new Button("bet 50", 40, canvas.width*0.005, canvas.height*0.44,  true, "./chips/50_casino_chip.png"))
     buttons.push(new Button("bet 250", 40, canvas.width*0.005, canvas.height*0.62,  true, "./chips/250_casino_chip.png"))
     buttons.push(new Button("bet 1000", 40, canvas.width*0.005, canvas.height*0.8,  true, "./chips/1000_casino_chip.png"))
+    buttons.push(new Button("bet 2500", 40, canvas.width*0.1, canvas.height*0.26,  true, "./chips/2500_casino_chip.png"))
+    buttons.push(new Button("bet 5000", 40, canvas.width*0.1, canvas.height*0.44,  true, "./chips/5000_casino_chip.png"))
+    buttons.push(new Button("bet 10000", 40, canvas.width*0.1, canvas.height*0.62,  true, "./chips/10000_casino_chip.png"))
+    buttons.push(new Button("bet 50000", 40, canvas.width*0.1, canvas.height*0.8,  true, "./chips/50000_casino_chip.png"))
     
     if(cardPile.length  < 52){
         restockCards()
