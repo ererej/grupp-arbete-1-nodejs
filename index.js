@@ -371,6 +371,7 @@ canvas.addEventListener('click', function(event) {
                     } else if(cardSum(playerCards) === 21) {
                         buttons[buttons.indexOf(buttons.find(button => button.name == "stand"))].enabled = false
                         buttons[buttons.indexOf(buttons.find(button => button.name == "hit"))].enabled = false
+                        houseCards.forEach(card => card.hidden = false)
                         while (cardSum(houseCards) < 17) {
                             pickUpCard(houseCards, cardPile, false)
                         }
@@ -380,6 +381,7 @@ canvas.addEventListener('click', function(event) {
                             clearTable()
                         } else if (cardSum(houseCards) == 21) {
                             splachText = "Push!!!!!!"
+                            cash += bet
                             clearTable()
                         }
                         cash += bet * 2 
