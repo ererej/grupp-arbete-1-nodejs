@@ -1,3 +1,8 @@
+let BGM = new Audio('bgm.mp3')
+
+BGM.loop = true;
+
+
 class Position {
     constructor(x, y, targetX, targetY, speed) {
         this.x = x
@@ -488,7 +493,18 @@ canvas.addEventListener('click', function(event) {
                     restart()
                     splachText = ""
                     break;
+                case "music":
+                    BGM.play();
+                    buttons[buttons.indexOf(buttons.find(button => button.name == "Music"))].enabled = false
+                    buttons[buttons.indexOf(buttons.find(button => button.name == "Offmusic"))].enabled = true
+                    break;
+                case "offmusic":
+                    BGM.pause();
+                    buttons[buttons.indexOf(buttons.find(button => button.name == "Music"))].enabled = true
+                    buttons[buttons.indexOf(buttons.find(button => button.name == "Offmusic"))].enabled = false
+                    break;
                 }
+            break;
         }
         i++;
     }
@@ -505,6 +521,8 @@ function restart(){
     buttons.push(new Button("stand", 50, canvas.width*0.7, canvas.height*0.5,  false, ))
     buttons.push(new Button("start", 50, canvas.width/2, canvas.height/2, false, ))
     buttons.push(new Button("Clear bets", 40, canvas.width*0.2, canvas.height*0.85, false))
+    buttons.push(new Button("Music", 40, canvas.width/1.1, canvas.height/10,true))
+    buttons.push(new Button("Offmusic", 40, canvas.width/1.1, canvas.height/10,false))
     const clearButton = buttons[buttons.indexOf(buttons.find(button => button.name == "Clear bets"))]
     buttons[buttons.indexOf(buttons.find(button => button.name == "Clear bets"))].y = canvas.height*0.95 - clearButton.height
     buttons.push(new Button("bet 10", 50, canvas.width*0.005, canvas.height*0.26,  true, "./chips/10_casino_chip.png"))
@@ -605,6 +623,7 @@ function draw() {
         requestAnimationFrame(draw);
     }
 };
+
 restart()
 requestAnimationFrame(draw);
 
