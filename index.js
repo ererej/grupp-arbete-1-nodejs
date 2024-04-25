@@ -569,6 +569,10 @@ canvas.addEventListener('click', function(event) {
 
 function restart(){
     bet = 0
+    let music
+    if (buttons.length > 0){
+        music = buttons[buttons.indexOf(buttons.find(button => button.name == "Music"))].enabled
+    }
     houseCards = []
     playerCards = []
     bets = []
@@ -578,8 +582,13 @@ function restart(){
     buttons.push(new Button("stand", 50, canvas.width*0.7, canvas.height*0.5,  false, ))
     buttons.push(new Button("start", 50, canvas.width/2, canvas.height/2, false, ))
     buttons.push(new Button("Clear bets", 40, canvas.width*0.2, canvas.height*0.85, false))
-    buttons.push(new Button("Music", 40, canvas.width/1.1, canvas.height/10,true))
-    buttons.push(new Button("Offmusic", 40, canvas.width/1.1, canvas.height/10,false))
+    if(music === false){
+        buttons.push(new Button("Music", 40, canvas.width/1.1, canvas.height/10, false))
+        buttons.push(new Button("Offmusic", 40, canvas.width/1.1, canvas.height/10,true))
+    }else {
+        buttons.push(new Button("Music", 40, canvas.width/1.1, canvas.height/10,true))
+        buttons.push(new Button("Offmusic", 40, canvas.width/1.1, canvas.height/10,false))
+    }
     const clearButton = buttons[buttons.indexOf(buttons.find(button => button.name == "Clear bets"))]
     buttons[buttons.indexOf(buttons.find(button => button.name == "Clear bets"))].y = canvas.height*0.95 - clearButton.height
     buttons.push(new Button("bet 10", 50, canvas.width*0.005, canvas.height*0.26,  true, "./chips/10_casino_chip.png"))
