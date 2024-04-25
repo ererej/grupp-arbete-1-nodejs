@@ -90,11 +90,16 @@ class Card {
 
     rotate() {
         this.rotation.rotate()
-        if (this.rotation.rotation > 90) {
-            this.hidden = true
-        } else {
-            this.hidden = false
-        }
+    }
+
+    hide() { // not used but could be useful or fun
+        this.hidden = true
+        this.rotation.targetRotation = 180
+    }
+
+    show() {
+        this.hidden = false
+        this.rotation.targetRotation = 0
     }
 }
 
@@ -222,10 +227,8 @@ const drawCard = (card, scaleDownFactor) => {
     let image;
     let rotation;
     if(card.rotation.rotation > 90){
-        console.log(card.rotation.rotation)
         image = card.backside
         rotation = Math.abs(card.rotation.rotation-180)
-        console.log(rotation)
     } else {
         image = card.image
         rotation = card.rotation.rotation
@@ -455,7 +458,7 @@ canvas.addEventListener('click', function(event) {
                     } else if(cardSum(playerCards) === 21) {
                         buttons[buttons.indexOf(buttons.find(button => button.name == "stand"))].enabled = false
                         buttons[buttons.indexOf(buttons.find(button => button.name == "hit"))].enabled = false
-                        houseCards.forEach(card => card.rotation.targetRotation = 0)
+                        houseCards.forEach(card => card.show())
                         while (cardSum(houseCards) < 17) {
                             pickUpCard(houseCards, cardPile, false)
                         }
@@ -476,12 +479,15 @@ canvas.addEventListener('click', function(event) {
                 case "stand": // Vi måte gör en start funktion som callas efter varje påstående eller va fan
                     buttons[buttons.indexOf(buttons.find(button => button.name == "stand"))].enabled = false
                     buttons[buttons.indexOf(buttons.find(button => button.name == "hit"))].enabled = false
-                    houseCards.forEach(card => card.rotation.targetRotation = 0)
+                    houseCards.forEach(card => card.show())
                     if(cardSum(houseCards) == 21 && cardSum(playerCards) == 21){
                         splachText = "Push"
                     }else{
                         while(cardSum(houseCards) < 17){
+                            console.log("before" + cardSum(houseCards))
                             pickUpCard(houseCards, cardPile, false)
+                            console.log("picked up card worth " + houseCards[houseCards.length-1].value)
+                            console.log("after " + cardSum(houseCards))
                         }
                         if (cardSum(houseCards) >= 17 && cardSum(houseCards) < 21 && cardSum(houseCards) == cardSum(playerCards)) {
                             cash = cash + bet 
@@ -496,7 +502,6 @@ canvas.addEventListener('click', function(event) {
                         }else if (cardSum(houseCards) < cardSum(playerCards)){
                             cash = cash + bet * 2
                             splachText = "You win!!!"
-                            houseCards.forEach(card => card.hidden = false)
                         }
                     }
                     clearTable()
@@ -522,7 +527,7 @@ canvas.addEventListener('click', function(event) {
                     if (cardSum(playerCards) === 21) {
                         cash += bet *2.5
                         splachText = "BLACKJACK!!!"
-                        houseCards.forEach(card => card.hidden = false)
+                        houseCards.forEach(card => card.show())
                         clearTable()
                     }
                 case "bet":
