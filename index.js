@@ -310,14 +310,21 @@ const drawChip = (chip, size) => {
     ctx.drawImage(chip.image, chip.position.x, chip.position.y, size, size)
 }
 
-const drawChips = (chips) => {
+const drawPlayersChips = () => {
     size = canvas.height*0.2
-    chips.forEach(chip => {
+    bets.forEach(chip => {
         chip.position.targetX = canvas.width*0.2
-        chip.position.targetY = (canvas.height*0.2/chips.length+1)*(chips.indexOf(chip) + 1) - canvas.height*0.2/chips.length+1 + canvas.height*0.5
+        chip.position.targetY = (canvas.height*0.2/bets.length+1)*(bets.indexOf(chip) + 1) - canvas.height*0.2/bets.length+1 + canvas.height*0.5
         drawChip(chip, size)
     })
     }
+
+const drawReturnChips = () => {
+    size = canvas.height*0.2
+    returnChips.forEach(chip => {
+        drawChip(chip, size)
+    })
+}
 
 const mousePos = (canvas, event) => {
     var boundingBox = canvas.getBoundingClientRect();
@@ -367,6 +374,49 @@ const addBet = (button) => {
         buttons[buttons.indexOf(buttons.find(button => button.name == "start"))].enabled = true
         buttons[buttons.indexOf(buttons.find(button => button.name == "Clear bets"))].enabled = true
     }
+}
+
+
+const yieldWinnings = (multiplyier) => {
+    console.log(multiplyier)
+    cash += bet * multiplyier
+    save()
+    switch (multiplyier) {
+        case 0:
+            bets.forEach(chip => {
+                chip.position.targetX = canvas.width*0.2
+                chip.position.targetY = -canvas.height*0.2
+                returnChips.push(chip)
+            })
+            break;
+        case 3:
+            
+            bets.forEach(chip => {
+                let chipPile = buttons[buttons.indexOf(buttons.find(button => button.name == "bet " + chip.value))]
+                returnChips.push(new Chip(chip.value, canvas.width*0.2+(Math.random()-0.5), 10 * Math.random(), chipPile.x, chipPile.y))
+            })
+        case 2:
+            console.log("case 2")
+            console.log("length before" + returnChips.length)
+            bets.forEach(chip => {
+                let chipPile = buttons[buttons.indexOf(buttons.find(button => button.name == "bet " + chip.value))]
+                returnChips.push(new Chip(chip.value, canvas.width*0.2+(Math.random()-0.5), 10 * Math.random(), chipPile.x, chipPile.y))
+            })  
+            console.log("length after" + returnChips.length)
+        case 1:
+            console.log("case 1")
+            console.log("lenght before" + returnChips.length)
+            bets.forEach(chip => {
+                let chipPile = buttons[buttons.indexOf(buttons.find(button => button.name == "bet " + chip.value))]
+                chip.position.x = canvas.width*0.2
+                chip.position.y = 0
+                chip.position.targetX = chipPile.x
+                chip.position.targetY = chipPile.y
+                returnChips.push(chip)
+            })
+            console.log("length after" + returnChips.length)
+    }
+    bets = []   
 }
 
 
@@ -454,6 +504,7 @@ canvas.addEventListener('click', function(event) {
                         buttons[buttons.indexOf(buttons.find(button => button.name == "stand"))].enabled = false
                         buttons[buttons.indexOf(buttons.find(button => button.name == "hit"))].enabled = false
                         splachText = "BUST"
+                        yieldWinnings(0)
                         clearTable()
                     } else if(cardSum(playerCards) === 21) {
                         buttons[buttons.indexOf(buttons.find(button => button.name == "stand"))].enabled = false
@@ -464,14 +515,14 @@ canvas.addEventListener('click', function(event) {
                         }
                         if (cardSum(houseCards) > 21) {
                             splachText = "House busts!!!"
-                            cash += bet * 2
+                            yieldWinnings(2)
                             clearTable()
                         } else if (cardSum(houseCards) == 21) {
                             splachText = "Push!!!!!!"
-                            cash += bet
+                            yieldWinnings(1)
                             clearTable()
                         }
-                        cash += bet * 2 
+                        yieldWinnings(2)
                         splachText = "you win!!!"
                         clearTable()
                     }
@@ -484,23 +535,23 @@ canvas.addEventListener('click', function(event) {
                         splachText = "Push"
                     }else{
                         while(cardSum(houseCards) < 17){
-                            console.log("before" + cardSum(houseCards))
                             pickUpCard(houseCards, cardPile, false)
-                            console.log("picked up card worth " + houseCards[houseCards.length-1].value)
-                            console.log("after " + cardSum(houseCards))
                         }
                         if (cardSum(houseCards) >= 17 && cardSum(houseCards) < 21 && cardSum(houseCards) == cardSum(playerCards)) {
-                            cash = cash + bet 
+                            yieldWinnings(1)
                             splachText = "Push"
+                            yieldWinnings(1)
                         }else if(cardSum(houseCards) > 21){
-                            cash = cash + bet *2
+                            yieldWinnings(2)
                             splachText = "House busts!!!"
                         }else if(cardSum(houseCards) == 21){
                             splachText = "House wins"
+                            yieldWinnings(0)
                         }else if (cardSum(houseCards) > cardSum(playerCards)){
                             splachText = "House wins"
+                            yieldWinnings(0)
                         }else if (cardSum(houseCards) < cardSum(playerCards)){
-                            cash = cash + bet * 2
+                            yieldWinnings(2)
                             splachText = "You win!!!"
                         }
                     }
@@ -525,7 +576,7 @@ canvas.addEventListener('click', function(event) {
                     pickUpCard(houseCards, cardPile, true)
                     pickUpCard(houseCards, cardPile, false)
                     if (cardSum(playerCards) === 21) {
-                        cash += bet *2.5
+                        yieldWinnings(3)
                         splachText = "BLACKJACK!!!"
                         houseCards.forEach(card => card.show())
                         clearTable()
@@ -581,6 +632,7 @@ function restart(){
     houseCards = []
     playerCards = []
     bets = []
+    returnChips = []
     buttons = []
     buttons.push(new Button("Restart", 50, canvas.width/2, canvas.height*0.7, false))
     buttons.push(new Button("hit",  50, canvas.width*0.3, canvas.height*0.5,  false, ))
@@ -664,6 +716,8 @@ restockCards()
 let playing = false 
 let splachText = ""
 
+let returnChips = []
+
 function draw() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
@@ -690,7 +744,8 @@ function draw() {
         const splachTextLength = ctx.measureText(splachText)
         ctx.textAlign = "center"
         drawtext(splachText, canvas.width/2, canvas.height/2, "red", 100)
-        drawChips(bets)
+        drawPlayersChips()
+        drawReturnChips()
         requestAnimationFrame(draw);
     }
 };
