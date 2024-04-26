@@ -392,14 +392,18 @@ const yieldWinnings = (multiplyier) => {
             
             bets.forEach(chip => {
                 let chipPile = buttons[buttons.indexOf(buttons.find(button => button.name == "bet " + chip.value))]
+                setTimeout(() => {
                 returnChips.push(new Chip(chip.value, canvas.width*0.2+(Math.random()-0.5), 10 * Math.random(), chipPile.x, chipPile.y))
+                }, Math.random()*1000)
             })
         case 2:
             console.log("case 2")
             console.log("length before" + returnChips.length)
             bets.forEach(chip => {
                 let chipPile = buttons[buttons.indexOf(buttons.find(button => button.name == "bet " + chip.value))]
-                returnChips.push(new Chip(chip.value, canvas.width*0.2+(Math.random()-0.5), 10 * Math.random(), chipPile.x, chipPile.y))
+                setTimeout(() => {
+                returnChips.push(new Chip(chip.value, canvas.width*0.2+ canvas.width *0.5 * (Math.random()-0.5), canvas.height * 0.2 * Math.random(), chipPile.x, chipPile.y))
+                }, Math.random()*1000)
             })  
             console.log("length after" + returnChips.length)
         case 1:
@@ -407,8 +411,6 @@ const yieldWinnings = (multiplyier) => {
             console.log("lenght before" + returnChips.length)
             bets.forEach(chip => {
                 let chipPile = buttons[buttons.indexOf(buttons.find(button => button.name == "bet " + chip.value))]
-                chip.position.x = canvas.width*0.2
-                chip.position.y = 0
                 chip.position.targetX = chipPile.x
                 chip.position.targetY = chipPile.y
                 returnChips.push(chip)
@@ -447,11 +449,11 @@ document.addEventListener("keydown", function(event){
            
             let betButtons = []
             for(i = 0; i < buttons.length; i++){
-                if(buttons[i].name.includes("bet") && !buttons[i].name.includes("all") && !buttons[i].name.includes("Clear")) {
+                if(buttons[i].name.includes("bet") && !buttons[i].name.includes("all") && !buttons[i].name.includes("Clear") && buttons[i].enabled) {
                     betButtons.push(buttons[i])
                 }
             } console.log(betButtons)
-            if(parseInt(event.key) != NaN && parseInt(event.key) < betButtons.length){
+            if(parseInt(event.key) != NaN && parseInt(event.key) < betButtons.length + 1){
                 addBet(betButtons[parseInt(event.key) - 1])
             }
 
@@ -501,6 +503,7 @@ canvas.addEventListener('click', function(event) {
                     buttons[buttons.indexOf(buttons.find(button => button.name == "hit"))].enabled = false
                     houseCards.forEach(card => card.show())
                     if(cardSum(houseCards) == 21 && cardSum(playerCards) == 21){
+                        yieldWinnings(1)
                         splachText = "Push"
                     }else{
                         while(cardSum(houseCards) < 17){
@@ -509,7 +512,6 @@ canvas.addEventListener('click', function(event) {
                         if (cardSum(houseCards) >= 17 && cardSum(houseCards) < 21 && cardSum(houseCards) == cardSum(playerCards)) {
                             yieldWinnings(1)
                             splachText = "Push"
-                            yieldWinnings(1)
                         }else if(cardSum(houseCards) > 21){
                             yieldWinnings(2)
                             splachText = "House busts!!!"
