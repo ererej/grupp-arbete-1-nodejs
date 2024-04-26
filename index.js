@@ -1,5 +1,4 @@
 let BGM = new Audio('bgm.mp3')
-
 BGM.loop = true;
 
 
