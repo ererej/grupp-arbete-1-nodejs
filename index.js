@@ -1,5 +1,4 @@
 let BGM = new Audio('bgm.mp3')
-
 BGM.loop = true;
 
 
@@ -423,46 +422,6 @@ const yieldWinnings = (multiplyier) => {
 document.addEventListener("keydown", function(event){
     let button = undefined
     switch (event.key){
-        case "1":
-            button = buttons[buttons.indexOf(buttons.find(button => button.name == "bet 10"))]
-            if (!button.enabled) break;
-            addBet(button)
-            break;
-        case "2":
-            button = buttons[buttons.indexOf(buttons.find(button => button.name == "bet 50"))]
-            if (!button.enabled) break;
-            addBet(button)
-            break;
-        case "3":
-            button = buttons[buttons.indexOf(buttons.find(button => button.name == "bet 250"))]
-            if (!button.enabled) break;
-            addBet(button)
-            break;
-        case "4":
-            button = buttons[buttons.indexOf(buttons.find(button => button.name == "bet 1000"))]
-            if (!button.enabled) break;
-            addBet(button)
-            break;
-        case "5":
-            button = buttons[buttons.indexOf(buttons.find(button => button.name == "bet 2500"))]
-            if (!button.enabled) break;
-            addBet(button)
-            break;
-        case "6":
-            button = buttons[buttons.indexOf(buttons.find(button => button.name == "bet 5000"))]
-            if (!button.enabled) break;
-            addBet(button)
-            break;
-        case "7":
-            button = buttons[buttons.indexOf(buttons.find(button => button.name == "bet 10000"))]
-            if (!button.enabled) break;
-            addBet(button)
-            break;
-        case "8":
-            button = buttons[buttons.indexOf(buttons.find(button => button.name == "bet 50000"))]
-            if (!button.enabled) break;
-            addBet(button)
-            break;
         case "Backspace":
             button = buttons[buttons.indexOf(buttons.find(button => button.name == "Clear bets"))]
             if (!button.enabled) break;
@@ -485,6 +444,16 @@ document.addEventListener("keydown", function(event){
                 splachText = ""
             break;
         default:
+           
+            let betButtons = []
+            for(i = 0; i < buttons.length; i++){
+                if(buttons[i].name.includes("bet") && !buttons[i].name.includes("all") && !buttons[i].name.includes("Clear")) {
+                    betButtons.push(buttons[i])
+                }
+            } console.log(betButtons)
+            if(parseInt(event.key) != NaN && parseInt(event.key) < betButtons.length){
+                addBet(betButtons[parseInt(event.key) - 1])
+            }
 
             
     }
