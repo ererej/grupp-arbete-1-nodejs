@@ -184,7 +184,7 @@ let buttons = []
 //draws all the buttons in the buttons array
 const drawbuttons = () => {
     buttons.forEach(button => {
-        if (button.name.split(" ")[0].toLowerCase() == "bet") { //om det är en betting knapp:
+        if (button.name.split(" ")[0].toLowerCase() == "bet" && !button.name.includes("all")) { //om det är en betting knapp:
             if (parseInt(button.name.split(" ")[1]) + bet > cash) {
                 button.enabled = false
             }
@@ -367,11 +367,21 @@ const clearTable = () => {
 }
 
 const addBet = (button) => {
-    if (cash >= parseInt(button.name.split(" ")[1]) + bet) {
-        bet += parseInt(button.name.split(" ")[1])
-        bets.push(new Chip(parseInt(button.name.split(" ")[1]), button.x, button.y, 100, 100))
-        buttons[buttons.indexOf(buttons.find(button => button.name == "start"))].enabled = true
-        buttons[buttons.indexOf(buttons.find(button => button.name == "Clear bets"))].enabled = true
+    if (button.name.split(" ")[1] == "all") {
+        
+        for (let i = 0; i < Math.floor((cash-bet)/10); i++) {
+            bets.push(new Chip(10, button.x, button.y, 100, 100))
+            buttons[buttons.indexOf(buttons.find(button => button.name == "start"))].enabled = true
+            buttons[buttons.indexOf(buttons.find(button => button.name == "Clear bets"))].enabled = true
+        }
+        bet += Math.floor((cash-bet)/10)*10
+    } else {
+        if (cash >= parseInt(button.name.split(" ")[1]) + bet) {
+            bet += parseInt(button.name.split(" ")[1])
+            bets.push(new Chip(parseInt(button.name.split(" ")[1]), button.x, button.y, 100, 100))
+            buttons[buttons.indexOf(buttons.find(button => button.name == "start"))].enabled = true
+            buttons[buttons.indexOf(buttons.find(button => button.name == "Clear bets"))].enabled = true
+        }
     }
 }
 
@@ -449,11 +459,14 @@ document.addEventListener("keydown", function(event){
            
             let betButtons = []
             for(i = 0; i < buttons.length; i++){
-                if(buttons[i].name.includes("bet") && !buttons[i].name.includes("all") && !buttons[i].name.includes("Clear") && buttons[i].enabled) {
+                if(buttons[i].name.includes("bet") && !buttons[i].name.includes("Clear") && buttons[i].enabled) {
                     betButtons.push(buttons[i])
                 }
             } console.log(betButtons)
-            if(parseInt(event.key) != NaN && parseInt(event.key) < betButtons.length + 1){
+            if(parseInt(event.key) != NaN && parseInt(event.key) < betButtons.length){
+                if (event.key == 0) {
+                    addBet(betButtons[betButtons.length-1])
+                }
                 addBet(betButtons[parseInt(event.key) - 1])
             }
 
@@ -609,7 +622,7 @@ function restart(){
     buttons.push(new Button("hit",  50, canvas.width*0.3, canvas.height*0.5,  false, ))
     buttons.push(new Button("stand", 50, canvas.width*0.7, canvas.height*0.5,  false, ))
     buttons.push(new Button("start", 50, canvas.width/2, canvas.height/2, false, ))
-    buttons.push(new Button("Clear bets", 40, canvas.width*0.2, canvas.height*0.85, false))
+    buttons.push(new Button("Clear bets", 40, canvas.width*0.45, canvas.height*0.85, false))
     if(music === false){
         buttons.push(new Button("Music", 40, canvas.width/1.1, canvas.height/10, false))
         buttons.push(new Button("Offmusic", 40, canvas.width/1.1, canvas.height/10,true))
@@ -627,6 +640,7 @@ function restart(){
     buttons.push(new Button("bet 5000", 40, canvas.width*0.1, canvas.height*0.44,  true, "./chips/5000_casino_chip.png"))
     buttons.push(new Button("bet 10000", 40, canvas.width*0.1, canvas.height*0.62,  true, "./chips/10000_casino_chip.png"))
     buttons.push(new Button("bet 50000", 40, canvas.width*0.1, canvas.height*0.8,  true, "./chips/50000_casino_chip.png"))
+    buttons.push(new Button("bet all", 40, canvas.width*0.45, canvas.height*0.95,  true))
     
     if(cardPile.length  < 52){
         restockCards()
