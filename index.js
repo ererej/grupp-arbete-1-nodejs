@@ -566,12 +566,7 @@ canvas.addEventListener('click', function(event) {
                         clearTable()
                     }
                 case "bet":
-                    if (button.name.split(" ")[1] == "all") {
-                        bet = cash
-                        buttons[buttons.indexOf(buttons.find(button => button.name == "start"))].enabled = true
-                    } else {
                         addBet(button)
-                    } 
                     break;
                 case "clear": //took to long to remember that the switch cased uses the first word of the name and to lower case
                     button.enabled = false
