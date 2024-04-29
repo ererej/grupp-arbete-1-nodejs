@@ -297,9 +297,13 @@ const cardSum = (hand) => {
 class Chip {
     constructor(value, spawnX, spawnY, x, y) {
         this.value = value
-        this.image = new Image(5000, 5000)
-        this.image.src = "./chips/" + value + "_casino_chip.png"
-        document.body.appendChild(this.image)
+        this.image = document.getElementById("./chips/" + this.value + "_casino_chip.png")
+        if (this.image === null) {
+            this.image = new Image(500, 726)
+            this.image.src = "./chips/" + this.value + "_casino_chip.png"
+            const image = document.body.appendChild(this.image)
+            image.id = this.image.src
+        }
         this.position = new Position(spawnX, spawnY, x, y, 25)
     }
 }   
