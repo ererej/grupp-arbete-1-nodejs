@@ -707,6 +707,7 @@ function draw() {
     canvas.height = window.innerHeight;
     ctx.drawImage(background, 0, 0, background.width, background.height, 0, 0, canvas.width, canvas.height);
     if (cash + bet < 10) {
+        buttons[buttons.indexOf(buttons.find(button => button.name == "bet all"))].enabled = false
         buttons[buttons.indexOf(buttons.find(button => button.name == "Restart"))].enabled = true
         drawbuttons()
         splachText = "You are too broke for this casino!"
