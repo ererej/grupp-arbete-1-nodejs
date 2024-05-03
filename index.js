@@ -198,9 +198,11 @@ const drawbuttons = () => {
             }
             const text = button.name.split(" ")[1]
             const length = ctx.measureText(text)//längden av texten
-            ctx.fillText(text, button.x + canvas.height*0.23/2 - length.width/2, button.y + canvas.height*0.23/2 + 30/2/* idk varför det inte ska vara 40/2*/)
+            ctx.textBaseline = "middle"
+            ctx.fillText(text, button.x + canvas.height*0.23/2 - length.width/2, button.y + canvas.height*0.23/2 /*+ 30/2 idk varför det inte ska vara 40/2*/)
         } else { //alla andra knappar
             if (!button.enabled) return
+            ctx.textBaseline = "bottom"
             ctx.font = `${button.fontsize}px serif`
             ctx.beginPath()
             ctx.roundRect(button.x, button.y, button.width, button.height, button.height/2)
@@ -370,6 +372,95 @@ const clearTable = () => {
     }, 1500)
 }
 
+const hit = () => {
+    buttons[buttons.indexOf(buttons.find(button => button.name == "hit"))].disable = false
+    pickUpCard(playerCards, cardPile)
+    if(cardSum(playerCards) > 21){
+        houseCards.forEach(card => card.rotation.targetRotation = 0)
+        buttons[buttons.indexOf(buttons.find(button => button.name == "stand"))].enabled = false
+        buttons[buttons.indexOf(buttons.find(button => button.name == "hit"))].enabled = false
+        splachText = "BUST"
+        yieldWinnings(0)
+        clearTable()
+    } else if(cardSum(playerCards) === 21) {
+        buttons[buttons.indexOf(buttons.find(button => button.name == "stand"))].enabled = false
+        buttons[buttons.indexOf(buttons.find(button => button.name == "hit"))].enabled = false
+        houseCards.forEach(card => card.show())
+        while (cardSum(houseCards) < 17) {
+            pickUpCard(houseCards, cardPile, false)
+        }
+        if (cardSum(houseCards) > 21) {
+            splachText = "House busts!!!"
+            yieldWinnings(2)
+            clearTable()
+        } else if (cardSum(houseCards) == 21) {
+            splachText = "Push!!!!!!"
+            yieldWinnings(1)
+            clearTable()
+        }
+        yieldWinnings(2)
+        splachText = "you win!!!"
+        clearTable()
+    }
+}
+
+const stand = () => {
+    buttons[buttons.indexOf(buttons.find(button => button.name == "stand"))].enabled = false
+    buttons[buttons.indexOf(buttons.find(button => button.name == "hit"))].enabled = false
+    houseCards.forEach(card => card.show())
+    if(cardSum(houseCards) == 21 && cardSum(playerCards) == 21){
+        yieldWinnings(1)
+        splachText = "Push"
+    }else{
+        while(cardSum(houseCards) < 17){
+            pickUpCard(houseCards, cardPile, false)
+        }
+        if (cardSum(houseCards) >= 17 && cardSum(houseCards) < 21 && cardSum(houseCards) == cardSum(playerCards)) {
+            yieldWinnings(1)
+            splachText = "Push"
+        }else if(cardSum(houseCards) > 21){
+            yieldWinnings(2)
+            splachText = "House busts!!!"
+        }else if(cardSum(houseCards) == 21){
+            splachText = "House wins"
+            yieldWinnings(0)
+        }else if (cardSum(houseCards) > cardSum(playerCards)){
+            splachText = "House wins"
+            yieldWinnings(0)
+        }else if (cardSum(houseCards) < cardSum(playerCards)){
+            yieldWinnings(2)
+            splachText = "You win!!!"
+        }
+    }
+    clearTable()
+
+}
+
+const start = () => {
+    for (let i =0; i < buttons.length; i++) {
+        if (buttons[i].name.split(" ")[0] == "bet") {
+            buttons[i].enabled = false
+        }
+    }
+    buttons[buttons.indexOf(buttons.find(button => button.name == "stand"))].enabled = true
+    buttons[buttons.indexOf(buttons.find(button => button.name == "hit"))].enabled = true
+    buttons[buttons.indexOf(buttons.find(button => button.name == "Clear bets"))].enabled = false
+    buttons[buttons.indexOf(buttons.find(button => button.name == "start"))].enabled = false
+    cash -= bet
+    save()
+    playing = true
+    pickUpCard(playerCards, cardPile, false)
+    pickUpCard(playerCards, cardPile, false)
+    pickUpCard(houseCards, cardPile, true)
+    pickUpCard(houseCards, cardPile, false)
+    if (cardSum(playerCards) === 21) {
+        yieldWinnings(3)
+        splachText = "BLACKJACK!!!"
+        houseCards.forEach(card => card.show())
+        clearTable()
+    }
+}
+
 const addBet = (button) => {
     if (button.name.split(" ")[1] == "all") {
         
@@ -438,6 +529,21 @@ const yieldWinnings = (multiplyier) => {
 document.addEventListener("keydown", function(event){
     let button = undefined
     switch (event.key){
+        case "Enter":
+            if (buttons[buttons.indexOf(buttons.find(button => button.name == "stand"))].enabled) {
+                stand()
+            }
+            break;
+        case " ":
+            if (buttons[buttons.indexOf(buttons.find(button => button.name == "hit"))].enabled) {
+                hit()
+            }
+            break;
+        case "s":
+            if (buttons[buttons.indexOf(buttons.find(button => button.name == "start"))].enabled) {
+                start()
+            }
+            break;
         case "Backspace":
             button = buttons[buttons.indexOf(buttons.find(button => button.name == "Clear bets"))]
             if (!button.enabled) break;
@@ -485,90 +591,14 @@ canvas.addEventListener('click', function(event) {
         if (tuching(mousePosition, button) && button.enabled) {
             switch (button.name.split(" ")[0].toLowerCase()) {
                 case "hit":
-                    buttons[buttons.indexOf(buttons.find(button => button.name == "hit"))].disable = false
-                    pickUpCard(playerCards, cardPile)
-                    if(cardSum(playerCards) > 21){
-                        houseCards.forEach(card => card.rotation.targetRotation = 0)
-                        buttons[buttons.indexOf(buttons.find(button => button.name == "stand"))].enabled = false
-                        buttons[buttons.indexOf(buttons.find(button => button.name == "hit"))].enabled = false
-                        splachText = "BUST"
-                        yieldWinnings(0)
-                        clearTable()
-                    } else if(cardSum(playerCards) === 21) {
-                        buttons[buttons.indexOf(buttons.find(button => button.name == "stand"))].enabled = false
-                        buttons[buttons.indexOf(buttons.find(button => button.name == "hit"))].enabled = false
-                        houseCards.forEach(card => card.show())
-                        while (cardSum(houseCards) < 17) {
-                            pickUpCard(houseCards, cardPile, false)
-                        }
-                        if (cardSum(houseCards) > 21) {
-                            splachText = "House busts!!!"
-                            yieldWinnings(2)
-                            clearTable()
-                        } else if (cardSum(houseCards) == 21) {
-                            splachText = "Push!!!!!!"
-                            yieldWinnings(1)
-                            clearTable()
-                        }
-                        yieldWinnings(2)
-                        splachText = "you win!!!"
-                        clearTable()
-                    }
+                    hit()
                     break;
                 case "stand": // Vi måte gör en start funktion som callas efter varje påstående eller va fan
-                    buttons[buttons.indexOf(buttons.find(button => button.name == "stand"))].enabled = false
-                    buttons[buttons.indexOf(buttons.find(button => button.name == "hit"))].enabled = false
-                    houseCards.forEach(card => card.show())
-                    if(cardSum(houseCards) == 21 && cardSum(playerCards) == 21){
-                        yieldWinnings(1)
-                        splachText = "Push"
-                    }else{
-                        while(cardSum(houseCards) < 17){
-                            pickUpCard(houseCards, cardPile, false)
-                        }
-                        if (cardSum(houseCards) >= 17 && cardSum(houseCards) < 21 && cardSum(houseCards) == cardSum(playerCards)) {
-                            yieldWinnings(1)
-                            splachText = "Push"
-                        }else if(cardSum(houseCards) > 21){
-                            yieldWinnings(2)
-                            splachText = "House busts!!!"
-                        }else if(cardSum(houseCards) == 21){
-                            splachText = "House wins"
-                            yieldWinnings(0)
-                        }else if (cardSum(houseCards) > cardSum(playerCards)){
-                            splachText = "House wins"
-                            yieldWinnings(0)
-                        }else if (cardSum(houseCards) < cardSum(playerCards)){
-                            yieldWinnings(2)
-                            splachText = "You win!!!"
-                        }
-                    }
-                    clearTable()
-
+                    stand()
                     break;
                 case "start":
-                    for (let i =0; i < buttons.length; i++) {
-                        if (buttons[i].name.split(" ")[0] == "bet") {
-                            buttons[i].enabled = false
-                        }
-                    }
-                    buttons[buttons.indexOf(buttons.find(button => button.name == "stand"))].enabled = true
-                    buttons[buttons.indexOf(buttons.find(button => button.name == "hit"))].enabled = true
-                    buttons[buttons.indexOf(buttons.find(button => button.name == "Clear bets"))].enabled = false
-                    button.enabled = false
-                    cash -= bet
-                    save()
-                    playing = true
-                    pickUpCard(playerCards, cardPile, false)
-                    pickUpCard(playerCards, cardPile, false)
-                    pickUpCard(houseCards, cardPile, true)
-                    pickUpCard(houseCards, cardPile, false)
-                    if (cardSum(playerCards) === 21) {
-                        yieldWinnings(3)
-                        splachText = "BLACKJACK!!!"
-                        houseCards.forEach(card => card.show())
-                        clearTable()
-                    }
+                    start()
+                    break;
                 case "bet":
                         addBet(button)
                     break;
@@ -631,17 +661,17 @@ function restart(){
     }
     const clearButton = buttons[buttons.indexOf(buttons.find(button => button.name == "Clear bets"))]
     buttons[buttons.indexOf(buttons.find(button => button.name == "Clear bets"))].y = canvas.height*0.90 - clearButton.height
-    buttons.push(new Button("bet 10", 50, canvas.width*0.005, canvas.height*0.26,  true, "./chips/10_casino_chip.png"))
-    buttons.push(new Button("bet 50", 40, canvas.width*0.005, canvas.height*0.44,  true, "./chips/50_casino_chip.png"))
-    buttons.push(new Button("bet 250", 40, canvas.width*0.005, canvas.height*0.62,  true, "./chips/250_casino_chip.png"))
-    buttons.push(new Button("bet 1000", 40, canvas.width*0.005, canvas.height*0.8,  true, "./chips/1000_casino_chip.png"))
-    buttons.push(new Button("bet 2500", 40, canvas.width*0.1, canvas.height*0.26,  true, "./chips/2500_casino_chip.png"))
-    buttons.push(new Button("bet 5000", 40, canvas.width*0.1, canvas.height*0.44,  true, "./chips/5000_casino_chip.png"))
-    buttons.push(new Button("bet 10000", 40, canvas.width*0.1, canvas.height*0.62,  true, "./chips/10000_casino_chip.png"))
-    buttons.push(new Button("bet 50000", 40, canvas.width*0.1, canvas.height*0.8,  true, "./chips/50000_casino_chip.png"))
-    buttons.push(new Button("bet all", 40, canvas.width*0.45, canvas.height*0.95,  true))
+    buttons.push(new Button("bet 10", canvas.height*0.07, canvas.width*0.005, canvas.height*0.26,  true, "./chips/10_casino_chip.png"))
+    buttons.push(new Button("bet 50", canvas.height*0.055, canvas.width*0.005, canvas.height*0.44,  true, "./chips/50_casino_chip.png"))
+    buttons.push(new Button("bet 250", canvas.height*0.055, canvas.width*0.005, canvas.height*0.62,  true, "./chips/250_casino_chip.png"))
+    buttons.push(new Button("bet 1000", canvas.height*0.055, canvas.width*0.005, canvas.height*0.8,  true, "./chips/1000_casino_chip.png"))
+    buttons.push(new Button("bet 2500", canvas.height*0.055, canvas.width*0.1, canvas.height*0.26,  true, "./chips/2500_casino_chip.png"))
+    buttons.push(new Button("bet 5000", canvas.height*0.055, canvas.width*0.1, canvas.height*0.44,  true, "./chips/5000_casino_chip.png"))
+    buttons.push(new Button("bet 10000", canvas.height*0.055, canvas.width*0.1, canvas.height*0.62,  true, "./chips/10000_casino_chip.png"))
+    buttons.push(new Button("bet 50000", canvas.height*0.055, canvas.width*0.1, canvas.height*0.8,  true, "./chips/50000_casino_chip.png"))
+    buttons.push(new Button("bet all", canvas.height*0.055, canvas.width*0.45, canvas.height*0.95,  true))
     
-    if(cardPile.length  < 52){
+    if(cardPile.length  < 26){//refrestock cards if there are less then 26(half a deck) cards left
         restockCards()
         discardPile = []
         console.log("restocked")
