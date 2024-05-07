@@ -608,6 +608,21 @@ document.addEventListener("keydown", function(event){
             
     }
 });
+
+
+let showOptions = false
+function drawOptions(){
+    if (showOptions){
+        ctx.beginPath();
+        ctx.roundRect(canvas.width/8, canvas.height/12, canvas.width*0.70, canvas.height*0.8, [100]);
+        ctx.fillStyle = "#99BC85"
+        ctx.fill()
+        ctx.strokeStyle = "white"
+        ctx.stroke();
+    }
+    
+}
+
 canvas.addEventListener('click', function(event) {
     var mousePosition = mousePos(canvas, event);
     let i = 0;
@@ -673,11 +688,11 @@ function restart(){
     buttons.push(new Button("start", 50, canvas.width/2, canvas.height/2, false, ))
     buttons.push(new Button("Clear bets", 40, canvas.width*0.45, canvas.height*0.85, false))
     if(music === false){
-        buttons.push(new Button("Music", 40, canvas.width/1.1, canvas.height/10, false))
-        buttons.push(new Button("Offmusic", 40, canvas.width/1.1, canvas.height/10,false))
+        buttons.push(new Button("Music", 40, canvas.width/1.5, canvas.height/1.2, false))
+        buttons.push(new Button("Offmusic", 40, canvas.width/1.5, canvas.height/1.2,true))
     }else {
-        buttons.push(new Button("Music", 40, canvas.width/1.1, canvas.height/10,false))
-        buttons.push(new Button("Offmusic", 40, canvas.width/1.1, canvas.height/10,false))
+        buttons.push(new Button("Music", 40, canvas.width/1.5, canvas.height/1.5,true))
+        buttons.push(new Button("Offmusic", 40, canvas.width/1.5, canvas.height/1.5,false))
     }
     const clearButton = buttons[buttons.indexOf(buttons.find(button => button.name == "Clear bets"))]
     buttons[buttons.indexOf(buttons.find(button => button.name == "Clear bets"))].y = canvas.height*0.90 - clearButton.height
@@ -752,16 +767,6 @@ let splachText = ""
 
 let returnChips = []
 
-let showOptions = false
-function drawOptions(){
-    if (showOptions){
-        ctx.beginPath();
-        ctx.fillRect(canvas.width/3, canvas.height/12, canvas.width*0.30, canvas.height*0.8);
-        ctx.strokeStyle = "white"
-        ctx.stroke();
-    }
-    
-}
 
 function draw() {
     canvas.width = window.innerWidth;
@@ -770,6 +775,7 @@ function draw() {
     if (cash + bet < 10) {
         buttons[buttons.indexOf(buttons.find(button => button.name == "bet all"))].enabled = false
         buttons[buttons.indexOf(buttons.find(button => button.name == "Restart"))].enabled = true
+        drawOptions()
         drawbuttons()
         splachText = "You are too broke for this casino!"
         ctx.textAlign = "center"
@@ -783,6 +789,7 @@ function draw() {
         drawDiscardPile()
         cardSum(playerCards)
         drawReturnChips()
+        drawOptions()   
         drawbuttons()
         drawtext(`Cash: ${cash}`, 10, 50, "lightgreen", 200)
         drawtext(`Bet: ${bet}`, 10, 100, "lightgreen", 200)
@@ -793,7 +800,6 @@ function draw() {
         ctx.textAlign = "center"
         drawtext(splachText, canvas.width/2, canvas.height/2, "red", 1000)
         drawPlayersChips()
-        drawOptions()
         requestAnimationFrame(draw);
     }
 };
