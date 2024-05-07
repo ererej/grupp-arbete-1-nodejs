@@ -328,6 +328,9 @@ const drawReturnChips = () => {
     size = canvas.height*0.2
     returnChips.forEach(chip => {
         drawChip(chip, size)
+        if (chip.position.x == chip.position.targetX && chip.position.y == chip.position.targetY) {
+            returnChips.splice(returnChips.indexOf(chip), 1)
+        }
     })
 }
 
@@ -493,6 +496,29 @@ const addBet = (button) => {
     }
 }
 
+const clearBets = (pressedButton) => {
+    pressedButton.enabled = false
+    buttons[buttons.indexOf(buttons.find(button => button.name == "start"))].enabled = false;
+    buttons.forEach(button => {
+        if (button.name.split(" ")[0] == "bet" && !button.name.includes("all") && button.enabled) {
+            const buttonName = parseInt(button.name.split(" ")[1])
+            const buttonx = button.x
+            const buttony = button.y
+            bets.forEach(chip => {
+                if (chip.value == buttonName) {
+                    returnChips.push(new Chip(chip.value, chip.position.x, chip.position.y, buttonx, buttony))
+                }
+            })
+        };
+    })
+    buttons.forEach(button => {
+        if (button.name.includes("bet") && cash >= parseInt(button.name.split(" ")[1])) {
+            button.enabled = true;
+        }
+    });
+    bets = []
+    bet = 0
+}
 
 const yieldWinnings = (multiplyier) => {
     console.log(multiplyier)
@@ -515,25 +541,19 @@ const yieldWinnings = (multiplyier) => {
                 }, Math.random()*1000)
             })
         case 2:
-            console.log("case 2")
-            console.log("length before" + returnChips.length)
             bets.forEach(chip => {
                 let chipPile = buttons[buttons.indexOf(buttons.find(button => button.name == "bet " + chip.value))]
                 setTimeout(() => {
                 returnChips.push(new Chip(chip.value, canvas.width*0.2+ canvas.width *0.5 * (Math.random()-0.5), canvas.height * 0.2 * Math.random(), chipPile.x, chipPile.y))
                 }, Math.random()*1000)
             })  
-            console.log("length after" + returnChips.length)
         case 1:
-            console.log("case 1")
-            console.log("lenght before" + returnChips.length)
             bets.forEach(chip => {
                 let chipPile = buttons[buttons.indexOf(buttons.find(button => button.name == "bet " + chip.value))]
                 chip.position.targetX = chipPile.x
                 chip.position.targetY = chipPile.y
                 returnChips.push(chip)
             })
-            console.log("length after" + returnChips.length)
     }
     bets = []   
 }
@@ -560,15 +580,7 @@ document.addEventListener("keydown", function(event){
         case "Backspace":
             button = buttons[buttons.indexOf(buttons.find(button => button.name == "Clear bets"))]
             if (!button.enabled) break;
-            button.enabled = false
-            buttons[buttons.indexOf(buttons.find(button => button.name == "start"))].enabled = false
-            buttons.forEach(button => {
-                if (button.name.split(" ")[0] == "bet") {
-                    button.enabled = true
-                }
-            });
-            bet = 0
-            bets = []
+            clearBets(button)
             break;
         case "r":
             button = buttons[buttons.indexOf(buttons.find(button => button.name == "Restart"))]
@@ -613,18 +625,11 @@ canvas.addEventListener('click', function(event) {
                     start()
                     break;
                 case "bet":
-                        addBet(button)
+                    addBet(button)
                     break;
                 case "clear": //took to long to remember that the switch cased uses the first word of the name and to lower case
-                    button.enabled = false
-                    buttons[buttons.indexOf(buttons.find(button => button.name == "start"))].enabled = false
-                    bet = 0
-                    bets = []
-                    buttons.forEach(button => {
-                        if (button.name.split(" ")[0] == "bet") {
-                            button.enabled = true
-                        }
-                    });
+                    buttons[buttons.indexOf(buttons.find(button => button.name == "start"))].enabled = false;
+                    clearBets(button)
                     break;
                 case "restart":
                     cash = 1000
@@ -660,7 +665,6 @@ function restart(){
     houseCards = []
     playerCards = []
     bets = []
-    returnChips = []
     buttons = []
     buttons.push(new Button("Options", 40, canvas.width/1.1, canvas.height/10, true))
     buttons.push(new Button("Restart", 60, canvas.width/2, canvas.height*0.7, false))
@@ -778,6 +782,7 @@ function draw() {
         drawHouseCards()
         drawDiscardPile()
         cardSum(playerCards)
+        drawReturnChips()
         drawbuttons()
         drawtext(`Cash: ${cash}`, 10, 50, "lightgreen", 200)
         drawtext(`Bet: ${bet}`, 10, 100, "lightgreen", 200)
@@ -788,7 +793,6 @@ function draw() {
         ctx.textAlign = "center"
         drawtext(splachText, canvas.width/2, canvas.height/2, "red", 1000)
         drawPlayersChips()
-        drawReturnChips()
         drawOptions()
         requestAnimationFrame(draw);
     }
