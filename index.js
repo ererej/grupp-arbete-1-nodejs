@@ -268,7 +268,7 @@ const drawDiscardPile = () => {
 
 //draws the inputed text at the x and y position with the inputed color and size
 const drawtext = (text, posX, posY, color, size) => {
-    ctx.font = `${size}px serif`
+    ctx.font = `${size}% serif`
     ctx.fillStyle = color
     ctx.fillText(text, posX, posY)
 }
@@ -297,7 +297,7 @@ const cardSum = (hand) => {
 
 
 class Chip {
-    constructor(value, spawnX, spawnY, x, y) {
+    constructor(value, spawnX, spawnY, targetx, targety) {
         this.value = value
         this.image = document.getElementById("./chips/" + this.value + "_casino_chip.png")
         if (this.image === null) {
@@ -306,7 +306,7 @@ class Chip {
             const image = document.body.appendChild(this.image)
             image.id = this.image.src
         }
-        this.position = new Position(spawnX, spawnY, x, y, 25)
+        this.position = new Position(spawnX, spawnY, targetx, targety, 25)
     }
 }   
 
@@ -463,13 +463,26 @@ const start = () => {
 
 const addBet = (button) => {
     if (button.name.split(" ")[1] == "all") {
-        
-        for (let i = 0; i < Math.floor((cash-bet)/10); i++) {
+        let betButtons = []
+        for(i = 0; i < buttons.length; i++){
+            if(buttons[i].name.includes("bet") && !buttons[i].name.includes("Clear") && buttons[i].enabled && !buttons[i].name.includes("all")) {
+                betButtons.push(buttons[i])
+            }
+        }
+        for (let i = betButtons.length-1; i >= 0; i--) {
+            while (cash - bet >= parseInt(betButtons[i].name.split(" ")[1])) {
+                bet += parseInt(betButtons[i].name.split(" ")[1])
+                bets.push(new Chip(parseInt(betButtons[i].name.split(" ")[1]), betButtons[i].x, betButtons[i].y, 100, 100))
+            }
+        }
+        buttons[buttons.indexOf(buttons.find(button => button.name == "start"))].enabled = true
+        buttons[buttons.indexOf(buttons.find(button => button.name == "Clear bets"))].enabled = true
+        /*for (let i = 0; i < Math.floor((cash-bet)/10); i++) { //all in in 10s 
             bets.push(new Chip(10, button.x, button.y, 100, 100))
             buttons[buttons.indexOf(buttons.find(button => button.name == "start"))].enabled = true
             buttons[buttons.indexOf(buttons.find(button => button.name == "Clear bets"))].enabled = true
         }
-        bet += Math.floor((cash-bet)/10)*10
+        bet += Math.floor((cash-bet)/10)*10*/
     } else {
         if (cash >= parseInt(button.name.split(" ")[1]) + bet) {
             bet += parseInt(button.name.split(" ")[1])
@@ -572,7 +585,7 @@ document.addEventListener("keydown", function(event){
                 if(buttons[i].name.includes("bet") && !buttons[i].name.includes("Clear") && buttons[i].enabled) {
                     betButtons.push(buttons[i])
                 }
-            } console.log(betButtons)
+            }
             if(parseInt(event.key) != NaN && parseInt(event.key) < betButtons.length){
                 if (event.key == 0) {
                     addBet(betButtons[betButtons.length-1])
@@ -665,7 +678,7 @@ function restart(){
     returnChips = []
     buttons = []
     buttons.push(new Button("Options", 40, canvas.width/1.1, canvas.height/10, true))
-    buttons.push(new Button("Restart", 50, canvas.width/2, canvas.height*0.7, false))
+    buttons.push(new Button("Restart", 60, canvas.width/2, canvas.height*0.7, false))
     buttons.push(new Button("hit",  50, canvas.width*0.3, canvas.height*0.5,  false, ))
     buttons.push(new Button("stand", 50, canvas.width*0.7, canvas.height*0.5,  false, ))
     buttons.push(new Button("start", 50, canvas.width/2, canvas.height/2, false, ))
@@ -762,7 +775,8 @@ function draw() {
         drawbuttons()
         splachText = "You are too broke for this casino!"
         ctx.textAlign = "center"
-        drawtext(splachText, canvas.width/2, canvas.height/2, "red", 100)
+        drawtext(splachText, canvas.width/2, canvas.height/2, "red", 500)
+        drawOptions()
         requestAnimationFrame(draw);
     } else {
         ctx.drawImage(backsideOfCard, canvas.width*0.85, canvas.height*0.6, backsideOfCard.width/3, backsideOfCard.height/3)      
@@ -772,14 +786,14 @@ function draw() {
         cardSum(playerCards)
         drawOptions()   
         drawbuttons()
-        drawtext(`Cash: ${cash}`, 10, 50, "lightgreen", 30)
-        drawtext(`Bet: ${bet}`, 10, 100, "lightgreen", 30)
-        drawtext(`Highscore: ${highscore}`, 10, 150, "lightgreen", 30)
-        drawtext(`CardSum: ${cardSum(playerCards)}`, canvas.width*0.7, canvas.height*0.9, "lightgreen", 30 )
-        drawtext(`CardSum: ${cardSum(houseCards)}`, canvas.width*0.7, 150, "lightgreen", 30)
+        drawtext(`Cash: ${cash}`, 10, 50, "lightgreen", 200)
+        drawtext(`Bet: ${bet}`, 10, 100, "lightgreen", 200)
+        drawtext(`Highscore: ${highscore}`, 10, 150, "lightgreen", 200)
+        drawtext(`CardSum: ${cardSum(playerCards)}`, canvas.width*0.7, canvas.height*0.9, "lightgreen", 200 )
+        drawtext(`CardSum: ${cardSum(houseCards)}`, canvas.width*0.7, 150, "lightgreen", 200)
         const splachTextLength = ctx.measureText(splachText)
         ctx.textAlign = "center"
-        drawtext(splachText, canvas.width/2, canvas.height/2, "red", 100)
+        drawtext(splachText, canvas.width/2, canvas.height/2, "red", 1000)
         drawPlayersChips()
         drawReturnChips()
         requestAnimationFrame(draw);
