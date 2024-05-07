@@ -295,7 +295,7 @@ const cardSum = (hand) => {
     return sum;
 }
 
-
+const chipSize = canvas.height*0.2
 class Chip {
     constructor(value, spawnX, spawnY, targetx, targety) {
         this.value = value
@@ -310,27 +310,22 @@ class Chip {
     }
 }   
 
-const drawChip = (chip, size) => {
+const drawChip = (chip) => {
     chip.position.move()
-    ctx.drawImage(chip.image, chip.position.x, chip.position.y, size, size)
+    ctx.drawImage(chip.image, chip.position.x, chip.position.y, chipSize, chipSize)
 }
 
 const drawPlayersChips = () => {
-    size = canvas.height*0.2
     bets.forEach(chip => {
         chip.position.targetX = canvas.width*0.2
         chip.position.targetY = (canvas.height*0.2/bets.length+1)*(bets.indexOf(chip) + 1) - canvas.height*0.2/bets.length+1 + canvas.height*0.5
-        drawChip(chip, size)
+        drawChip(chip)
     })
     }
 
 const drawReturnChips = () => {
-    size = canvas.height*0.2
     returnChips.forEach(chip => {
-        drawChip(chip, size)
-        if (chip.position.x == chip.position.targetX && chip.position.y == chip.position.targetY) {
-            returnChips.splice(returnChips.indexOf(chip), 1)
-        }
+        drawChip(chip)
     })
 }
 
@@ -500,13 +495,12 @@ const clearBets = (pressedButton) => {
     pressedButton.enabled = false
     buttons[buttons.indexOf(buttons.find(button => button.name == "start"))].enabled = false;
     buttons.forEach(button => {
-        if (button.name.split(" ")[0] == "bet" && !button.name.includes("all") && button.enabled) {
+        if (button.name.split(" ")[0] == "bet" && !button.name.includes("all")) {
             const buttonName = parseInt(button.name.split(" ")[1])
-            const buttonx = button.x
-            const buttony = button.y
+
             bets.forEach(chip => {
                 if (chip.value == buttonName) {
-                    returnChips.push(new Chip(chip.value, chip.position.x, chip.position.y, buttonx, buttony))
+                    returnChips.push(new Chip(chip.value, chip.position.x, chip.position.y, button.x + button.width/2 - chipSize*1.7/4, button.y + button.height/2 - chipSize*1.7/4))
                 }
             })
         };
@@ -518,6 +512,9 @@ const clearBets = (pressedButton) => {
     });
     bets = []
     bet = 0
+    setTimeout(() => {
+        returnChips = []
+    }, 500);
 }
 
 const yieldWinnings = (multiplyier) => {
@@ -680,6 +677,7 @@ function restart(){
     houseCards = []
     playerCards = []
     bets = []
+    returnChips = []
     buttons = []
     buttons.push(new Button("Options", 40, canvas.width/1.1, canvas.height/10, true))
     buttons.push(new Button("Restart", 60, canvas.width/2, canvas.height*0.7, false))
