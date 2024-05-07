@@ -642,6 +642,8 @@ canvas.addEventListener('click', function(event) {
                     buttons[buttons.indexOf(buttons.find(button => button.name == "Music"))].enabled = true
                     buttons[buttons.indexOf(buttons.find(button => button.name == "Offmusic"))].enabled = false
                     break;
+                case "options":
+                    showOptions = !showOptions // HELT GALET ATT DETTA FUNKAR
                 }
             break;
         }
@@ -660,6 +662,7 @@ function restart(){
     bets = []
     returnChips = []
     buttons = []
+    buttons.push(new Button("Options", 40, canvas.width/1.1, canvas.height/10, true))
     buttons.push(new Button("Restart", 60, canvas.width/2, canvas.height*0.7, false))
     buttons.push(new Button("hit",  50, canvas.width*0.3, canvas.height*0.5,  false, ))
     buttons.push(new Button("stand", 50, canvas.width*0.7, canvas.height*0.5,  false, ))
@@ -667,9 +670,9 @@ function restart(){
     buttons.push(new Button("Clear bets", 40, canvas.width*0.45, canvas.height*0.85, false))
     if(music === false){
         buttons.push(new Button("Music", 40, canvas.width/1.1, canvas.height/10, false))
-        buttons.push(new Button("Offmusic", 40, canvas.width/1.1, canvas.height/10,true))
+        buttons.push(new Button("Offmusic", 40, canvas.width/1.1, canvas.height/10,false))
     }else {
-        buttons.push(new Button("Music", 40, canvas.width/1.1, canvas.height/10,true))
+        buttons.push(new Button("Music", 40, canvas.width/1.1, canvas.height/10,false))
         buttons.push(new Button("Offmusic", 40, canvas.width/1.1, canvas.height/10,false))
     }
     const clearButton = buttons[buttons.indexOf(buttons.find(button => button.name == "Clear bets"))]
@@ -745,6 +748,17 @@ let splachText = ""
 
 let returnChips = []
 
+let showOptions = false
+function drawOptions(){
+    if (showOptions){
+        ctx.beginPath();
+        ctx.fillRect(canvas.width/3, canvas.height/12, canvas.width*0.30, canvas.height*0.8);
+        ctx.strokeStyle = "white"
+        ctx.stroke();
+    }
+    
+}
+
 function draw() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
@@ -756,6 +770,7 @@ function draw() {
         splachText = "You are too broke for this casino!"
         ctx.textAlign = "center"
         drawtext(splachText, canvas.width/2, canvas.height/2, "red", 500)
+        drawOptions()
         requestAnimationFrame(draw);
     } else {
         ctx.drawImage(backsideOfCard, canvas.width*0.85, canvas.height*0.6, backsideOfCard.width/3, backsideOfCard.height/3)      
@@ -774,6 +789,7 @@ function draw() {
         drawtext(splachText, canvas.width/2, canvas.height/2, "red", 1000)
         drawPlayersChips()
         drawReturnChips()
+        drawOptions()
         requestAnimationFrame(draw);
     }
 };
