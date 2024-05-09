@@ -215,7 +215,7 @@ const drawbuttons = () => {
             
             ctx.fillStyle = 'green'
             ctx.textAlign = "center"
-            ctx.fillText(button.name, button.x + button.width/2, button.y + button.height/2 + button.height/4)
+            ctx.fillText(button.name, button.x + button.width/2, button.y + button.height/2 + button.height/2.5)
             ctx.textAlign = "start"
         }
     })
