@@ -203,7 +203,7 @@ const drawbuttons = () => {
         } else { //alla andra knappar
             if (!button.enabled) return
             ctx.textBaseline = "bottom"
-            ctx.font = `${button.fontsize}px serif`
+            ctx.font = `${button.fontsize}px cursive`
             ctx.beginPath()
             ctx.roundRect(button.x, button.y, button.width, button.height, button.height/2)
             ctx.fillStyle = 'rgba(225,225,225,0.5)'
