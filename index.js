@@ -802,7 +802,9 @@ function draw() {
         drawOptions()   
         drawbuttons()
         if (showOptions){
-            drawtext( `1 - 9    Beting \n 0   Bet all  \n s    start \n backspace   clear bets\n space  hit\n enter  stand\n r   restart`,300, 180, "black", 500)
+            drawtext( `                             Keybinds \n
+                        1 - 9    Beting \n                            0      Bet all  \n                            s      start \n              backspace     clear bets\n                        space  hit\n                         enter  stand\n
+                               r   restart`,300, 180, "black", 300)
         }
         const splachTextLength = ctx.measureText(splachText)
         ctx.textAlign = "center"
