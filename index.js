@@ -463,26 +463,29 @@ const start = () => {
 
 const addBet = (button) => {
     if (button.name.split(" ")[1] == "all") {
-        let betButtons = []
-        for(i = 0; i < buttons.length; i++){
-            if(buttons[i].name.includes("bet") && !buttons[i].name.includes("Clear") && buttons[i].enabled && !buttons[i].name.includes("all")) {
-                betButtons.push(buttons[i])
+        if (!chipssss) {
+            let betButtons = []
+            for(i = 0; i < buttons.length; i++){
+                if(buttons[i].name.includes("bet") && !buttons[i].name.includes("Clear") && buttons[i].enabled && !buttons[i].name.includes("all")) {
+                    betButtons.push(buttons[i])
+                }
             }
-        }
-        for (let i = betButtons.length-1; i >= 0; i--) {
-            while (cash - bet >= parseInt(betButtons[i].name.split(" ")[1])) {
-                bet += parseInt(betButtons[i].name.split(" ")[1])
-                bets.push(new Chip(parseInt(betButtons[i].name.split(" ")[1]), betButtons[i].x, betButtons[i].y, 100, 100))
+            for (let i = betButtons.length-1; i >= 0; i--) {
+                while (cash - bet >= parseInt(betButtons[i].name.split(" ")[1])) {
+                    bet += parseInt(betButtons[i].name.split(" ")[1])
+                    bets.push(new Chip(parseInt(betButtons[i].name.split(" ")[1]), betButtons[i].x, betButtons[i].y, 100, 100))
+                }
             }
-        }
-        buttons[buttons.indexOf(buttons.find(button => button.name == "start"))].enabled = true
-        buttons[buttons.indexOf(buttons.find(button => button.name == "Clear bets"))].enabled = true
-        /*for (let i = 0; i < Math.floor((cash-bet)/10); i++) { //all in in 10s 
-            bets.push(new Chip(10, button.x, button.y, 100, 100))
             buttons[buttons.indexOf(buttons.find(button => button.name == "start"))].enabled = true
             buttons[buttons.indexOf(buttons.find(button => button.name == "Clear bets"))].enabled = true
+        } else {//all in in 10s 
+            for (let i = 0; i < Math.floor((cash-bet)/10); i++) { 
+                bets.push(new Chip(10, button.x, button.y, 100, 100))
+                buttons[buttons.indexOf(buttons.find(button => button.name == "start"))].enabled = true
+                buttons[buttons.indexOf(buttons.find(button => button.name == "Clear bets"))].enabled = true
+            }
+            bet += Math.floor((cash-bet)/10)*10
         }
-        bet += Math.floor((cash-bet)/10)*10*/
     } else {
         if (cash >= parseInt(button.name.split(" ")[1]) + bet) {
             bet += parseInt(button.name.split(" ")[1])
