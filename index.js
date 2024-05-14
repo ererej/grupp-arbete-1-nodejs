@@ -1,5 +1,6 @@
 let BGM = new Audio('bgm.mp3')
 BGM.loop = true;
+let music = false
 
 
 class Position {
@@ -309,6 +310,7 @@ class Chip {
         this.position = new Position(spawnX, spawnY, targetx, targety, 25)
     }
 }   
+let chipssss = false
 
 const drawChip = (chip) => {
     chip.position.move()
@@ -650,17 +652,21 @@ canvas.addEventListener('click', function(event) {
                     splachText = ""
                     break;
                 case "music":
-                    BGM.play();
-                    buttons[buttons.indexOf(buttons.find(button => button.name == "Music"))].enabled = false
-                    buttons[buttons.indexOf(buttons.find(button => button.name == "Offmusic"))].enabled = true
+                    if(music){
+                        BGM.pause();
+                        music = false
+                    }else{
+                        BGM.play();
+                        music = true
+                    }
                     break;
-                case "offmusic":
-                    BGM.pause();
-                    buttons[buttons.indexOf(buttons.find(button => button.name == "Music"))].enabled = true
-                    buttons[buttons.indexOf(buttons.find(button => button.name == "Offmusic"))].enabled = false
+                case "holieday":
+                    chipssss = !chipssss
                     break;
                 case "options":
                     showOptions = !showOptions // HELT GALET ATT DETTA FUNKAR
+                    buttons[buttons.indexOf(buttons.find(button => button.name == "Music"))].enabled = !buttons[buttons.indexOf(buttons.find(button => button.name == "Music"))].enabled
+                    buttons[buttons.indexOf(buttons.find(button => button.name == "Holieday"))].enabled = !buttons[buttons.indexOf(buttons.find(button => button.name == "Holieday"))].enabled
                 }
             break;
         }
@@ -685,13 +691,8 @@ function restart(){
     buttons.push(new Button("stand", 50, canvas.width*0.7, canvas.height*0.5,  false, ))
     buttons.push(new Button("start", 50, canvas.width/2, canvas.height/2, false, ))
     buttons.push(new Button("Clear bets", 40, canvas.width*0.45, canvas.height*0.85, false))
-    if(music === false){
-        buttons.push(new Button("Music", 40, canvas.width/1.5, canvas.height/1.2, false))
-        buttons.push(new Button("Offmusic", 40, canvas.width/1.5, canvas.height/1.2,true))
-    }else {
-        buttons.push(new Button("Music", 40, canvas.width/1.5, canvas.height/1.5,true))
-        buttons.push(new Button("Offmusic", 40, canvas.width/1.5, canvas.height/1.5,false))
-    }
+    buttons.push(new Button("Music", 40, canvas.width/1.5, canvas.height/1.2, false))
+    buttons.push(new Button("Holieday", 40, canvas.width/2.5, canvas.height/1.2, false))
     const clearButton = buttons[buttons.indexOf(buttons.find(button => button.name == "Clear bets"))]
     buttons[buttons.indexOf(buttons.find(button => button.name == "Clear bets"))].y = canvas.height*0.90 - clearButton.height
     buttons.push(new Button("bet 10", canvas.height*0.07, canvas.width*0.005, canvas.height*0.26,  true, "./chips/10_casino_chip.png"))
@@ -787,13 +788,13 @@ function draw() {
         drawDiscardPile()
         cardSum(playerCards)
         drawReturnChips()
-        drawOptions()   
-        drawbuttons()
         drawtext(`Cash: ${cash}`, 10, 50, "lightgreen", 200)
         drawtext(`Bet: ${bet}`, 10, 100, "lightgreen", 200)
         drawtext(`Highscore: ${highscore}`, 10, 150, "lightgreen", 200)
         drawtext(`CardSum: ${cardSum(playerCards)}`, canvas.width*0.7, canvas.height*0.9, "lightgreen", 200 )
         drawtext(`CardSum: ${cardSum(houseCards)}`, canvas.width*0.7, 150, "lightgreen", 200)
+        drawOptions()   
+        drawbuttons()
         const splachTextLength = ctx.measureText(splachText)
         ctx.textAlign = "center"
         drawtext(splachText, canvas.width/2, canvas.height/2, "red", 1000)
