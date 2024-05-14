@@ -781,12 +781,11 @@ function draw() {
     if (cash + bet < 10) {
         buttons[buttons.indexOf(buttons.find(button => button.name == "bet all"))].enabled = false
         buttons[buttons.indexOf(buttons.find(button => button.name == "Restart"))].enabled = true
-        drawOptions()
-        drawbuttons()
         splachText = "You are too broke for this casino!"
         ctx.textAlign = "center"
         drawtext(splachText, canvas.width/2, canvas.height/2, "red", 500)
         drawOptions()
+        drawbuttons()
         requestAnimationFrame(draw);
     } else {
         ctx.drawImage(backsideOfCard, canvas.width*0.85, canvas.height*0.6, backsideOfCard.width/3, backsideOfCard.height/3)      
@@ -803,7 +802,9 @@ function draw() {
         drawOptions()   
         drawbuttons(buttons)
         if (showOptions){
-            drawtext( `1 - 9    Beting \n 0   Bet all  \n s    start \n backspace   clear bets\n space  hit\n enter  stand\n r   restart`,300, 180, "black", 500)
+            drawtext( `                             Keybinds \n
+                        1 - 9    Beting \n                            0      Bet all  \n                            s      start \n              backspace     clear bets\n                        space  hit\n                         enter  stand\n
+                               r   restart`,300, 180, "black", 300)
         }
         const splachTextLength = ctx.measureText(splachText)
         ctx.textAlign = "center"
