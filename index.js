@@ -183,8 +183,8 @@ let buttons = []
 
 
 //draws all the buttons in the buttons array
-const drawbuttons = () => {
-    buttons.forEach(button => {
+const drawbuttons = (listOfButtons) => {
+    listOfButtons.forEach(button => {
         if (button.name.split(" ")[0].toLowerCase() == "bet" && !button.name.includes("all")) { //om det är en betting knapp:
             if (parseInt(button.name.split(" ")[1]) + bet > cash) {
                 button.enabled = false
@@ -482,7 +482,8 @@ const addBet = (button) => {
             buttons[buttons.indexOf(buttons.find(button => button.name == "Clear bets"))].enabled = true
         } else {//all in in 10s 
             for (let i = 0; i < Math.floor((cash-bet)/10); i++) { 
-                bets.push(new Chip(10, button.x, button.y, 100, 100))
+                const bet10 = buttons[buttons.indexOf(buttons.find(button => button.name == "bet 10"))]
+                bets.push(new Chip(10, bet10.x, bet10.y, 100, 100))
                 buttons[buttons.indexOf(buttons.find(button => button.name == "start"))].enabled = true
                 buttons[buttons.indexOf(buttons.find(button => button.name == "Clear bets"))].enabled = true
             }
@@ -518,7 +519,7 @@ const clearBets = (pressedButton) => {
         }
     });
     bets = []
-    bet = 0
+    bet = 0     
     setTimeout(() => {
         returnChips = []
     }, 500);
@@ -799,9 +800,11 @@ function draw() {
         drawtext(`CardSum: ${cardSum(playerCards)}`, canvas.width*0.7, canvas.height*0.9, "lightgreen", 200 )
         drawtext(`CardSum: ${cardSum(houseCards)}`, canvas.width*0.7, 150, "lightgreen", 200)
         drawOptions()   
-        drawbuttons()
+        drawbuttons(buttons)
         if (showOptions){
-            drawtext( `1 - 9    Beting \n 0   Bet all  \n s    start \n backspace   clear bets\n space  hit\n enter  stand\n r   restart`,300, 180, "black", 500)
+            drawtext( `                             Keybinds \n
+                        1 - 9    Beting \n                            0      Bet all  \n                            s      start \n              backspace     clear bets\n                        space  hit\n                         enter  stand\n
+                               r   restart`,300, 180, "black", 300)
         }
         const splachTextLength = ctx.measureText(splachText)
         ctx.textAlign = "center"
