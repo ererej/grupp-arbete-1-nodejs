@@ -271,7 +271,10 @@ const drawDiscardPile = () => {
 const drawtext = (text, posX, posY, color, size) => {
     ctx.font = `${size}% serif`
     ctx.fillStyle = color
-    ctx.fillText(text, posX, posY)
+    text.split("\n").forEach((line, i) => {
+        ctx.fillText(line, posX, posY + i * (size + 10)) 
+
+    })
 }
 
 
