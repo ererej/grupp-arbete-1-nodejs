@@ -106,7 +106,7 @@ class Card {
 let cardPile = []
 let houseCards = []
 let playerCards = []
-const types =["hearts", "spades", "diamonds", "clubs"]
+const types =["hearts", "spades", "diamonds", "clubs", "pang"]
 
 const canvas = document.getElementById("myCanvas")
 
