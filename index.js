@@ -667,6 +667,7 @@ canvas.addEventListener('click', function(event) {
                     showOptions = !showOptions // HELT GALET ATT DETTA FUNKAR
                     buttons[buttons.indexOf(buttons.find(button => button.name == "Music"))].enabled = !buttons[buttons.indexOf(buttons.find(button => button.name == "Music"))].enabled
                     buttons[buttons.indexOf(buttons.find(button => button.name == "Holieday"))].enabled = !buttons[buttons.indexOf(buttons.find(button => button.name == "Holieday"))].enabled
+                    
                 }
             break;
         }
@@ -795,6 +796,9 @@ function draw() {
         drawtext(`CardSum: ${cardSum(houseCards)}`, canvas.width*0.7, 150, "lightgreen", 200)
         drawOptions()   
         drawbuttons()
+        if (showOptions){
+            drawtext( `1 - 9    Beting \n 0   Bet all  \n s    start \n backspace   clear bets\n space  hit\n enter  stand\n r   restart`,300, 180, "black", 500)
+        }
         const splachTextLength = ctx.measureText(splachText)
         ctx.textAlign = "center"
         drawtext(splachText, canvas.width/2, canvas.height/2, "red", 1000)
