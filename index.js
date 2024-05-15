@@ -785,7 +785,7 @@ function draw() {
         ctx.textAlign = "center"
         drawtext(splachText, canvas.width/2, canvas.height/2, "red", 500)
         drawOptions()
-        drawbuttons()
+        drawbuttons(buttons)
         requestAnimationFrame(draw);
     } else {
         ctx.drawImage(backsideOfCard, canvas.width*0.85, canvas.height*0.6, backsideOfCard.width/3, backsideOfCard.height/3)      
