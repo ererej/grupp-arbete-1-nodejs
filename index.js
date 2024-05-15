@@ -671,8 +671,8 @@ canvas.addEventListener('click', function(event) {
                     break;
                 case "options":
                     showOptions = !showOptions // HELT GALET ATT DETTA FUNKAR
-                    buttons[buttons.indexOf(buttons.find(button => button.name == "Music"))].enabled = !buttons[buttons.indexOf(buttons.find(button => button.name == "Music"))].enabled
-                    buttons[buttons.indexOf(buttons.find(button => button.name == "Holieday"))].enabled = !buttons[buttons.indexOf(buttons.find(button => button.name == "Holieday"))].enabled
+                    buttons[buttons.indexOf(buttons.find(button => button.name == "Music"))].enabled = showOptions
+                    buttons[buttons.indexOf(buttons.find(button => button.name == "Holieday"))].enabled = showOptions
                     
                 }
             break;
