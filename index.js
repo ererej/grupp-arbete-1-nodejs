@@ -667,13 +667,24 @@ canvas.addEventListener('click', function(event) {
                 case "holieday":
                     chipssss = !chipssss
                     break;
-                case "close":
-                    localStorage.clear()
+                case "eat":
+                    setCookie("highscore", "1000", -1)
+                    setCookie("cash", "1000", -1)
+                    location.reload()
                 case "options":
                     showOptions = !showOptions // HELT GALET ATT DETTA FUNKAR
                     buttons[buttons.indexOf(buttons.find(button => button.name == "Music"))].enabled = showOptions
                     buttons[buttons.indexOf(buttons.find(button => button.name == "Holieday"))].enabled = showOptions
                     buttons[buttons.indexOf(buttons.find(button => button.name == "Close"))].enabled = showOptions
+                    buttons[buttons.indexOf(buttons.find(button => button.name == "Eat"))].enabled = showOptions
+                    break;
+                case "close":
+                    showOptions = false
+                    buttons[buttons.indexOf(buttons.find(button => button.name == "Music"))].enabled = false
+                    buttons[buttons.indexOf(buttons.find(button => button.name == "Holieday"))].enabled = false
+                    buttons[buttons.indexOf(buttons.find(button => button.name == "Eat"))].enabled = false
+                    button.enabled = false
+                    break;
                 }
             break;
         }
@@ -701,6 +712,7 @@ function restart(){
     clearButton.y = canvas.height*0.90 - clearButton.height
     buttons.push(new Button("Music", 40, canvas.width/1.5, canvas.height/1.2, false))
     buttons.push(new Button("Holieday", 40, canvas.width/4, canvas.height/1.2, false))
+    buttons.push(new Button("Eat", 40, canvas.width/4, canvas.height/1.35,false))
     buttons.push(new Button("Close", 40, canvas.width/1.35, canvas.height/7, false))
     buttons.push(new Button("bet 10", canvas.height*0.07, canvas.width*0.005, canvas.height*0.26,  true, "./chips/10_casino_chip.png"))
     buttons.push(new Button("bet 50", canvas.height*0.055, canvas.width*0.005, canvas.height*0.44,  true, "./chips/50_casino_chip.png"))
