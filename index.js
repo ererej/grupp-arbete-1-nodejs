@@ -384,25 +384,6 @@ const hit = () => {
         splachText = "BUST"
         yieldWinnings(0)
         clearTable()
-    } else if(cardSum(playerCards) === 21) {
-        buttons[buttons.indexOf(buttons.find(button => button.name == "stand"))].enabled = false
-        buttons[buttons.indexOf(buttons.find(button => button.name == "hit"))].enabled = false
-        houseCards.forEach(card => card.show())
-        while (cardSum(houseCards) < 17) {
-            pickUpCard(houseCards, cardPile, false)
-        }
-        if (cardSum(houseCards) > 21) {
-            splachText = "House busts!!!"
-            yieldWinnings(2)
-            clearTable()
-        } else if (cardSum(houseCards) == 21) {
-            splachText = "Push!!!!!!"
-            yieldWinnings(1)
-            clearTable()
-        }
-        yieldWinnings(2)
-        splachText = "you win!!!"
-        clearTable()
     }
 }
 
@@ -460,6 +441,8 @@ const start = () => {
         splachText = "BLACKJACK!!!"
         houseCards.forEach(card => card.show())
         clearTable()
+    } else if ( cash > bet && (cardSum(playerCards) === 9 || cardSum(playerCards) === 10 || cardSum(playerCards) === 11)){
+        buttons[buttons.indexOf(buttons.find(button => button.name == "Dubble Down"))].enabled = true
     }
 }
 
@@ -640,6 +623,18 @@ canvas.addEventListener('click', function(event) {
                 case "start":
                     start()
                     break;
+                case "dubble":
+                    button.enabled = false
+                    bet *= 2
+                    cash -= bet
+                    save()
+                    bets.forEach(chip => {
+                        spawnPos = buttons[buttons.indexOf(buttons.find(button => button.name == "bet " + chip.value))]
+                        bets.push(new Chip(chip.value, spawnPos.x, spawnPos.y, chip.position.x, chip.position.y))
+                    })
+                    hit()
+                    stand()
+                    break;
                 case "bet":
                     addBet(button)
                     break;
@@ -665,13 +660,24 @@ canvas.addEventListener('click', function(event) {
                 case "holieday":
                     chipssss = !chipssss
                     break;
-                case "close":
-                    localStorage.clear()
+                case "eat":
+                    setCookie("highscore", "1000", -1)
+                    setCookie("cash", "1000", -1)
+                    location.reload()
                 case "options":
                     showOptions = !showOptions // HELT GALET ATT DETTA FUNKAR
                     buttons[buttons.indexOf(buttons.find(button => button.name == "Music"))].enabled = showOptions
                     buttons[buttons.indexOf(buttons.find(button => button.name == "Holieday"))].enabled = showOptions
                     buttons[buttons.indexOf(buttons.find(button => button.name == "Close"))].enabled = showOptions
+                    buttons[buttons.indexOf(buttons.find(button => button.name == "Eat"))].enabled = showOptions
+                    break;
+                case "close":
+                    showOptions = false
+                    buttons[buttons.indexOf(buttons.find(button => button.name == "Music"))].enabled = false
+                    buttons[buttons.indexOf(buttons.find(button => button.name == "Holieday"))].enabled = false
+                    buttons[buttons.indexOf(buttons.find(button => button.name == "Eat"))].enabled = false
+                    button.enabled = false
+                    break;
                 }
             break;
         }
@@ -695,10 +701,12 @@ function restart(){
     buttons.push(new Button("hit",  50, canvas.width*0.3, canvas.height*0.5,  false, ))
     buttons.push(new Button("stand", 50, canvas.width*0.7, canvas.height*0.5,  false, ))
     buttons.push(new Button("start", 50, canvas.width/2, canvas.height/2, false, ))
+    buttons.push(new Button("Dubble Down", 40, canvas.width*0.5, canvas.height*0.5, false))
     const clearButton = buttons.push(new Button("Clear bets", 40, canvas.width*0.45, canvas.height*0.85, false))
     clearButton.y = canvas.height*0.90 - clearButton.height
     buttons.push(new Button("Music", 40, canvas.width/1.5, canvas.height/1.2, false))
     buttons.push(new Button("Holieday", 40, canvas.width/4, canvas.height/1.2, false))
+    buttons.push(new Button("Eat", 40, canvas.width/4, canvas.height/1.35,false))
     buttons.push(new Button("Close", 40, canvas.width/1.35, canvas.height/7, false))
     buttons.push(new Button("bet 10", canvas.height*0.07, canvas.width*0.005, canvas.height*0.26,  true, "./chips/10_casino_chip.png"))
     buttons.push(new Button("bet 50", canvas.height*0.055, canvas.width*0.005, canvas.height*0.44,  true, "./chips/50_casino_chip.png"))
