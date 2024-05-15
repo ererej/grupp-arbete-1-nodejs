@@ -272,7 +272,7 @@ const drawtext = (text, posX, posY, color, size) => {
     ctx.font = `${size}% serif`
     ctx.fillStyle = color
     text.split("\n").forEach((line, i) => {
-        ctx.fillText(line, posX, posY + i * ctx.measureText(line).actualBoundingBoxAscent) 
+        ctx.fillText(line, posX, posY + i * (ctx.measureText(line).fontBoundingBoxAscent + ctx.measureText(line).fontBoundingBoxDescent)) 
     })
 }
 
@@ -478,8 +478,6 @@ const addBet = (button) => {
                     bets.push(new Chip(parseInt(betButtons[i].name.split(" ")[1]), betButtons[i].x, betButtons[i].y, 100, 100))
                 }
             }
-            buttons[buttons.indexOf(buttons.find(button => button.name == "start"))].enabled = true
-            buttons[buttons.indexOf(buttons.find(button => button.name == "Clear bets"))].enabled = true
         } else {//all in in 10s 
             for (let i = 0; i < Math.floor((cash-bet)/10); i++) { 
                 const bet10 = buttons[buttons.indexOf(buttons.find(button => button.name == "bet 10"))]
@@ -617,14 +615,14 @@ document.addEventListener("keydown", function(event){
 
 let showOptions = false
 function drawOptions(){
-    if (showOptions){
-        ctx.beginPath();
-        ctx.roundRect(canvas.width/8, canvas.height/12, canvas.width*0.70, canvas.height*0.8, [100]);
-        ctx.fillStyle = "#99BC85"
-        ctx.fill()
-        ctx.strokeStyle = "white"
-        ctx.stroke();
-    }
+    buttons[buttons.indexOf(buttons.find(button => button.name == "start"))].enabled = false
+    buttons[buttons.indexOf(buttons.find(button => button.name == "Clear bets"))].enabled = false
+    ctx.beginPath();
+    ctx.roundRect(canvas.width/8, canvas.height/12, canvas.width*0.70, canvas.height*0.8, [100]);
+    ctx.fillStyle = "#99BC85"
+    ctx.fill()
+    ctx.strokeStyle = "white"
+    ctx.stroke();
     
 }
 
@@ -697,11 +695,10 @@ function restart(){
     buttons.push(new Button("hit",  50, canvas.width*0.3, canvas.height*0.5,  false, ))
     buttons.push(new Button("stand", 50, canvas.width*0.7, canvas.height*0.5,  false, ))
     buttons.push(new Button("start", 50, canvas.width/2, canvas.height/2, false, ))
-    buttons.push(new Button("Clear bets", 40, canvas.width*0.45, canvas.height*0.85, false))
+    const clearButton = buttons.push(new Button("Clear bets", 40, canvas.width*0.45, canvas.height*0.85, false))
+    clearButton.y = canvas.height*0.90 - clearButton.height
     buttons.push(new Button("Music", 40, canvas.width/1.5, canvas.height/1.2, false))
     buttons.push(new Button("Holieday", 40, canvas.width/2.5, canvas.height/1.2, false))
-    const clearButton = buttons[buttons.indexOf(buttons.find(button => button.name == "Clear bets"))]
-    buttons[buttons.indexOf(buttons.find(button => button.name == "Clear bets"))].y = canvas.height*0.90 - clearButton.height
     buttons.push(new Button("bet 10", canvas.height*0.07, canvas.width*0.005, canvas.height*0.26,  true, "./chips/10_casino_chip.png"))
     buttons.push(new Button("bet 50", canvas.height*0.055, canvas.width*0.005, canvas.height*0.44,  true, "./chips/50_casino_chip.png"))
     buttons.push(new Button("bet 250", canvas.height*0.055, canvas.width*0.005, canvas.height*0.62,  true, "./chips/250_casino_chip.png"))
@@ -784,7 +781,9 @@ function draw() {
         splachText = "You are too broke for this casino!"
         ctx.textAlign = "center"
         drawtext(splachText, canvas.width/2, canvas.height/2, "red", 500)
-        drawOptions()
+        if (showOptions){
+            drawOptions() 
+        }
         drawbuttons(buttons)
         requestAnimationFrame(draw);
     } else {
@@ -792,14 +791,19 @@ function draw() {
         drawPlayerCards()
         drawHouseCards()
         drawDiscardPile()
-        cardSum(playerCards)
         drawReturnChips()
         drawtext(`Cash: ${cash}`, 10, 50, "lightgreen", 200)
         drawtext(`Bet: ${bet}`, 10, 100, "lightgreen", 200)
         drawtext(`Highscore: ${highscore}`, 10, 150, "lightgreen", 200)
         drawtext(`CardSum: ${cardSum(playerCards)}`, canvas.width*0.7, canvas.height*0.9, "lightgreen", 200 )
         drawtext(`CardSum: ${cardSum(houseCards)}`, canvas.width*0.7, 150, "lightgreen", 200)
-        drawOptions()   
+        
+        buttons[buttons.indexOf(buttons.find(button => button.name == "start"))].enabled = (bet > 0 && playerCards.length == 0 && splachText == "")
+        buttons[buttons.indexOf(buttons.find(button => button.name == "Clear bets"))].enabled = (bet > 0 && playerCards.length == 0 && splachText == "")
+
+        if (showOptions){
+            drawOptions() 
+        }
         drawbuttons(buttons)
         if (showOptions){
             drawtext( `                             Keybinds \n
@@ -809,7 +813,7 @@ function draw() {
         const splachTextLength = ctx.measureText(splachText)
         ctx.textAlign = "center"
         drawtext(splachText, canvas.width/2, canvas.height/2, "red", 1000)
-        drawPlayersChips()
+        if (!showOptions) drawPlayersChips()
         requestAnimationFrame(draw);
     }
 };
