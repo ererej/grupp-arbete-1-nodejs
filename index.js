@@ -437,6 +437,9 @@ const start = () => {
     pickUpCard(houseCards, cardPile, true)
     pickUpCard(houseCards, cardPile, false)
     if (cardSum(playerCards) === 21) {
+        buttons[buttons.indexOf(buttons.find(button => button.name == "stand"))].enabled = false
+        buttons[buttons.indexOf(buttons.find(button => button.name == "hit"))].enabled = false
+        buttons[buttons.indexOf(buttons.find(button => button.name == "Clear bets"))].enabled = false
         yieldWinnings(3)
         splachText = "BLACKJACK!!!"
         houseCards.forEach(card => card.show())
