@@ -327,6 +327,14 @@ const drawPlayersChips = () => {
     })
     }
 
+const drawInsuranceChips = () => {
+    insurancebet.forEach(chip => {
+        chip.position.targetX = canvas.width*0.2
+        chip.position.targetY = (canvas.height*0.2/insurancebet.length+1)*(insurancebet.indexOf(chip) + 1) - canvas.height*0.2/insurancebet.length+1 + canvas.height*0.2
+        drawChip(chip)
+    })
+    }
+
 const drawReturnChips = () => {
     returnChips.forEach(chip => {
         drawChip(chip)
@@ -436,6 +444,11 @@ const start = () => {
     pickUpCard(playerCards, cardPile, false)
     pickUpCard(houseCards, cardPile, true)
     pickUpCard(houseCards, cardPile, false)
+
+    if (houseCards[1].value == 11) {
+        buttons[buttons.indexOf(buttons.find(button => button.name == "Insurance"))].enabled = true
+    }
+
     if (cardSum(playerCards) === 21) {
         buttons[buttons.indexOf(buttons.find(button => button.name == "stand"))].enabled = false
         buttons[buttons.indexOf(buttons.find(button => button.name == "hit"))].enabled = false
@@ -520,6 +533,11 @@ const yieldWinnings = (multiplyier) => {
                 chip.position.targetY = -canvas.height*0.2
                 returnChips.push(chip)
             })
+            insurancebet.forEach(chip => {
+                chip.position.targetX = canvas.width*0.3
+                chip.position.targetY = -canvas.height*0.2
+                returnChips.push(chip)
+            })
             break;
         case 3:
             bets.forEach(chip => {
@@ -532,7 +550,7 @@ const yieldWinnings = (multiplyier) => {
             bets.forEach(chip => {
                 let chipPile = buttons[buttons.indexOf(buttons.find(button => button.name == "bet " + chip.value))]
                 setTimeout(() => {
-                returnChips.push(new Chip(chip.value, canvas.width*0.2+ canvas.width *0.5 * (Math.random()-0.5), canvas.height * 0.2 * Math.random(), chipPile.x, chipPile.y))
+                returnChips.push(new Chip(chip.value, canvas.width*0.2+ canvas.width *0.5 * (Math.random()-0.5), canvas.height * 0.1 * Math.random(), chipPile.x, chipPile.y))
                 }, Math.random()*1000)
             })  
         case 1:
@@ -542,8 +560,26 @@ const yieldWinnings = (multiplyier) => {
                 chip.position.targetY = chipPile.y
                 returnChips.push(chip)
             })
+            if (houseCards[0].value == 10 && houseCards[1].value == 11) {
+                cash += insurance*3
+                insurancebet.forEach(chip => {
+                    let chipPile = buttons[buttons.indexOf(buttons.find(button => button.name == "bet " + chip.value))]
+                    chip.position.targetX = chipPile.x
+                    chip.position.targetY = chipPile.y
+                    returnChips.push(chip)
+                })
+                for (let i=0; i<2; i++) {
+                    insurancebet.forEach(chip => {
+                        let chipPile = buttons[buttons.indexOf(buttons.find(button => button.name == "bet " + chip.value))]
+                        chip.position.targetX = chipPile.x
+                        chip.position.targetY = chipPile.y
+                        returnChips.push(chip)
+                    })
+                }
+            }
     }
     bets = []   
+    insurancebet = []
 }
 
 
@@ -635,8 +671,22 @@ canvas.addEventListener('click', function(event) {
                         spawnPos = buttons[buttons.indexOf(buttons.find(button => button.name == "bet " + chip.value))]
                         bets.push(new Chip(chip.value, spawnPos.x, spawnPos.y, chip.position.x, chip.position.y))
                     })
-                    hit()
-                    stand()
+                    buttons[buttons.indexOf(buttons.find(button => button.name == "hit"))].enabled = false
+                    buttons[buttons.indexOf(buttons.find(button => button.name == "stand"))].enabled = false
+                    setTimeout(() => {
+                        hit()
+                        stand()
+                    }, 500);
+                    break;
+                case "insurance":
+                    button.enabled = false
+                    insurance = Math.floor(bet/2)*10
+                    cash -= insurance
+                    save()
+                    const bet10 = buttons[buttons.indexOf(buttons.find(button => button.name == "bet 10"))]
+                    for (let i = 0; i < (Math.floor(bet/20)); i++) {
+                        insurancebet.push(new Chip(10, bet10.x, bet10.y, 100, 100))
+                    }
                     break;
                 case "bet":
                     addBet(button)
@@ -689,6 +739,8 @@ canvas.addEventListener('click', function(event) {
 }, false)
 
 function restart(){
+    insurance = 0;
+    insurancebet = [];
     bet = 0
     let music
     if (buttons.length > 0){
@@ -705,6 +757,7 @@ function restart(){
     buttons.push(new Button("stand", 50, canvas.width*0.7, canvas.height*0.5,  false, ))
     buttons.push(new Button("start", 50, canvas.width/2, canvas.height/2, false, ))
     buttons.push(new Button("Dubble Down", 40, canvas.width*0.5, canvas.height*0.5, false))
+    buttons.push(new Button("Insurance", 40, canvas.width*0.5, canvas.height*0.6, false))
     const clearButton = buttons.push(new Button("Clear bets", 40, canvas.width*0.45, canvas.height*0.85, false))
     clearButton.y = canvas.height*0.90 - clearButton.height
     buttons.push(new Button("Music", 40, canvas.width/1.5, canvas.height/1.2, false))
@@ -776,7 +829,8 @@ let discardPile = [];
 let bet = 0;
 let bets = [];
 restockCards();
-
+let insurance = 0;
+let insurancebet = [];
 let playing = false;
 let splachText = "";
 
@@ -804,6 +858,7 @@ function draw() {
         drawHouseCards();
         drawDiscardPile();
         drawReturnChips();
+        drawInsuranceChips();
         drawtext(`Cash: ${cash}`, 10, 50, "lightgreen", 200);
         drawtext(`Bet: ${bet}`, 10, 100, "lightgreen", 200);
         drawtext(`Highscore: ${highscore}`, 10, 150, "lightgreen", 200);
