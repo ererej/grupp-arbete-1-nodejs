@@ -702,8 +702,6 @@ function restart(){
     buttons.push(new Button("Music", 40, canvas.width/1.5, canvas.height/1.2, false))
     buttons.push(new Button("Holieday", 40, canvas.width/3, canvas.height/1.35, false))
     buttons.push(new Button("Close", 40, canvas.width/1.35, canvas.height/7, false))
-    const clearButton = buttons[buttons.indexOf(buttons.find(button => button.name == "Clear bets"))]
-    buttons[buttons.indexOf(buttons.find(button => button.name == "Clear bets"))].y = canvas.height*0.90 - clearButton.height
     buttons.push(new Button("bet 10", canvas.height*0.07, canvas.width*0.005, canvas.height*0.26,  true, "./chips/10_casino_chip.png"))
     buttons.push(new Button("bet 50", canvas.height*0.055, canvas.width*0.005, canvas.height*0.44,  true, "./chips/50_casino_chip.png"))
     buttons.push(new Button("bet 250", canvas.height*0.055, canvas.width*0.005, canvas.height*0.62,  true, "./chips/250_casino_chip.png"))
