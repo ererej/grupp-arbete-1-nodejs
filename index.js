@@ -384,25 +384,6 @@ const hit = () => {
         splachText = "BUST"
         yieldWinnings(0)
         clearTable()
-    } else if(cardSum(playerCards) === 21) {
-        buttons[buttons.indexOf(buttons.find(button => button.name == "stand"))].enabled = false
-        buttons[buttons.indexOf(buttons.find(button => button.name == "hit"))].enabled = false
-        houseCards.forEach(card => card.show())
-        while (cardSum(houseCards) < 17) {
-            pickUpCard(houseCards, cardPile, false)
-        }
-        if (cardSum(houseCards) > 21) {
-            splachText = "House busts!!!"
-            yieldWinnings(2)
-            clearTable()
-        } else if (cardSum(houseCards) == 21) {
-            splachText = "Push!!!!!!"
-            yieldWinnings(1)
-            clearTable()
-        }
-        yieldWinnings(2)
-        splachText = "you win!!!"
-        clearTable()
     }
 }
 
@@ -460,6 +441,8 @@ const start = () => {
         splachText = "BLACKJACK!!!"
         houseCards.forEach(card => card.show())
         clearTable()
+    } else if ( cash > bet && (cardSum(playerCards) === 9 || cardSum(playerCards) === 10 || cardSum(playerCards) === 11)){
+        buttons[buttons.indexOf(buttons.find(button => button.name == "Dubble Down"))].enabled = true
     }
 }
 
@@ -642,6 +625,18 @@ canvas.addEventListener('click', function(event) {
                 case "start":
                     start()
                     break;
+                case "dubble":
+                    button.enabled = false
+                    bet *= 2
+                    cash -= bet
+                    save()
+                    bets.forEach(chip => {
+                        spawnPos = buttons[buttons.indexOf(buttons.find(button => button.name == "bet " + chip.value))]
+                        bets.push(new Chip(chip.value, spawnPos.x, spawnPos.y, chip.position.x, chip.position.y))
+                    })
+                    hit()
+                    stand()
+                    break;
                 case "bet":
                     addBet(button)
                     break;
@@ -697,6 +692,7 @@ function restart(){
     buttons.push(new Button("hit",  50, canvas.width*0.3, canvas.height*0.5,  false, ))
     buttons.push(new Button("stand", 50, canvas.width*0.7, canvas.height*0.5,  false, ))
     buttons.push(new Button("start", 50, canvas.width/2, canvas.height/2, false, ))
+    buttons.push(new Button("Dubble Down", 40, canvas.width*0.5, canvas.height*0.5, false))
     const clearButton = buttons.push(new Button("Clear bets", 40, canvas.width*0.45, canvas.height*0.85, false))
     clearButton.y = canvas.height*0.90 - clearButton.height
     buttons.push(new Button("Music", 40, canvas.width/1.5, canvas.height/1.2, false))
