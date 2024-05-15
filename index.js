@@ -669,11 +669,13 @@ canvas.addEventListener('click', function(event) {
                 case "holieday":
                     chipssss = !chipssss
                     break;
+                case "close":
+                    localStorage.clear()
                 case "options":
                     showOptions = !showOptions // HELT GALET ATT DETTA FUNKAR
                     buttons[buttons.indexOf(buttons.find(button => button.name == "Music"))].enabled = showOptions
                     buttons[buttons.indexOf(buttons.find(button => button.name == "Holieday"))].enabled = showOptions
-                    
+                    buttons[buttons.indexOf(buttons.find(button => button.name == "Close"))].enabled = showOptions
                 }
             break;
         }
@@ -699,7 +701,8 @@ function restart(){
     buttons.push(new Button("start", 50, canvas.width/2, canvas.height/2, false, ))
     buttons.push(new Button("Clear bets", 40, canvas.width*0.45, canvas.height*0.85, false))
     buttons.push(new Button("Music", 40, canvas.width/1.5, canvas.height/1.2, false))
-    buttons.push(new Button("Holieday", 40, canvas.width/2.5, canvas.height/1.2, false))
+    buttons.push(new Button("Holieday", 40, canvas.width/3, canvas.height/1.35, false))
+    buttons.push(new Button("Close", 40, canvas.width/1.35, canvas.height/7, false))
     const clearButton = buttons[buttons.indexOf(buttons.find(button => button.name == "Clear bets"))]
     buttons[buttons.indexOf(buttons.find(button => button.name == "Clear bets"))].y = canvas.height*0.90 - clearButton.height
     buttons.push(new Button("bet 10", canvas.height*0.07, canvas.width*0.005, canvas.height*0.26,  true, "./chips/10_casino_chip.png"))
