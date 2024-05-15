@@ -536,7 +536,6 @@ const yieldWinnings = (multiplyier) => {
             })
             break;
         case 3:
-            
             bets.forEach(chip => {
                 let chipPile = buttons[buttons.indexOf(buttons.find(button => button.name == "bet " + chip.value))]
                 setTimeout(() => {
@@ -623,7 +622,6 @@ function drawOptions(){
     ctx.fill()
     ctx.strokeStyle = "white"
     ctx.stroke();
-    
 }
 
 canvas.addEventListener('click', function(event) {
@@ -713,11 +711,11 @@ function restart(){
     buttons.push(new Button("bet all", canvas.height*0.055, canvas.width*0.45, canvas.height*0.95,  true))
     
     if(cardPile.length  < 26){//refrestock cards if there are less then 26(half a deck) cards left
-        restockCards()
-        discardPile = []
-        console.log("restocked")
-    }
-}
+        restockCards();
+        discardPile = [];
+        console.log("restocked");
+    };
+};
 
 function setCookie(cname, cvalue, exdays) {
     const d = new Date();
@@ -733,45 +731,45 @@ function getCookie(cname) {
         let c = ca[i];
         while (c.charAt(0) == ' ') {
         c = c.substring(1);
-        }
+        };
         if (c.indexOf(name) == 0) {
         return c.substring(name.length, c.length);
-        }
-    }
+        };
+    };
     return "";
 }
 let highscore = 0
 if (getCookie("highscore") === "") {
-    setCookie("highscore", "1000",365)
-    highscore = getCookie("highscore")
+    setCookie("highscore", "1000",365);
+    highscore = getCookie("highscore");
 } else {
-    highscore = getCookie("highscore")
-}
+    highscore = getCookie("highscore");
+};
 let cash = 0
 if (getCookie("cash") === "") {
-    setCookie("cash", "1000", 365)
-    cash = getCookie("cash")
+    setCookie("cash", "1000", 365);
+    cash = getCookie("cash");
 } else {
-    cash = getCookie("cash")
-}
+    cash = getCookie("cash");
+};
 
 const save = () => {
     setCookie("cash", cash, 365)
     if (cash > highscore){
         setCookie("highscore", cash, 365)
         highscore = cash
-    }
-}
+    };
+};
 
-let discardPile = []
-let bet = 0
-let bets = []
-restockCards()
+let discardPile = [];
+let bet = 0;
+let bets = [];
+restockCards();
 
-let playing = false 
-let splachText = ""
+let playing = false;
+let splachText = "";
 
-let returnChips = []
+let returnChips = [];
 
 
 function draw() {
@@ -779,43 +777,42 @@ function draw() {
     canvas.height = window.innerHeight;
     ctx.drawImage(background, 0, 0, background.width, background.height, 0, 0, canvas.width, canvas.height);
     if (cash + bet < 10) {
-        buttons[buttons.indexOf(buttons.find(button => button.name == "bet all"))].enabled = false
-        buttons[buttons.indexOf(buttons.find(button => button.name == "Restart"))].enabled = true
-        splachText = "You are too broke for this casino!"
-        ctx.textAlign = "center"
-        drawtext(splachText, canvas.width/2, canvas.height/2, "red", 500)
+        buttons[buttons.indexOf(buttons.find(button => button.name == "bet all"))].enabled = false;
+        buttons[buttons.indexOf(buttons.find(button => button.name == "Restart"))].enabled = true;
+        splachText = "You are too broke for this casino!";
+        ctx.textAlign = "center";
+        drawtext(splachText, canvas.width/2, canvas.height/2, "red", 500);
         if (showOptions){
             drawOptions() 
-        }
-        drawbuttons(buttons)
+        };
+        drawbuttons(buttons);
         requestAnimationFrame(draw);
     } else {
-        ctx.drawImage(backsideOfCard, canvas.width*0.85, canvas.height*0.6, backsideOfCard.width/3, backsideOfCard.height/3)      
-        drawPlayerCards()
-        drawHouseCards()
-        drawDiscardPile()
-        drawReturnChips()
-        drawtext(`Cash: ${cash}`, 10, 50, "lightgreen", 200)
-        drawtext(`Bet: ${bet}`, 10, 100, "lightgreen", 200)
-        drawtext(`Highscore: ${highscore}`, 10, 150, "lightgreen", 200)
-        drawtext(`CardSum: ${cardSum(playerCards)}`, canvas.width*0.7, canvas.height*0.9, "lightgreen", 200 )
-        drawtext(`CardSum: ${cardSum(houseCards)}`, canvas.width*0.7, 150, "lightgreen", 200)
-        
-        buttons[buttons.indexOf(buttons.find(button => button.name == "start"))].enabled = (bet > 0 && playerCards.length == 0 && splachText == "")
-        buttons[buttons.indexOf(buttons.find(button => button.name == "Clear bets"))].enabled = (bet > 0 && playerCards.length == 0 && splachText == "")
+        ctx.drawImage(backsideOfCard, canvas.width*0.85, canvas.height*0.6, backsideOfCard.width/3, backsideOfCard.height/3); 
+        drawPlayerCards();
+        drawHouseCards();
+        drawDiscardPile();
+        drawReturnChips();
+        drawtext(`Cash: ${cash}`, 10, 50, "lightgreen", 200);
+        drawtext(`Bet: ${bet}`, 10, 100, "lightgreen", 200);
+        drawtext(`Highscore: ${highscore}`, 10, 150, "lightgreen", 200);
+        drawtext(`CardSum: ${cardSum(playerCards)}`, canvas.width*0.7, canvas.height*0.9, "lightgreen", 200 );
+        drawtext(`CardSum: ${cardSum(houseCards)}`, canvas.width*0.7, 150, "lightgreen", 200);
+        buttons[buttons.indexOf(buttons.find(button => button.name == "start"))].enabled = (bet > 0 && playerCards.length == 0 && splachText == "");
+        buttons[buttons.indexOf(buttons.find(button => button.name == "Clear bets"))].enabled = (bet > 0 && playerCards.length == 0 && splachText == "");
 
         if (showOptions){
             drawOptions() 
-        }
+        };
         drawbuttons(buttons)
         if (showOptions){
             drawtext( `                             Keybinds \n
                         1 - 9    Beting \n                            0      Bet all  \n                            s      start \n              backspace     clear bets\n                        space  hit\n                         enter  stand\n                               r   restart`,300, 180, "black", 300)
-        }
-        const splachTextLength = ctx.measureText(splachText)
-        ctx.textAlign = "center"
-        drawtext(splachText, canvas.width/2, canvas.height/2, "red", 1000)
-        if (!showOptions) drawPlayersChips()
+        };
+        const splachTextLength = ctx.measureText(splachText);
+        ctx.textAlign = "center";
+        drawtext(splachText, canvas.width/2, canvas.height/2, "red", 1000);
+        if (!showOptions) drawPlayersChips();
         requestAnimationFrame(draw);
     }
 };
