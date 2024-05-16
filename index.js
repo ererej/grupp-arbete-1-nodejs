@@ -878,9 +878,15 @@ function draw() {
         };
         drawbuttons(buttons)
         if (showOptions){
+            if(chipssss == true){
+                drawtext(`: true`, 530, 645, "black", 300)
+            } else {
+                drawtext(`: false`,530, 645, "black", 300)
+            }
             drawtext( `                             Keybinds \n
-                        1 - 9    Beting \n                            0      Bet all  \n                            s      start \n              backspace     clear bets\n                        space  hit\n                         enter  stand\n                               r   restart`,300, 180, "black", 300)
+                        1 - 9    Beting \n                            0      Bet all  \n                            s      start \n              backspace     clear bets\n                        space  hit\n                         enter  stand\n                             r   restart`,300, 180, "black", 300)
         };
+    
         const splachTextLength = ctx.measureText(splachText);
         ctx.textAlign = "center";
         drawtext(splachText, canvas.width/2, canvas.height/2, "red", 1000);
