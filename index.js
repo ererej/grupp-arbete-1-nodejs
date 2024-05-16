@@ -459,24 +459,24 @@ const start = () => {
         buttons[buttons.indexOf(buttons.find(button => button.name == "hit"))].enabled = false
         buttons[buttons.indexOf(buttons.find(button => button.name == "Clear bets"))].enabled = false
         houseCards.forEach(card => card.show())
-        let under16 = true;
-        while(under16){
+        let amountOfCardsBefore = houseCards.length;
+        let pickedUpCards = []
+        while (cardSum(houseCards) + cardSum(pickedUpCards) < 17) {
+            pickUpCard(pickedUpCards, cardPile, false)
             setTimeout(() => {
-                if (cardSum(houseCards) >= 17) {
-                    pickUpCard(houseCards, cardPile, false)
-                    under16 = false;
-                }
-            }, 500);
-        }
-        if (cardSum(houseCards) === 21) {
-            yieldWinnings(1)
-            splachText = "Push LOL"
-        } else {
-            yieldWinnings(3)
-            splachText = "BLACKJACK!!!"
-        }
-        
-        clearTable()
+                houseCards.push(pickedUpCards.reverse().pop())
+            }, pickedUpCards.length*1000)
+        }    
+        setTimeout(() => {
+            if (cardSum(houseCards) === 21) {
+                yieldWinnings(1)
+                splachText = "Push LOL"
+            } else {
+                yieldWinnings(3)
+                splachText = "BLACKJACK!!!"
+            }
+            clearTable()
+        }, pickedUpCards.length*1000)
     } else if ( cash > bet && (cardSum(playerCards) === 9 || cardSum(playerCards) === 10 || cardSum(playerCards) === 11)){
         buttons[buttons.indexOf(buttons.find(button => button.name == "Dubble Down"))].enabled = true
     }
