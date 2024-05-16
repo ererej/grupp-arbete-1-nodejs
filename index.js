@@ -445,7 +445,7 @@ const start = () => {
     pickUpCard(houseCards, cardPile, true)
     pickUpCard(houseCards, cardPile, false)
 
-    if (houseCards[1].value == 11) {
+    if (houseCards[1].value == 11 && cash > bet/2) {
         buttons[buttons.indexOf(buttons.find(button => button.name == "Insurance"))].enabled = true
     }
 
@@ -663,8 +663,8 @@ canvas.addEventListener('click', function(event) {
                     break;
                 case "dubble":
                     button.enabled = false
-                    bet *= 2
                     cash -= bet
+                    bet *= 2
                     save()
                     bets.forEach(chip => {
                         spawnPos = buttons[buttons.indexOf(buttons.find(button => button.name == "bet " + chip.value))]
@@ -809,7 +809,7 @@ function getCookie(cname) {
     return "";
 }
 let highscore = 0
-if (getCookie("highscore") === "") {
+if (getCookie("highscore") === "" || parseInt(getCookie("highscore")) < 10){
     setCookie("highscore", "1000",365);
     highscore = getCookie("highscore");
 } else {
