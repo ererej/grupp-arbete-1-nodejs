@@ -668,6 +668,22 @@ function drawOptions(){
     ctx.stroke();
 }
 
+canvas.addEventListener('mousemove', function(event) {
+    var mousePosition = mousePos(canvas, event);
+    let i = 0;
+    while (i < buttons.length) {
+        const button = buttons[i];
+        if (tuching(mousePosition, button) && button.enabled) {
+            canvas.style.cursor = "pointer"
+            break;
+        } else {
+            canvas.style.cursor = "default"
+        }
+        i++;
+    }
+})
+
+
 canvas.addEventListener('click', function(event) {
     var mousePosition = mousePos(canvas, event);
     let i = 0;
