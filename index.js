@@ -106,7 +106,7 @@ class Card {
 let cardPile = []
 let houseCards = []
 let playerCards = []
-const types =["hearts", "spades", "diamonds", "clubs", "pang"]
+const types =["hearts", "spades", "diamonds", /*"clubs",*/ "pang"]
 
 const canvas = document.getElementById("myCanvas")
 
@@ -138,6 +138,7 @@ const restockCards = () => {
             }
         }
     }
+    discardPile = []
 }
 
 const pickUpCard = (cards, cPile, hidden) => {
@@ -389,6 +390,8 @@ const hit = () => {
         houseCards.forEach(card => card.rotation.targetRotation = 0)
         buttons[buttons.indexOf(buttons.find(button => button.name == "stand"))].enabled = false
         buttons[buttons.indexOf(buttons.find(button => button.name == "hit"))].enabled = false
+        buttons[buttons.indexOf(buttons.find(button => button.name == "Dubble Down"))].enabled = false
+        buttons[buttons.indexOf(buttons.find(button => button.name == "Insurance"))].enabled = false
         splachText = "BUST"
         yieldWinnings(0)
         clearTable()
@@ -398,6 +401,8 @@ const hit = () => {
 const stand = () => {
     buttons[buttons.indexOf(buttons.find(button => button.name == "stand"))].enabled = false
     buttons[buttons.indexOf(buttons.find(button => button.name == "hit"))].enabled = false
+    buttons[buttons.indexOf(buttons.find(button => button.name == "Dubble Down"))].enabled = false
+    buttons[buttons.indexOf(buttons.find(button => button.name == "Insurance"))].enabled = false
     houseCards.forEach(card => card.show())
     if(cardSum(houseCards) == 21 && cardSum(playerCards) == 21){
         yieldWinnings(1)
@@ -799,8 +804,7 @@ function restart(){
     buttons.push(new Button("bet all", canvas.height*0.055, canvas.width*0.45, canvas.height*0.95,  true))
     
     if(cardPile.length  < 26){//refrestock cards if there are less then 26(half a deck) cards left
-        restockCards();
-        discardPile = [];
+        restockCards();;
         console.log("restocked");
     };
 };
