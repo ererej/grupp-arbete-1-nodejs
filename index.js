@@ -380,7 +380,7 @@ const clearTable = () => {
 
 const hit = () => {
     buttons[buttons.indexOf(buttons.find(button => button.name == "hit"))].disable = false
-    pickUpCard(playerCards, cardPile, true)
+    pickUpCard(playerCards, cardPile, false)
     if(cardSum(playerCards) > 21){
         houseCards.forEach(card => card.rotation.targetRotation = 0)
         buttons[buttons.indexOf(buttons.find(button => button.name == "stand"))].enabled = false
