@@ -133,7 +133,7 @@ const restockCards = () => {
     for(l=0; l<2; l++){
         for(i=0; i<types.length; i++){
             for(j=1; j<=13;j++){
-                const card = new Card(types[i], j, false);
+                const card = new Card(types[i], j, true);
                 cardPile.push(card)
             }
         }
@@ -142,15 +142,10 @@ const restockCards = () => {
 }
 
 const pickUpCard = (cards, cPile, hidden) => {
-    if (!hidden) {
-        cards.push(cPile.splice((Math.floor(Math.random() * cPile.length)), 1)[0]);
-    } else {
         card = cPile.splice((Math.floor(Math.random() * cPile.length)), 1)[0]
-        card.rotation.rotation = 180;
-        card.rotation.targetRotation = 180;
-        card.hidden = true
+        card.rotation.targetRotation = hidden*180;
+        card.hidden = hidden
         cards.push(card)
-    }
 }
 
 class Button {
@@ -224,7 +219,7 @@ const drawbuttons = (listOfButtons) => {
 }
 
 //draws the card inputed at the x and y position, the scaleDownFactor is used to scale down the image to fit good in the canvas
-const drawCard = (card, scaleDownFactor) => {
+const drawCard = (card, scaleFactor) => {
     card.position.move()
     card.rotate()
     let image;
@@ -236,35 +231,35 @@ const drawCard = (card, scaleDownFactor) => {
         image = card.image
         rotation = card.rotation.rotation
     }
-    const width = Math.abs(image.width/scaleDownFactor - (image.width/scaleDownFactor/90)*rotation);
+    const width = Math.abs(image.width*scaleFactor - (image.width*scaleFactor/90)*rotation);
 
-    ctx.drawImage(image, card.position.x + (image.width/scaleDownFactor - width)/2, card.position.y, width, image.height/scaleDownFactor)
+    ctx.drawImage(image, card.position.x + (image.width*scaleFactor - width)/2, card.position.y, width, image.height*scaleFactor)
 }
 
 //draws the player cards on the canvas
 const drawPlayerCards = () => {
-    const scaleDownFactor = 3
+    const scaleFactor = 1/3          //canvas.width*0.088/500   //tried to make the cards scale with the canvas but it didn't look good
     playerCards.forEach(card => {
         card.position.targetX = (canvas.width*0.3/playerCards.length+1)*(playerCards.indexOf(card) + 1) - canvas.width*0.3/(playerCards.length+1) + canvas.width*0.30
         card.position.targetY = canvas.height*0.6
-        drawCard(card, scaleDownFactor)
+        drawCard(card, scaleFactor)
     });
 }
 
 //draws the house cards on the canvas
 const drawHouseCards = () => {
-    const scaleDownFactor = 3
+    const scaleFactor = 1/3       //canvas.width*0.088/500
     houseCards.forEach(card => {
         card.position.targetX = (canvas.width*0.3/houseCards.length+1)*(houseCards.indexOf(card) + 1) - canvas.width*0.3/(houseCards.length+1) + canvas.width*0.30
         card.position.targetY = canvas.height*0.05
-        drawCard(card, scaleDownFactor)
+        drawCard(card, scaleFactor)
     });
 }
 
 const drawDiscardPile = () => {
-    const scaleDownFactor = 3
+    const scaleFactor = 1/3            //canvas.width*0.088/500
     discardPile.forEach(card => {
-        drawCard(card, scaleDownFactor)
+        drawCard(card, scaleFactor)
     });
 }
 
@@ -385,7 +380,7 @@ const clearTable = () => {
 
 const hit = () => {
     buttons[buttons.indexOf(buttons.find(button => button.name == "hit"))].disable = false
-    pickUpCard(playerCards, cardPile)
+    pickUpCard(playerCards, cardPile, true)
     if(cardSum(playerCards) > 21){
         houseCards.forEach(card => card.rotation.targetRotation = 0)
         buttons[buttons.indexOf(buttons.find(button => button.name == "stand"))].enabled = false
@@ -449,7 +444,6 @@ const start = () => {
     pickUpCard(playerCards, cardPile, false)
     pickUpCard(houseCards, cardPile, true)
     pickUpCard(houseCards, cardPile, false)
-
     if (houseCards[1].value == 11 && cash > bet/2) {
         buttons[buttons.indexOf(buttons.find(button => button.name == "Insurance"))].enabled = true
     }
