@@ -523,7 +523,6 @@ const clearBets = (pressedButton) => {
 }
 
 const yieldWinnings = (multiplyier) => {
-    console.log(multiplyier)
     cash += bet * multiplyier
     save()
     switch (multiplyier) {
@@ -680,13 +679,20 @@ canvas.addEventListener('click', function(event) {
                     break;
                 case "insurance":
                     button.enabled = false
-                    insurance = Math.floor(bet/2)*10
+                    let betButtons = []
+                    for(i = 0; i < buttons.length; i++){
+                        if(buttons[i].name.includes("bet") && !buttons[i].name.includes("Clear") && !buttons[i].name.includes("all")) {
+                            betButtons.push(buttons[i])
+                        }
+                    }
+                    for (let i = betButtons.length-1; i >= 0; i--) {
+                        while (bet/2 - insurance >= parseInt(betButtons[i].name.split(" ")[1])) {
+                            insurance += parseInt(betButtons[i].name.split(" ")[1])
+                            insurancebet.push(new Chip(parseInt(betButtons[i].name.split(" ")[1]), betButtons[i].x, betButtons[i].y, 100, 100))
+                        }
+                    }
                     cash -= insurance
                     save()
-                    const bet10 = buttons[buttons.indexOf(buttons.find(button => button.name == "bet 10"))]
-                    for (let i = 0; i < (Math.floor(bet/20)); i++) {
-                        insurancebet.push(new Chip(10, bet10.x, bet10.y, 100, 100))
-                    }
                     break;
                 case "bet":
                     addBet(button)
