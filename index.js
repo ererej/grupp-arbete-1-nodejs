@@ -406,7 +406,7 @@ const stand = () => {
         while(cardSum(houseCards) < 17){
             pickUpCard(houseCards, cardPile, false)
         }
-        if (cardSum(houseCards) >= 17 && cardSum(houseCards) < 21 && cardSum(houseCards) == cardSum(playerCards)) {
+        if ( cardSum(houseCards) == cardSum(playerCards)) {
             yieldWinnings(1)
             splachText = "Push"
         }else if(cardSum(houseCards) > 21){
@@ -453,9 +453,24 @@ const start = () => {
         buttons[buttons.indexOf(buttons.find(button => button.name == "stand"))].enabled = false
         buttons[buttons.indexOf(buttons.find(button => button.name == "hit"))].enabled = false
         buttons[buttons.indexOf(buttons.find(button => button.name == "Clear bets"))].enabled = false
-        yieldWinnings(3)
-        splachText = "BLACKJACK!!!"
         houseCards.forEach(card => card.show())
+        let under16 = true;
+        while(under16){
+            setTimeout(() => {
+                if (cardSum(houseCards) >= 17) {
+                    pickUpCard(houseCards, cardPile, false)
+                    under16 = false;
+                }
+            }, 500);
+        }
+        if (cardSum(houseCards) === 21) {
+            yieldWinnings(1)
+            splachText = "Push LOL"
+        } else {
+            yieldWinnings(3)
+            splachText = "BLACKJACK!!!"
+        }
+        
         clearTable()
     } else if ( cash > bet && (cardSum(playerCards) === 9 || cardSum(playerCards) === 10 || cardSum(playerCards) === 11)){
         buttons[buttons.indexOf(buttons.find(button => button.name == "Dubble Down"))].enabled = true
@@ -588,6 +603,8 @@ document.addEventListener("keydown", function(event){
         case "Enter":
             if (buttons[buttons.indexOf(buttons.find(button => button.name == "stand"))].enabled) {
                 stand()
+            } else if (buttons[buttons.indexOf(buttons.find(button => button.name == "start"))].enabled) {
+                start()
             }
             break;
         case " ":
@@ -622,10 +639,11 @@ document.addEventListener("keydown", function(event){
                 }
             }
             if(parseInt(event.key) != NaN && parseInt(event.key) < betButtons.length){
-                if (event.key == 0) {
-                    addBet(betButtons[betButtons.length-1])
+                if (event.key === "0") {
+                    addBet(betButtons[betButtons.indexOf(betButtons.find(button => button.name == "bet all"))])
+                } else {
+                    addBet(betButtons[parseInt(event.key) - 1])
                 }
-                addBet(betButtons[parseInt(event.key) - 1])
             }
 
             
