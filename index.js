@@ -1,9 +1,10 @@
+//music stuff
 let BGM = new Audio('bgm.mp3')
 BGM.loop = true;
 let music = false
 
 
-class Position {
+class Position { // class for handling the position of an object
     constructor(x, y, targetX, targetY, speed) {
         this.x = x
         this.y = y
@@ -12,7 +13,7 @@ class Position {
         this.speed = speed
     }
 
-    move() {
+    move() { //moves the position towards the target position
         if (Math.abs(this.x-this.targetX) < this.speed && Math.abs(this.y-this.targetY) < this.speed) {
             this.x = this.targetX
             this.y = this.targetY
@@ -26,7 +27,7 @@ class Position {
     }
 }
 
-class Rotation {
+class Rotation { //class for handling the rotation of an object
     constructor(rotation, targetRotation, speed) {
         this.rotation = rotation
         this.targetRotation = targetRotation
@@ -220,20 +221,20 @@ const drawbuttons = (listOfButtons) => {
 
 //draws the card inputed at the x and y position, the scaleDownFactor is used to scale down the image to fit good in the canvas
 const drawCard = (card, scaleFactor) => {
-    card.position.move()
+    card.position.move() //moves the card twords the traget position before drawing
     card.rotate()
     let image;
     let rotation;
-    if(card.rotation.rotation > 90){
+    if(card.rotation.rotation > 90){ //renders the backside of the card if the backside is facing the player
         image = card.backside
         rotation = Math.abs(card.rotation.rotation-180)
     } else {
         image = card.image
         rotation = card.rotation.rotation
     }
-    const width = Math.abs(image.width*scaleFactor - (image.width*scaleFactor/90)*rotation);
+    const width = Math.abs(image.width*scaleFactor - (image.width*scaleFactor/90)*rotation); //sumulates the rotation of the card
 
-    ctx.drawImage(image, card.position.x + (image.width*scaleFactor - width)/2, card.position.y, width, image.height*scaleFactor)
+    ctx.drawImage(image, card.position.x + (image.width*scaleFactor - width)/2/*adjusts the possition of the card to make the rotation look better */, card.position.y, width, image.height*scaleFactor)
 }
 
 //draws the player cards on the canvas
@@ -248,7 +249,7 @@ const drawPlayerCards = () => {
 
 //draws the house cards on the canvas
 const drawHouseCards = () => {
-    const scaleFactor = 1/3       //canvas.width*0.088/500
+    const scaleFactor = 1/3      
     houseCards.forEach(card => {
         card.position.targetX = (canvas.width*0.3/houseCards.length+1)*(houseCards.indexOf(card) + 1) - canvas.width*0.3/(houseCards.length+1) + canvas.width*0.30
         card.position.targetY = canvas.height*0.05
@@ -256,8 +257,8 @@ const drawHouseCards = () => {
     });
 }
 
-const drawDiscardPile = () => {
-    const scaleFactor = 1/3            //canvas.width*0.088/500
+const drawDiscardPile = () => { //yes this and the 2 above it should have been one function. but this is due today and i'd like it to work
+    const scaleFactor = 1/3            
     discardPile.forEach(card => {
         drawCard(card, scaleFactor)
     });
@@ -267,12 +268,12 @@ const drawDiscardPile = () => {
 const drawtext = (text, posX, posY, color, size) => {
     ctx.font = `${size}% serif`
     ctx.fillStyle = color
-    text.split("\n").forEach((line, i) => {
-        ctx.fillText(line, posX, posY + i * (ctx.measureText(line).fontBoundingBoxAscent + ctx.measureText(line).fontBoundingBoxDescent)) 
+    text.split("\n").forEach((line, i) => { //makes \n work becouse its not built in to the fillText function. for some reason
+        ctx.fillText(line, posX, posY + i * (ctx.measureText(line).fontBoundingBoxAscent + ctx.measureText(line).fontBoundingBoxDescent)/*also for line brakes*/) 
     })
 }
 
-
+//returnes the sum value of the inputed hand. does not count hidden cards
 const cardSum = (hand) => {
     let sum = 0;
     let aceCount = 0;  
@@ -286,7 +287,7 @@ const cardSum = (hand) => {
         }
     });
 
-    while (sum > 21 && aceCount > 0) {
+    while (sum > 21 && aceCount > 0) { //acounts for the ace being 1 or 11
         sum -= 10;  
         aceCount--; 
     }
@@ -294,7 +295,7 @@ const cardSum = (hand) => {
     return sum;
 }
 
-const chipSize = canvas.height*0.2
+const chipSize = canvas.height*0.2 //idk why i made this a const but it works so i'll keep it
 class Chip {
     constructor(value, spawnX, spawnY, targetx, targety) {
         this.value = value
@@ -310,7 +311,8 @@ class Chip {
 }   
 let chipssss = false
 
-const drawChip = (chip) => {
+//moves the chip and then draws it
+const drawChip = (chip) => { 
     chip.position.move()
     ctx.drawImage(chip.image, chip.position.x, chip.position.y, chipSize, chipSize)
 }
@@ -321,15 +323,15 @@ const drawPlayersChips = () => {
         chip.position.targetY = (canvas.height*0.2/bets.length+1)*(bets.indexOf(chip) + 1) - canvas.height*0.2/bets.length+1 + canvas.height*0.5
         drawChip(chip)
     })
-    }
-
+}
+//the function above and below should have been one function but i didn't have time to fix it
 const drawInsuranceChips = () => {
     insurancebet.forEach(chip => {
         chip.position.targetX = canvas.width*0.2
         chip.position.targetY = (canvas.height*0.2/insurancebet.length+1)*(insurancebet.indexOf(chip) + 1) - canvas.height*0.2/insurancebet.length+1 + canvas.height*0.2
         drawChip(chip)
     })
-    }
+}
 
 const drawReturnChips = () => {
     returnChips.forEach(chip => {
@@ -337,39 +339,41 @@ const drawReturnChips = () => {
     })
 }
 
+//returns the position of the mouse on the canvas
 const mousePos = (canvas, event) => {
     var boundingBox = canvas.getBoundingClientRect();
     return {
       x: event.clientX - boundingBox.left,
       y: event.clientY - boundingBox.top,
     };
-  }
-
+}
+//checks if the mouse is tuching the button
 function tuching(pos, button) {
 return pos.x > button.x && pos.x < button.x + button.width && pos.y < button.y + button.height && pos.y > button.y
 }
 
+//resets every
 const clearTable = () => {
     save()
     setTimeout(() => {
     setTimeout(() => {
         restart()
         splachText = ""
-        if (!cardPile.length < 0) {
+        if (cardPile.length > 0) {
          card = discardPile[discardPile.length-1]
          discardPile = []
          discardPile.push(card)
         }
 
     }
-    ,1500)
-    playerCards.forEach(card => {  
+    ,1300) //Jonatan sa att det var för lång tid mellan rundorna så jag minskade den
+    playerCards.forEach(card => {  //moves the players cards to the discard pile
         card.position.targetX = canvas.width*0.85
         card.position.targetY = canvas.height*0.16
         discardPile.push(card)
     })
     playerCards = []
-    houseCards.forEach(card => {
+    houseCards.forEach(card => { //moves the houses cards to the discard pile
         card.position.targetX = canvas.width*0.85
         card.position.targetY = canvas.height*0.16
         discardPile.push(card)
@@ -378,10 +382,12 @@ const clearTable = () => {
     }, 1500)
 }
 
-const hit = () => {
+//picks up a card from the card pile and moves it to the players hand
+// and checks if the player busted
+const hit = () => { 
     buttons[buttons.indexOf(buttons.find(button => button.name == "hit"))].disable = false
     pickUpCard(playerCards, cardPile, false)
-    if(cardSum(playerCards) > 21){
+    if(cardSum(playerCards) > 21){ //checks if the player busted
         houseCards.forEach(card => card.rotation.targetRotation = 0)
         buttons[buttons.indexOf(buttons.find(button => button.name == "stand"))].enabled = false
         buttons[buttons.indexOf(buttons.find(button => button.name == "hit"))].enabled = false
@@ -393,20 +399,21 @@ const hit = () => {
     }
 }
 
+//picks up cards for the house and checks who won and gives out the winnings
 const stand = () => {
     buttons[buttons.indexOf(buttons.find(button => button.name == "stand"))].enabled = false
     buttons[buttons.indexOf(buttons.find(button => button.name == "hit"))].enabled = false
     buttons[buttons.indexOf(buttons.find(button => button.name == "Dubble Down"))].enabled = false
     buttons[buttons.indexOf(buttons.find(button => button.name == "Insurance"))].enabled = false
     houseCards.forEach(card => card.show())
-    if(cardSum(houseCards) == 21 && cardSum(playerCards) == 21){
+    if(cardSum(houseCards) == 21 && cardSum(playerCards) == 21){ //redundent but i'll keep it
         yieldWinnings(1)
         splachText = "Push"
     }else{
-        while(cardSum(houseCards) < 17){
+        while(cardSum(houseCards) < 17){ //makes the house pick up cards until the sum is 17 or higher
             pickUpCard(houseCards, cardPile, false)
         }
-        if ( cardSum(houseCards) == cardSum(playerCards)) {
+        if ( cardSum(houseCards) == cardSum(playerCards)) { //checks who won
             yieldWinnings(1)
             splachText = "Push"
         }else if(cardSum(houseCards) > 21){
@@ -427,8 +434,10 @@ const stand = () => {
 
 }
 
+//starts a new game
+//and checks if the player got blackjack
 const start = () => {
-    for (let i =0; i < buttons.length; i++) {
+    for (let i =0; i < buttons.length; i++) { //disables all bet buttons
         if (buttons[i].name.split(" ")[0] == "bet") {
             buttons[i].enabled = false
         }
@@ -437,23 +446,22 @@ const start = () => {
     buttons[buttons.indexOf(buttons.find(button => button.name == "hit"))].enabled = true
     buttons[buttons.indexOf(buttons.find(button => button.name == "Clear bets"))].enabled = false
     buttons[buttons.indexOf(buttons.find(button => button.name == "start"))].enabled = false
-    cash -= bet
-    save()
+    cash -= bet //removes the bet from the players cash
+    save() //saves the players cash to a cookie
     playing = true
     pickUpCard(playerCards, cardPile, false)
     pickUpCard(playerCards, cardPile, false)
     pickUpCard(houseCards, cardPile, true)
     pickUpCard(houseCards, cardPile, false)
-    if (houseCards[1].value == 11 && cash > bet/2) {
+    if (houseCards[1].value == 11 && cash > bet/2) { // lets the player buy insurance if the house has an ace
         buttons[buttons.indexOf(buttons.find(button => button.name == "Insurance"))].enabled = true
     }
 
-    if (cardSum(playerCards) === 21) {
+    if (cardSum(playerCards) === 21) { //checks if the player got blackjack and lets the house try to get blackjack
         buttons[buttons.indexOf(buttons.find(button => button.name == "stand"))].enabled = false
         buttons[buttons.indexOf(buttons.find(button => button.name == "hit"))].enabled = false
         buttons[buttons.indexOf(buttons.find(button => button.name == "Clear bets"))].enabled = false
         houseCards.forEach(card => card.show())
-        let amountOfCardsBefore = houseCards.length;
         let pickedUpCards = []
         while (cardSum(houseCards) + cardSum(pickedUpCards) < 17) {
             pickUpCard(pickedUpCards, cardPile, false)
@@ -476,9 +484,9 @@ const start = () => {
     }
 }
 
-const addBet = (button) => {
+const addBet = (button) => { //determens what bet to add to the bet pile and then adds it to the bet pile
     if (button.name.split(" ")[1] == "all") {
-        if (!chipssss) {
+        if (!chipssss) { // bets all the players cash in a smart way(not in only 10s)
             let betButtons = []
             for(i = 0; i < buttons.length; i++){
                 if(buttons[i].name.includes("bet") && !buttons[i].name.includes("Clear") && buttons[i].enabled && !buttons[i].name.includes("all")) {
@@ -510,7 +518,7 @@ const addBet = (button) => {
     }
 }
 
-const clearBets = (pressedButton) => {
+const clearBets = (pressedButton) => { //removes all the players chips and resets the bet and animates it ofc
     pressedButton.enabled = false
     buttons[buttons.indexOf(buttons.find(button => button.name == "start"))].enabled = false;
     buttons.forEach(button => {
@@ -536,7 +544,7 @@ const clearBets = (pressedButton) => {
     }, 500);
 }
 
-const yieldWinnings = (multiplyier) => {
+const yieldWinnings = (multiplyier) => { //gives out the winnings to the player and animates it
     cash += bet * multiplyier
     save()
     switch (multiplyier) {
@@ -552,36 +560,36 @@ const yieldWinnings = (multiplyier) => {
                 returnChips.push(chip)
             })
             break;
-        case 3:
-            bets.forEach(chip => {
+        case 3: //if this case is triggerd then case 2 and case 1 will also trigger. 
+            bets.forEach(chip => { //spawns in chips
                 let chipPile = buttons[buttons.indexOf(buttons.find(button => button.name == "bet " + chip.value))]
                 setTimeout(() => {
                 returnChips.push(new Chip(chip.value, canvas.width*0.2+(Math.random()-0.5), 10 * Math.random(), chipPile.x, chipPile.y))
                 }, Math.random()*1000)
             })
-        case 2:
-            bets.forEach(chip => {
+        case 2: //if this case is triggerd then case 1 will also trigger
+            bets.forEach(chip => { //spawns in chips
                 let chipPile = buttons[buttons.indexOf(buttons.find(button => button.name == "bet " + chip.value))]
                 setTimeout(() => {
                 returnChips.push(new Chip(chip.value, canvas.width*0.2+ canvas.width *0.5 * (Math.random()-0.5), canvas.height * 0.1 * Math.random(), chipPile.x, chipPile.y))
                 }, Math.random()*1000)
             })  
-        case 1:
-            bets.forEach(chip => {
+        case 1: 
+            bets.forEach(chip => { //moves the players chips to the chip pile
                 let chipPile = buttons[buttons.indexOf(buttons.find(button => button.name == "bet " + chip.value))]
                 chip.position.targetX = chipPile.x
                 chip.position.targetY = chipPile.y
                 returnChips.push(chip)
             })
-            if (houseCards[0].value == 10 && houseCards[1].value == 11) {
+            if (houseCards[0].value == 10 && houseCards[1].value == 11) { //gives the player its insurance pay if the house got blackjack
                 cash += insurance*3
-                insurancebet.forEach(chip => {
+                insurancebet.forEach(chip => { //moves the insurance chips
                     let chipPile = buttons[buttons.indexOf(buttons.find(button => button.name == "bet " + chip.value))]
                     chip.position.targetX = chipPile.x
                     chip.position.targetY = chipPile.y
                     returnChips.push(chip)
                 })
-                for (let i=0; i<2; i++) {
+                for (let i=0; i<2; i++) { //spawns in new chips
                     insurancebet.forEach(chip => {
                         let chipPile = buttons[buttons.indexOf(buttons.find(button => button.name == "bet " + chip.value))]
                         chip.position.targetX = chipPile.x
@@ -595,11 +603,11 @@ const yieldWinnings = (multiplyier) => {
     insurancebet = []
 }
 
-
+//detects when a key is pressed and then calls the right function
 document.addEventListener("keydown", function(event){
     let button = undefined
     switch (event.key){
-        case "Enter":
+        case "Enter": //dubble hidden keybind
             if (buttons[buttons.indexOf(buttons.find(button => button.name == "stand"))].enabled) {
                 stand()
             } else if (buttons[buttons.indexOf(buttons.find(button => button.name == "start"))].enabled) {
@@ -632,7 +640,7 @@ document.addEventListener("keydown", function(event){
         default:
            
             let betButtons = []
-            for(i = 0; i < buttons.length; i++){
+            for(i = 0; i < buttons.length; i++){ //checks if a bet button is pressed and then calls the addBet function. i did it like this instend of a switch case becouse i wanted to make it easy to add more bet buttons
                 if(buttons[i].name.includes("bet") && !buttons[i].name.includes("Clear") && buttons[i].enabled) {
                     betButtons.push(buttons[i])
                 }
@@ -677,7 +685,7 @@ canvas.addEventListener('mousemove', function(event) {
     }
 })
 
-
+//adds listeners to the buttons. and calls the right function when the button is pressed
 canvas.addEventListener('click', function(event) {
     var mousePosition = mousePos(canvas, event);
     let i = 0;
@@ -694,7 +702,7 @@ canvas.addEventListener('click', function(event) {
                 case "start":
                     start()
                     break;
-                case "dubble":
+                case "dubble": //no fuctions as we dont need it as we dont have a keybind for it
                     button.enabled = false
                     cash -= bet
                     bet *= 2
@@ -710,7 +718,7 @@ canvas.addEventListener('click', function(event) {
                         stand()
                     }, 500);
                     break;
-                case "insurance":
+                case "insurance": //no fuctions as we dont need it as we dont have a keybind for it
                     button.enabled = false
                     let betButtons = []
                     for(i = 0; i < buttons.length; i++){
@@ -777,6 +785,7 @@ canvas.addEventListener('click', function(event) {
     }
 }, false)
 
+//reverts everything to the start state
 function restart(){
     insurance = 0;
     insurancebet = [];
@@ -818,13 +827,14 @@ function restart(){
         console.log("restocked");
     };
 };
-
+//code from w3schools. Cant even pretend that i wrote this
 function setCookie(cname, cvalue, exdays) {
     const d = new Date();
     d.setTime(d.getTime() + (exdays*24*60*60*1000));
     let expires = "expires="+ d.toUTCString();
     document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
 }
+//code from w3schools. Cant even pretend that i wrote this
 function getCookie(cname) {
     let name = cname + "=";
     let decodedCookie = decodeURIComponent(document.cookie);
@@ -840,21 +850,22 @@ function getCookie(cname) {
     };
     return "";
 }
+
 let highscore = 0
-if (getCookie("highscore") === "" || parseInt(getCookie("highscore")) < 10){
+if (getCookie("highscore") === "" || parseInt(getCookie("highscore")) < 10){ //sets the highscore to 1000 if there is no highscore
     setCookie("highscore", "1000",365);
     highscore = getCookie("highscore");
 } else {
     highscore = getCookie("highscore");
 };
 let cash = 0
-if (getCookie("cash") === "") {
+if (getCookie("cash") === "" || parseInt(getCookie("cash")) < 10){ //reads the players saved cash from a cookie and give the player its starting cash if there is no saved cash
     setCookie("cash", "1000", 365);
     cash = getCookie("cash");
 } else {
     cash = getCookie("cash");
 };
-
+//saves the players cash to a cookie and updates the highscore if the player has a new highscore
 const save = () => {
     setCookie("cash", cash, 365)
     if (cash > highscore){
@@ -863,6 +874,7 @@ const save = () => {
     };
 };
 
+//creates most of the global veriables
 let discardPile = [];
 let bet = 0;
 let bets = [];
@@ -874,12 +886,12 @@ let splachText = "";
 
 let returnChips = [];
 
-
+//renders the game
 function draw() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
     ctx.drawImage(background, 0, 0, background.width, background.height, 0, 0, canvas.width, canvas.height);
-    if (cash + bet < 10) {
+    if (cash + bet < 10) { //if player are too broke to play
         buttons[buttons.indexOf(buttons.find(button => button.name == "bet all"))].enabled = false;
         buttons[buttons.indexOf(buttons.find(button => button.name == "Restart"))].enabled = true;
         splachText = "You are too broke for this casino!";
@@ -891,6 +903,7 @@ function draw() {
         drawbuttons(buttons);
         requestAnimationFrame(draw);
     } else {
+        //draws everything
         ctx.drawImage(backsideOfCard, canvas.width*0.85, canvas.height*0.6, backsideOfCard.width/3, backsideOfCard.height/3); 
         drawPlayerCards();
         drawHouseCards();
@@ -914,7 +927,7 @@ function draw() {
                 drawtext(`: true`, 530, 645, "black", 300)
             } else {
                 drawtext(`: false`,530, 645, "black", 300)
-            }
+            } 
             drawtext( `                             Keybinds \n
                         1 - 9    Beting \n                            0      Bet all  \n                            s      start \n              backspace     clear bets\n                        space  hit\n                         enter  stand\n                             r   restart`,300, 180, "black", 300)
         };
@@ -927,8 +940,8 @@ function draw() {
     }
 };
 
-restart()
-requestAnimationFrame(draw);
+restart() //configures everytinhg to the start state
+requestAnimationFrame(draw); //starts the game loop
 
 
 
