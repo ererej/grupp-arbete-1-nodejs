@@ -668,6 +668,10 @@ function drawOptions(){
     ctx.fill()
     ctx.strokeStyle = "white"
     ctx.stroke();
+    buttons[buttons.indexOf(buttons.find(button => button.name == "Music"))].enabled = true
+    buttons[buttons.indexOf(buttons.find(button => button.name == "Holieday"))].enabled = true
+    buttons[buttons.indexOf(buttons.find(button => button.name == "Close"))].enabled = true
+    buttons[buttons.indexOf(buttons.find(button => button.name == "Eat"))].enabled = true
 }
 
 canvas.addEventListener('mousemove', function(event) {
@@ -897,9 +901,8 @@ function draw() {
         splachText = "You are too broke for this casino!";
         ctx.textAlign = "center";
         drawtext(splachText, canvas.width/2, canvas.height/2, "red", 500);
-        if (showOptions){
-            drawOptions() 
-        };
+        showOptions = false
+        buttons[buttons.indexOf(buttons.find(button => button.name == "Options"))].enabled = false
         drawbuttons(buttons);
         requestAnimationFrame(draw);
     } else {
