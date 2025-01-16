@@ -637,6 +637,14 @@ document.addEventListener("keydown", function(event){
                 restart()
                 splachText = ""
             break;
+        case "m":
+            if(music){
+                BGM.pause();
+                music = false
+            }else{
+                BGM.play();
+                music = true
+            }
         default:
            
             let betButtons = []
